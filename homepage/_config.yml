@@ -20,11 +20,11 @@
 
 title: SAFMC Snapper-Grouper MSE
 email: adrian@bluematterscience.com
-description: Management Strategy Evaluation of the South Atlantic Fishery Management Council's Grouper-Snapper Fishery
+description: SAFMC Grouper-Snapper Fishery MSE
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://safmc-mse.netlify.app/" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username:
-github_username:  Blue-Matter/SAFMC-MSE
+github_username:  'Blue-Matter/SAFMC-MSE'
 kramdown:
   # parse markdown inside block-level HTML tag
   parse_block_html: true
