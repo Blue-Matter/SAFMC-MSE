@@ -1,0 +1,25 @@
+# Project Overview
+The Snapper-Grouper Complex is a diverse group of fishes managed by the [South Atlantic Fishery Management Council](https://safmc.net/). They  are targeted by recreational and commercial fishermen throughout the South Atlantic region (Virginia
+and North Carolina border through the Florida Keys). 
+
+Several species in the region managed by the Council are overfished and experiencing overfishing based on the findings of recent age-based
+stock assessments. The Council has responded to the findings of these stock assessments by
+revising the sustainable catch levels for each species. Due to the significant reductions needed to
+constrain catch for multiple stocks, the Council is considering a holistic approach to manage the
+multi-species fishery that will address overfishing and rebuild depleted stocks through an
+evaluation of different management approaches.
+
+[Blue Matter Science](https://www.bluematterscience.com/) has been contracted to work with the Council to develop a [Management Strategy Evaluation (MSE)](https://harveststrategies.org/management-strategy-evaluation-2/) to describe potential outcomes of different management approaches
+for the Snapper-Grouper Fishery. 
+
+The MSE will consider the biological, economic, and social
+impacts of different management approaches. The [openMSE](https://openmse.com/) framework will be used to develop and condition operating models based on the available fishery data, design customized management procedures for the Snapper-Grouper fishery, and evaluate the performance of these management procedures using closed-loop simulation testing. Performance metrics recommended by the public and the Council will be used to evaluate the relative performance of the management approaches to achieving objectives.
+
+This site will be updated periodically with notes on project progress, background materials, presentations and reports, and other information relating to this project. 
+
+
+
+
+
+
+
