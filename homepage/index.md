@@ -25,8 +25,7 @@ This site will be updated periodically with notes on project progress, backgroun
 - [Chip Collier](mailto:chip.collier@safmc.net)
 - [John Carmichael](mailto:john.carmichael@safmc.net)
 
-## MSE Trial Specifications 
-[Test](/TrialSpecs.html)
+
 
 ## Background Material
 Coming soon.
