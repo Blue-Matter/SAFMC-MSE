@@ -6,23 +6,22 @@ fls <- list.files('functions')
 for (f in fls) source(file.path('functions', f))
 
 
-# Red snapper OM and MOM
-rs <- standardize_rdat(rdat_RedSnapper)
-OM <- BAM2OM(rs, nsim = 3)
-MOM <- BAM2MOM(rs, nsim = 3)
-MOM@cpars[[1]][[5]]$V %>% range()
+# Red snapper  MOM
+RSMOM <- BAM2MOM(rdat=rdat_RedSnapper, nsim = 3)
 
-
+lapply(RSMOM@Fleets[[1]], slot, 'Name') %>% unlist()
 
 multiHist <- SimulateMOM(MOM)
 
 
-Hist <- Simulate(OM)
+# Gag MOM
 
-# Gag OM and MOM
-gag <- standardize_rdat(rdat_GagGrouper)
-OM <- BAM2OM(gag, nsim = 3)
-MOM <- BAM2MOM(gag, nsim = 3)
+GGMOM <- BAM2MOM(rdat=rdat_GagGrouper, nsim = 3)
+lapply(GGMOM@Fleets[[1]], slot, 'Name') %>% unlist()
+
+
+plot(RSMOM@cpars[[1]][[1]]$Len_age[1,,1],RSMOM@cpars[[1]][[1]]$V[1,,1], type='l')
+lines(GGMOM@cpars[[1]][[1]]$Len_age[1,,1], GGMOM@cpars[[1]][[1]]$V[1,,1], col='blue')
 
 fl <- tempfile()
 fl
