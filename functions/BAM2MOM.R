@@ -161,7 +161,7 @@ BAM2MOM <- function(rdat, nsim = 48, proyears = 50, interval = 2,
 
   message("Running Assess2MOM()...")
 
-  MOM <- Assess2MOM(Name = "Operating model created by BAM2MOM",
+  MOM <- Assess2MOM(Name = paste0(snameBAM, " OM created by BAM2MOM"),
                     proyears = proyears,
                     interval = interval,
                     CurrentYr = CurrentYr,
