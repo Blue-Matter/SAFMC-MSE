@@ -26,7 +26,7 @@ This site will be updated periodically with notes on project progress, backgroun
 - [John Carmichael](mailto:john.carmichael@safmc.net)
 
 ## MSE Trial Specifications 
-[Test](../TrialSpecs.html)
+[Test](/TrialSpecs.html)
 
 ## Background Material
 Coming soon.
