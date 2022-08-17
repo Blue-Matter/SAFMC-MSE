@@ -11,3 +11,19 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
+
+South Atlantic Gag - SEDAR 71
+
+- 1999 - MSY proxy - 30% static SPR. OY~ 45% SPR
+overfished SPR = 27%
+overfishing levels F>F30% SPR
+
+MSST - minimum stock size threshold =
+max((1-M), 0.5) * BMSY
+MFMT = FMSY (maximum fishing mortality threshold)
+
+
+# Things to consider:
+
+- area closures
+- 
