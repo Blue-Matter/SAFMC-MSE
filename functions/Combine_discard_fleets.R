@@ -150,7 +150,8 @@ Combine_MOM <- function(MOMlist, name='Combined MOM') {
   fl_list <- list()
   for (s in 1:n.moms) {
     n.fleets <- MOMlist[[s]]@Fleets[[1]] %>% length()
-    fleet.names <- lapply(MOMlist[[s]]@Fleets[[1]], slot, name='Name') %>% unlist() %>% as.character()
+    fleet.names <- lapply(MOMlist[[s]]@Fleets[[1]], slot, name='Name') %>%
+      unlist() %>% as.character()
     fl_list[[s]] <- data.frame(Fleets=fleet.names)
   }
   all.fleets <- do.call('rbind', fl_list) %>% unique()  %>% unlist()
@@ -196,7 +197,8 @@ Combine_MOM <- function(MOMlist, name='Combined MOM') {
   fl_list <- list()
   for (s in 1:n.moms) {
     n.fleets <- MOMlist[[s]]@Fleets[[1]] %>% length()
-    fleet.names <- lapply(MOMlist[[s]]@Fleets[[1]], slot, name='Name') %>% unlist() %>% as.character()
+    fleet.names <- lapply(MOMlist[[s]]@Fleets[[1]], slot, name='Name') %>%
+      unlist() %>% as.character()
     fl_list[[s]] <- data.frame(Fleets=fleet.names)
   }
   # re-order to match Stock 1
@@ -204,6 +206,9 @@ Combine_MOM <- function(MOMlist, name='Combined MOM') {
     ind <- match(unlist(fl_list[[1]]), unlist(fl_list[[s]]))
     MOMlist[[s]]@Fleets[[1]] <-  MOMlist[[s]]@Fleets[[1]][ind]
     MOMlist[[s]]@CatchFrac[[1]] <- MOMlist[[s]]@CatchFrac[[1]][,ind]
+    MOMlist[[s]]@cpars[[1]] <-  MOMlist[[s]]@cpars[[1]][ind]
+    MOMlist[[s]]@Obs[[1]] <-  MOMlist[[s]]@Obs[[1]][ind]
+    MOMlist[[s]]@Imps[[1]] <-  MOMlist[[s]]@Imps[[1]][ind]
   }
 
   # final check on fleet names
@@ -232,13 +237,13 @@ Combine_MOM <- function(MOMlist, name='Combined MOM') {
 
   # combine fleets, obs, imps, & cpars
   MOM@Fleets <-  vector('list', n.stocks)
-  names(Fleets) <-  MOM@Stocks
+  names(MOM@Fleets) <-  MOM@Stocks
   MOM@Obs <- vector('list', n.stocks)
-  names(Obs) <-  MOM@Stocks
+  names(MOM@Obs) <-  MOM@Stocks
   MOM@Imps <- vector('list', n.stocks)
-  names(Imps) <-  MOM@Stocks
+  names(MOM@Imps) <-  MOM@Stocks
   MOM@cpars <-  vector('list', n.stocks)
-  names(cpars) <-  MOM@Stocks
+  names(MOM@cpars) <-  MOM@Stocks
 
   MOM@CatchFrac <- vector('list', n.stocks)
 

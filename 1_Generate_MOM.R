@@ -68,13 +68,15 @@ GG_discMort <- list(cHL=matrix(c(0.4, 2020), ncol=2, byrow=T),
 RSMOM_2 <- Combine_discard_fleets(RSMOM, RS_fleets, RS_discMort)
 GGMOM_2 <- Combine_discard_fleets(GGMOM, GG_fleets, GG_discMort)
 
+
 # ---- Combine RS and GG into multi-stock MOM ----
 
 # Things to consider:
 # - management interval
 # - units of the TAC - weight-at-age is in whole weight lbs
 # -
-RS_GG_MOM <- Combine_MOM(MOMlist=list(RSMOM_2, GGMOM_2), 'Red Snapper & Gag Grouper MOM')
+RS_GG_MOM <- Combine_MOM(MOMlist=list(RSMOM_2, GGMOM_2),
+                         name='Red Snapper & Gag Grouper MOM')
 
 saveRDS(RS_GG_MOM, 'OMs/BaseCaseMOM.rda')
 
