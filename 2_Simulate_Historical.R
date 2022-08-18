@@ -29,5 +29,6 @@ plot_SB(RS_GG_hist, type='rel')
 
 # landings & discards
 plot_C(RS_GG_hist)
+plot_C(RS_GG_hist, 'mt')
 plot_C(RS_GG_hist, type='byfleet')
 
