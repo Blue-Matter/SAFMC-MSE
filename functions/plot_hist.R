@@ -1,6 +1,8 @@
 
 
-plot_C <- function(multiHist, type=c('overall', 'byfleet')) {
+plot_C <- function(multiHist, units=c('1000 lb', 'mt'),
+                   type=c('overall', 'byfleet')) {
+  units <- match.arg(units)
   info <- get_info(multiHist)
   df <- get_ts(multiHist)
   type <- match.arg(type)
@@ -8,14 +10,21 @@ plot_C <- function(multiHist, type=c('overall', 'byfleet')) {
   bio <- df %>% filter(Name%in%c('Landings', 'Discards'))
   bio$Name <- factor(bio$Name, levels=unique(bio$Name), ordered = TRUE)
   bio$Fleet <- factor(bio$Fleet, levels=unique(bio$Fleet), ordered = TRUE)
-  bio$Value <- bio$Value/1000
+
+  if (units=='1000 lb') {
+    bio$Value <- bio$Value/1000
+  }
+  if (units=='mt') {
+    bio$Value <- lb2mt(bio$Value)
+  }
+  ylab <- paste0('Biomass (', units, ')')
 
   if (type=='byfleet') {
     p <- ggplot(bio, aes(x=Year, y=Value, color=Stock)) +
       facet_grid(Fleet~Name, scales='free_y') +
       geom_line() +
       theme_bw() +
-      labs(x='Year', y='1000 lb') +
+      labs(x='Year', y=ylab) +
       scale_color_manual(values=c('blue', 'red'))
   } else {
     bio <- bio %>% group_by(Stock, Year, Name) %>%
@@ -24,7 +33,7 @@ plot_C <- function(multiHist, type=c('overall', 'byfleet')) {
       facet_grid(~Name, scales='free_y') +
       geom_line() +
       theme_bw() +
-      labs(x='Year', y='1000 lb') +
+      labs(x='Year', y=ylab) +
       scale_color_manual(values=c('blue', 'red'))
   }
   p
