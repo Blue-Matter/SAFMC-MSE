@@ -1,6 +1,6 @@
 # devtools::install_github("nikolaifish/bamExtras")
 
-nsim <- 3
+nsim <- 20
 
 # ---- Generate the Base Case MOM from the latest assessments ----
 
@@ -15,6 +15,10 @@ for (f in fls) source(file.path('functions', f))
 # ---- Generate individual MOMs ----
 # Red snapper  MOM - SEDAR 73 March 2021
 RSMOM <- BAM2MOM(rdat=rdat_RedSnapper, stock_name='Red Snapper', nsim = nsim)
+
+fl <- tempfile()
+fl
+saveRDS(rdat_RedSnapper, fl)
 
 # Gag MOM - SEDAR 71 April 2021
 GGMOM <- BAM2MOM(rdat=rdat_GagGrouper, stock_name='Gag', nsim = nsim)
@@ -79,15 +83,5 @@ RS_GG_MOM <- Combine_MOM(MOMlist=list(RSMOM_2, GGMOM_2),
                          name='Red Snapper & Gag Grouper MOM')
 
 saveRDS(RS_GG_MOM, 'OMs/BaseCaseMOM.rda')
-
-
-
-
-
-
-
-
-
-
 
 

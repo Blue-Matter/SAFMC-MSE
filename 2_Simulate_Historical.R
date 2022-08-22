@@ -1,6 +1,7 @@
 library(openMSE)
 library(dplyr)
 library(ggplot2)
+library(cowplot)
 
 # ---- Load functions ----
 fls <- list.files('functions')
@@ -14,21 +15,35 @@ RS_GG_MOM <- readRDS('OMs/BaseCaseMOM.rda')
 # ---- Simulate Historical Fishery ----
 
 RS_GG_hist <- SimulateMOM(RS_GG_MOM)
+saveRDS(RS_GG_hist, 'Hist_Objects/RS_GG_hist.rda')
 
 
 # ---- Plot Historical Simulated Fishery ----
 
 # total biomass
 plot_B(RS_GG_hist)
-plot_B(RS_GG_hist, 'mt')
-plot_B(RS_GG_hist, type='rel')
+ggsave('docs/Presentations/img/B_lbs.png', width=8, height=5)
 
-# spawning biomas
+plot_B(RS_GG_hist, 'mt')
+ggsave('docs/Presentations/img/B_mt.png', width=8, height=5)
+
+plot_B(RS_GG_hist, type='rel')
+ggsave('docs/Presentations/img/B_rel.png', width=8, height=5)
+
+# spawning biomass
 plot_SB(RS_GG_hist)
+ggsave('docs/Presentations/img/SB.png', width=10, height=5)
+
 plot_SB(RS_GG_hist, type='rel')
+ggsave('docs/Presentations/img/SB_rel.png', width=10, height=5)
 
 # landings & discards
 plot_C(RS_GG_hist)
-plot_C(RS_GG_hist, 'mt')
-plot_C(RS_GG_hist, type='byfleet')
+ggsave('docs/Presentations/img/Landings_Disc.png', width=10, height=5)
 
+plot_C(RS_GG_hist, 'mt')
+
+plot_C(RS_GG_hist, type='byfleet', 'mt')
+ggsave('docs/Presentations/img/Landings_Disc_fleet.png', width=10, height=6)
+
+# multiHist=RS_GG_hist

@@ -1,0 +1,138 @@
+library(openMSE)
+library(dplyr)
+library(ggplot2)
+
+# ---- Load functions ----
+fls <- list.files('functions')
+for (f in fls) source(file.path('functions', f))
+
+# ---- Load Base Case Hist ----
+# created in 2_Simulate_Historical.R
+RS_GG_hist <- readRDS('Hist_Objects/RS_GG_hist.rda')
+
+
+# ---- Develop Simple Example Management Procedures -----
+
+# Make stock-fleet specific data list from historical simulations
+# for testing purposes
+info <- get_info(RS_GG_hist)
+DataList <- vector('list', info$n.stocks)
+for (p in 1:info$n.stocks) {
+  DataList[[p]] <- vector('list', info$n.fleets)
+  for (f in 1:info$n.fleets) {
+    DataList[[p]][[f]] <- RS_GG_hist[[p]][[f]]@Data
+  }
+}
+
+
+# A super simple example MMP that holds each fleet at current effort
+current_effort <- function(x, DataList, ...) {
+  # First level is stocks
+  nStocks <- length(DataList)
+  # Second level is fleets (same dimensions among stocks)
+  nFleets <- length(DataList[[1]])
+
+  # The hierarchical list we are going to put recommendations in
+  RecList <- new('list')
+
+  for(ss in 1:nStocks){
+    # List of recommendations by fleet within stock
+    RecList[[ss]] <- new('list')
+
+    for(ff in 1:nFleets){
+      # New blank recommendations object
+      Rec <- new("Rec")
+      # Effort held constant at the same level as the last historical year
+      Rec@Effort <- 1
+      # Store recommendations object in RecList
+      RecList[[ss]][[ff]] <- Rec
+    }
+  }
+  # Return the RecList
+  RecList
+}
+# Assign our new function the correct class
+class(current_effort) <- 'MMP'
+
+# Test out the new MP:
+current_effort(1, DataList)
+# returns a hierarchical list with Effort=1 for each Stock and Fleet
+
+
+
+# A super simple example MMP that holds each fleet at current catch (last historical year)
+current_catch <- function(x, DataList, ...) {
+  nStocks <- length(DataList)
+  nFleets <- length(DataList[[1]])
+  RecList <- new('list')
+  for(ss in 1:nStocks){
+    RecList[[ss]] <- new('list')
+    for(ff in 1:nFleets){
+      Rec <- new("Rec")
+      Rec@TAC <- DataList[[ss]][[ff]]@MPrec[x]
+      RecList[[ss]][[ff]] <- Rec
+    }
+  }
+  RecList
+}
+# Assign our new function the correct class
+class(current_catch) <- 'MMP'
+
+
+
+MMSE <- ProjectMOM(RS_GG_hist, MPs=c('current_catch', 'current_effort'), dropHist = FALSE)
+
+
+# total biomass
+plot_B(RS_GG_hist)
+plot_B_proj(MMSE)
+
+
+plot_B(RS_GG_hist, 'mt')
+plot_B_proj(MMSE, 'mt')
+
+plot_B(RS_GG_hist, type='rel')
+plot_B_proj(MMSE, type='rel')
+
+# spawning biomass
+plot_SB(RS_GG_hist)
+
+plot_SB_proj(MMSE)
+ggsave('docs/Presentations/img/SB_proj.png', width=10, height=6)
+
+plot_SB(RS_GG_hist, type='rel')
+plot_SB_proj(MMSE, type='rel')
+
+# landings & discards
+plot_C(RS_GG_hist)
+plot_C(RS_GG_hist, 'mt')
+plot_C(RS_GG_hist, type='byfleet', 'mt')
+
+plot_C_proj(MMSE)
+ggsave('docs/Presentations/img/Landings_Disc_proj.png', width=10, height=6)
+
+plot_C_proj(MMSE, type='byfleet')
+ggsave('docs/Presentations/img/Landings_Disc_fleet_proj.png', width=10, height=6)
+
+
+plot_C_proj(MMSE, incHist=TRUE)
+ggsave('docs/Presentations/img/Landings_Disc_overall_proj.png', width=10, height=6)
+
+plot(MMSE@multiHist$`Red Snapper`$cHL@SampPars$Stock$Perr_y[1,], type='l')
+MMSE@multiHist$Gag$cHL@SampPars$Stock$Perr_y[1,]
+
+
+
+
+
+
+
+
+
+# By Stock and Fleet:
+#   1. current_effort
+#   2. current_catch
+#   3. current_effort & change discard mortality
+#   4. fleet-specific TACs
+
+# ---- Develop Slightly More Complex Example Management Procedures -----
