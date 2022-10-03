@@ -59,8 +59,6 @@ current_effort(1, DataList)
 # returns a hierarchical list with Effort=1 for each Stock and Fleet
 
 
-
-# A super simple example MMP that holds each fleet at current catch (last historical year)
 current_catch <- function(x, DataList, ...) {
   nStocks <- length(DataList)
   nFleets <- length(DataList[[1]])
@@ -79,8 +77,112 @@ current_catch <- function(x, DataList, ...) {
 class(current_catch) <- 'MMP'
 
 
+half_effort <- function(x, DataList, ...) {
+  # First level is stocks
+  nStocks <- length(DataList)
+  # Second level is fleets (same dimensions among stocks)
+  nFleets <- length(DataList[[1]])
 
-MMSE <- ProjectMOM(RS_GG_hist, MPs=c('current_catch', 'current_effort'), dropHist = FALSE)
+  # The hierarchical list we are going to put recommendations in
+  RecList <- new('list')
+
+  for(ss in 1:nStocks){
+    # List of recommendations by fleet within stock
+    RecList[[ss]] <- new('list')
+
+    for(ff in 1:nFleets){
+      # New blank recommendations object
+      Rec <- new("Rec")
+      # Effort held constant at the same level as the last historical year
+      Rec@Effort <- 0.5
+      # Store recommendations object in RecList
+      RecList[[ss]][[ff]] <- Rec
+    }
+  }
+  # Return the RecList
+  RecList
+}
+# Assign our new function the correct class
+class(half_effort) <- 'MMP'
+
+
+third_effort <- function(x, DataList, ...) {
+  # First level is stocks
+  nStocks <- length(DataList)
+  # Second level is fleets (same dimensions among stocks)
+  nFleets <- length(DataList[[1]])
+
+  # The hierarchical list we are going to put recommendations in
+  RecList <- new('list')
+
+  for(ss in 1:nStocks){
+    # List of recommendations by fleet within stock
+    RecList[[ss]] <- new('list')
+
+    for(ff in 1:nFleets){
+      # New blank recommendations object
+      Rec <- new("Rec")
+      # Effort held constant at the same level as the last historical year
+      Rec@Effort <- 0.333
+      # Store recommendations object in RecList
+      RecList[[ss]][[ff]] <- Rec
+    }
+  }
+  # Return the RecList
+  RecList
+}
+# Assign our new function the correct class
+class(third_effort) <- 'MMP'
+
+MMSE <- ProjectMOM(RS_GG_hist, MPs=c('current_effort',
+                                     'half_effort',
+                                     'third_effort',
+                                     'current_catch'), dropHist = FALSE)
+
+MMSE@multiHist <- RS_GG_hist
+
+plot_B_proj(MMSE, mps=1, sims=1, incyears=2019)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_1.png', width=6, height=2.5)
+
+plot_B_proj(MMSE, mps=1, sims=1, incyears=2020:2025)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_2.png', width=6, height=2.5)
+
+plot_B_proj(MMSE, mps=1, sims=1, incyears=2020:2030)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_3.png', width=6, height=2.5)
+
+plot_B_proj(MMSE, mps=1, sims=1, incyears=2020:2035)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_4.png', width=6, height=2.5)
+
+plot_B_proj(MMSE, mps=1, sims=1, incyears=2020:2040)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_5.png', width=6, height=2.5)
+
+plot_B_proj(MMSE, mps=1, sims=1:2)
+plot_B_proj(MMSE, mps=1, sims=1:3)
+plot_B_proj(MMSE, mps=1, sims=1:4)
+plot_B_proj(MMSE, mps=1, sims=1:5)
+
+plot_B_proj(MMSE, mps=1)
+
+#
+
+plot_B_proj(MMSE, mps=1:2)
+
+plot_B_proj(MMSE, mps=1:3)
+plot_B_proj(MMSE, mps=1:4)
+
+
+
+
+
+plot_B_proj(MMSE, mps=1:2, incyears=2020:2025)
+
+
+plot_B_proj(MMSE, mps=1, maxyr=2030)
+plot_B_proj(MMSE, mps=1, maxyr=2035)
+
+
+
+
 
 
 # total biomass

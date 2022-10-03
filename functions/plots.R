@@ -25,7 +25,7 @@ plot_C <- function(multiHist, units=c('1000 lb', 'mt'),
 
       p <- ggplot(bio, aes(x=Year, y=Value, color=Fleet)) +
         facet_grid(Stock~Name, scales='free_y') +
-        geom_line() +
+        geom_line(size=1.2) +
         theme_bw() +
         labs(x='Year', y=ylab)
 
@@ -34,7 +34,7 @@ plot_C <- function(multiHist, units=c('1000 lb', 'mt'),
         summarize(Value=sum(Value), .groups = 'drop')
       p <- ggplot(bio, aes(x=Year, y=Value, color=Stock)) +
         facet_grid(~Name, scales='free_y') +
-        geom_line() +
+        geom_line(size=1.2) +
         theme_bw() +
         labs(x='Year', y=ylab) +
         scale_color_manual(values=c('red', 'blue'))
@@ -63,7 +63,7 @@ plot_SB <- function(multiHist,
   }
 
   p <- ggplot(bio, aes(x=Year, y=Value, color=Stock)) +
-    geom_line() +
+    geom_line(size=1.2) +
     facet_wrap(~Stock, scales='free_y') +
     expand_limits(y=c(0,1)) +
     theme_bw() +
@@ -106,7 +106,7 @@ plot_SB_proj <- function(MMSE,
 
   p <- ggplot(bio, aes(x=Year, y=Value, color=Stock)) +
     facet_grid(Stock~MP, scales='free_y') +
-    geom_line() +
+    geom_line(size=1.2) +
     expand_limits(y=0) +
     theme_bw() +
     labs(x='Year', y=ylab) +
@@ -121,7 +121,7 @@ plot_SB_proj <- function(MMSE,
 
 plot_B <- function(multiHist, units=c('1000 lb', 'mt'),
                    type=c('abs', 'rel'),
-                   incRef=TRUE) {
+                   incRef=TRUE, incLeg=TRUE) {
   units <- match.arg(units)
   type <- match.arg(type)
   info <- get_info(multiHist)
@@ -145,7 +145,7 @@ plot_B <- function(multiHist, units=c('1000 lb', 'mt'),
   }
 
   p <- ggplot(bio, aes(x=Year, y=Value, color=Stock)) +
-    geom_line() +
+    geom_line(size=1.2) +
     expand_limits(y=c(0,1)) +
     theme_bw() +
     labs(x='Year', y=ylab) +
@@ -154,6 +154,9 @@ plot_B <- function(multiHist, units=c('1000 lb', 'mt'),
     p <- p + geom_line(aes(y=Bref, color=Stock, linetype=Bref_type)) +
       scale_linetype_manual(values=c(2,3)) +
       labs(linetype='Bref')
+  }
+  if (!incLeg) {
+    p <- p + guides(color='none')
   }
   p
 }
@@ -508,49 +511,146 @@ plot_C_overall <- function(MMSE, units=c('1000 lb', 'mt'),
 
 }
 
+make_proj_df <- function(MMSE, sl) {
+  info <- get_info_MMSE(MMSE)
+  nstocks <- length(info$stocks)
+  val <- slot(MMSE, sl)
+  mps <- MMSE@MPs[[1]]
+  df <- data.frame(Sim=1:info$nsim,
+                   Stock=rep(info$stocks, each=info$nsim),
+                   MP=rep(mps, each=info$nsim*nstocks),
+                   Year=rep(info$p.yrs, each=info$nsim*nstocks*length(mps)),
+                   Var=sl,
+                   Val=as.vector(val))
+
+  df
+
+}
+
+
+
+
 plot_B_proj <- function(MMSE, units=c('1000 lb', 'mt'),
                    type=c('abs', 'rel'),
-                   stat=c('mean', 'median'),
+                   stat=c('mean', 'median', 'all'),
+                   sims=NULL,
+                   mps=NA,
+                   incyears=NULL,
+                   maxyr,
                    incquants=TRUE,
                    incRef=TRUE) {
   units <- match.arg(units)
   type <- match.arg(type)
   stat <- match.arg(stat)
 
-  info <- get_info_MMSE(MMSE)
-  df <- get_ts_MMSE(MMSE)
+  ylab <- paste0('Biomass (', units, ')')
+
+  # historical
+  multiHist <- MMSE@multiHist
+
+  info <- get_info(multiHist)
+  df <- get_ts(multiHist) %>% filter(Name=='Biomass', Fleet=='cHL')
+  df$Sim <- 1
+  df$MP <- ''
+  df$Phase <- 'Historical'
   bio <- df %>% filter(Name=='Biomass', Fleet==info$fleets[1])
   bio <- left_join(bio, info$Ref, by='Stock')
   bio$Stock <- factor(bio$Stock, levels=unique(bio$Stock), ordered = TRUE)
 
-  var_stat <- switch(stat, mean='Mean', median='Median')
-  bio$Value <- bio[[var_stat]]
+  # projection
+  proj_info <- get_info_MMSE(MMSE)
+  proj_df <- make_proj_df(MMSE, sl)
+  proj_df$Phase <- 'Projection'
 
-  if (type=='rel') {
-    bio <- bio %>% group_by(Stock) %>% mutate(Value=Value/B0, Bref=Bref/B0)
-    ylab <- 'Relative Biomass (B/B0)'
+  # combine df
+  df <- df %>% select(Year, Sim, Stock, Val=Value, MP, Name, Phase)
+
+  proj_df <- proj_df %>% select(Year, Sim, Stock, Val, MP, Name=Var,Phase)
+  proj_df$Name <- switch(proj_df$Name[1],
+                        B='Biomass')
+
+  # add last historical year
+  df_lstyr <- df %>% filter(Year==max(df$Year))
+  mm <- unique(proj_df$MP)
+  templist <- list()
+  for (i in 1:length(mm)) {
+    tt <- df_lstyr
+    tt$MP <- mm[i]
+    templist[[i]] <- tt
+  }
+  df_lstyr <- do.call('rbind', templist)
+  ss <- unique(proj_df$Sim)
+  for (i in 1:length(ss)) {
+    tt <- df_lstyr
+    tt$Sim <- ss[i]
+    templist[[i]] <- tt
+  }
+  df_lstyr <- do.call('rbind', templist)
+
+  proj_df <- rbind(df_lstyr, proj_df)
+
+  MPs <- MMSE@MPs[[1]]
+  if (all(is.na(mps))) mps <- 1:length(MPs)
+
+  if (!is.null(incyears)) {
+    incyears <- c(2019, incyears)
+    all.year <- unique(proj_df$Year)
+    ig.year <- all.year[!all.year%in%incyears]
+    proj_df$Val[proj_df$Year %in% ig.year] <- NA
+  }
+  proj_df  <- proj_df%>% filter(MP%in%MPs[mps])
+
+  df$Val <- df$Val/1000
+  proj_df$Val <- proj_df$Val/1000
+
+  # plot by simulation
+  if (!is.null(sims)) {
+    proj_df2 <- proj_df %>% filter(Sim%in%sims)
+
+    p <- ggplot(proj_df2) +
+      geom_line(aes(x=Year, y=Val, color=Stock), data=df, size=1.2) +
+      geom_line(aes(x=Year, y=Val, color=Stock, linetype=MP,
+                    group=interaction(Sim, Stock, MP)),size=0.5) +
+      expand_limits(y=c(0,1)) +
+      theme_bw() +
+      labs(x='Year', y=ylab) +
+      scale_color_manual(values=c('red', 'blue')) +
+      guides(color='none', linetype='none')
+    lst.sim <- max(sims)
+
+    p <- p +
+      geom_line(aes(x=Year, y=Val, color=Stock, linetype=MP,
+                    group=interaction(Sim, Stock, MP)), size=1.2,
+                data=proj_df2%>%filter(Sim==lst.sim))
+
   } else {
-    if (units=='1000 lb') {
-      bio$Value <- bio$Value/1000
-      bio$Bref <- bio$Bref/1000
-    }
-    if (units=='mt') {
-      bio$Value <- lb2mt(bio$Value)
-      bio$Bref <- lb2mt(bio$Bref)
-    }
-    ylab <- paste0('Biomass (', units, ')')
+    # summarise
+    proj_df3 <- proj_df %>% group_by(Year,MP, Stock) %>%
+      filter(is.na(Val)==FALSE) %>%
+      summarise(Median=median(Val),
+                Lower=quantile(Val,0.05),
+                Upper=quantile(Val, 0.95))
+
+    p <- ggplot(proj_df3) +
+      geom_line(aes(x=Year, y=Val, color=Stock), data=df, size=1.2)
+    if (incquants)
+      p <- p +  geom_ribbon(aes(x=Year, ymin=Lower, ymax=Upper, fill=Stock,
+                      linetype=MP,
+                      group=interaction(Stock, MP)), alpha=0.2)
+    p <- p +  geom_line(aes(x=Year, y=Median, color=Stock, linetype=MP,
+                    group=interaction(Stock, MP)),
+                size=0.8) +
+      expand_limits(y=c(0,1)) +
+      theme_bw() +
+      labs(x='Year', y=ylab) +
+      scale_color_manual(values=c('red', 'blue')) +
+      scale_fill_manual(values=c('red', 'blue')) +
+      guides(color='none', linetype='none', fill='none')
+
   }
 
-  p <- ggplot(bio, aes(x=Year, y=Value, color=Stock, linetype=MP)) +
-    facet_grid(~Stock, scales='free_y') +
-    geom_line() +
-    expand_limits(y=c(0,1)) +
-    theme_bw() +
-    labs(x='Year', y=ylab) +
-    scale_color_manual(values=c('red', 'blue'))
-  if (incRef) {
-    p <- p + geom_line(aes(y=Bref, color=Stock), linetype=4)
-  }
+
+
   p
 }
 
