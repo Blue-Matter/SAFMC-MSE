@@ -157,19 +157,30 @@ plot_B_proj(MMSE, mps=1, sims=1, incyears=2020:2040)
 ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_5.png', width=6, height=2.5)
 
 plot_B_proj(MMSE, mps=1, sims=1:2)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_6.png', width=6, height=2.5)
+
 plot_B_proj(MMSE, mps=1, sims=1:3)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_7.png', width=6, height=2.5)
+
 plot_B_proj(MMSE, mps=1, sims=1:4)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_8.png', width=6, height=2.5)
+
 plot_B_proj(MMSE, mps=1, sims=1:5)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_9.png', width=6, height=2.5)
+
 
 plot_B_proj(MMSE, mps=1)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_10.png', width=6, height=2.5)
 
-#
 
-plot_B_proj(MMSE, mps=1:2)
+plot_B_proj(MMSE, mps=2)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_11.png', width=6, height=2.5)
 
-plot_B_proj(MMSE, mps=1:3)
-plot_B_proj(MMSE, mps=1:4)
+plot_B_proj(MMSE, mps=3)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_12.png', width=6, height=2.5)
 
+plot_B_proj(MMSE, mps=4)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_13.png', width=6, height=2.5)
 
 
 
