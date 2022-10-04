@@ -168,10 +168,8 @@ ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_8.png', width=6, height
 plot_B_proj(MMSE, mps=1, sims=1:5)
 ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_9.png', width=6, height=2.5)
 
-
 plot_B_proj(MMSE, mps=1)
 ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_10.png', width=6, height=2.5)
-
 
 plot_B_proj(MMSE, mps=2)
 ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_11.png', width=6, height=2.5)
@@ -183,6 +181,36 @@ plot_B_proj(MMSE, mps=4)
 ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/proj_13.png', width=6, height=2.5)
 
 
+# add reference points
+
+plot_B_proj(MMSE, mps=1, incRef = TRUE)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/biomas_ref_1.png', width=4, height=2)
+
+plot_B_proj(MMSE, mps=2, incRef = TRUE)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/biomas_ref_2.png', width=4, height=2)
+
+plot_B_proj(MMSE, mps=3, incRef = TRUE)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/biomas_ref_3.png', width=4, height=2)
+
+plot_B_proj(MMSE, mps=4, incRef = TRUE)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/biomas_ref_4.png', width=4, height=2)
+
+# plot catches
+plot_C_proj(MMSE, mps=1, incRef = TRUE)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/catch_1.png', width=4, height=2)
+plot_C_proj(MMSE, mps=2, incRef = TRUE)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/catch_2.png', width=4, height=2)
+
+plot_C_proj(MMSE, mps=3, incRef = TRUE)
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/catch_3.png', width=4, height=2)
+
+plot_C_proj(MMSE, mps=4, incRef = TRUE)
+
+ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/biomas_ref_1.png', width=4, height=2)
+
+
+
+# trade-off plots
 
 
 plot_B_proj(MMSE, mps=1:2, incyears=2020:2025)

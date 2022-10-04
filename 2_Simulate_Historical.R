@@ -32,16 +32,18 @@ ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/Biomass_lbs_no_legend.png', 
 
 
 # landings & discards
-plot_C(RS_GG_hist)
+plot_C(RS_GG_hist) # function needs to be fixed to accound for discards
 ggsave('img/2022_Oct_Snapper_Grouper_Advisory_Panel/Landings_Disc_lbs.png', width=10, height=5)
 
+# compare historical landings
 
 
+cHL <- rowSums(RS_GG_hist$Gag$cHL@TSdata$Landings[1,,])/1000
+rHB <- rowSums(RS_GG_hist$Gag$rHB@TSdata$Landings[1,,])/1000
+lnd <- rowSums(RS_GG_hist$Gag$rGN@TSdata$Landings[1,,])/1000
+lnd <- rowSums(RS_GG_hist$Gag$cDV@TSdata$Landings[1,,])/1000
 
-
-
-
-
+plot(lnd, type='l')
 
 
 

@@ -376,66 +376,6 @@ get_ts_MMSE <- function(MMSE, byfleet=TRUE) {
   df
 }
 
-plot_C_proj <- function(MMSE, units=c('1000 lb', 'mt'),
-                        type=c('overall', 'byfleet'),
-                        stat=c('mean', 'median'),
-                        incquants=TRUE,
-                        incHist=FALSE) {
-
-  units <- match.arg(units)
-  type <- match.arg(type)
-  stat <- match.arg(stat)
-
-  if (incHist) {
-    p <- plot_C_overall(MMSE, units, type, stat)
-    return(p)
-  }
-
-  if (type=='byfleet') {
-    byfleet <- TRUE
-  } else {
-    byfleet <- FALSE
-  }
-  df <- get_ts_MMSE(MMSE, byfleet)
-
-  bio <- df %>% filter(Name%in%c('Landings', 'Discards'))
-  bio$Name <- factor(bio$Name, levels=unique(bio$Name), ordered = TRUE)
-  bio$Fleet <- factor(bio$Fleet, levels=unique(bio$Fleet), ordered = TRUE)
-
-  var_stat <- switch(stat, mean='Mean', median='Median')
-  bio$Value <- bio[[var_stat]]
-  if (units=='1000 lb') {
-    bio$Value <- bio$Value/1000
-    bio$Upper <- bio$Upper/1000
-    bio$Lower <- bio$Lower/1000
-  }
-  if (units=='mt') {
-    bio$Value <- lb2mt(bio$Value)
-    bio$Upper <- lb2mt(bio$Upper)
-    bio$Lower <- lb2mt(bio$Lower)
-  }
-  ylab <- units
-
-  if (type=='byfleet') {
-    p <- ggplot(bio, aes(x=Year, y=Value,
-                         color=Fleet, linetype=MP)) +
-      facet_grid(Stock~Name, scales='free_y') +
-      geom_line() +
-      theme_bw() +
-      labs(x='Year', y=ylab)
-
-  } else {
-    p <- ggplot(bio, aes(x=Year, y=Value, color=Stock, linetype=MP)) +
-      facet_grid(Stock~Name) +
-      geom_line() +
-      theme_bw() +
-      labs(x='Year', y=ylab) +
-      scale_color_manual(values=c('red', 'blue'))
-
-  }
-  p
-}
-
 plot_C_overall <- function(MMSE, units=c('1000 lb', 'mt'),
                            type=c('overall', 'byfleet'),
                            stat=c('mean', 'median'),
@@ -515,6 +455,11 @@ make_proj_df <- function(MMSE, sl) {
   info <- get_info_MMSE(MMSE)
   nstocks <- length(info$stocks)
   val <- slot(MMSE, sl)
+  if (sl=='Catch') {
+
+    val <- val[,,c(1:3,7),,] # drop discard fleets
+    val <- apply(val, c(1,2,4,5), sum)
+  }
   mps <- MMSE@MPs[[1]]
   df <- data.frame(Sim=1:info$nsim,
                    Stock=rep(info$stocks, each=info$nsim),
@@ -532,16 +477,13 @@ make_proj_df <- function(MMSE, sl) {
 
 plot_B_proj <- function(MMSE, units=c('1000 lb', 'mt'),
                    type=c('abs', 'rel'),
-                   stat=c('mean', 'median', 'all'),
                    sims=NULL,
                    mps=NA,
                    incyears=NULL,
-                   maxyr,
                    incquants=TRUE,
-                   incRef=TRUE) {
+                   incRef=FALSE) {
   units <- match.arg(units)
   type <- match.arg(type)
-  stat <- match.arg(stat)
 
   ylab <- paste0('Biomass (', units, ')')
 
@@ -559,7 +501,7 @@ plot_B_proj <- function(MMSE, units=c('1000 lb', 'mt'),
 
   # projection
   proj_info <- get_info_MMSE(MMSE)
-  proj_df <- make_proj_df(MMSE, sl)
+  proj_df <- make_proj_df(MMSE, 'B')
   proj_df$Phase <- 'Projection'
 
   # combine df
@@ -628,8 +570,8 @@ plot_B_proj <- function(MMSE, units=c('1000 lb', 'mt'),
     proj_df3 <- proj_df %>% group_by(Year,MP, Stock) %>%
       filter(is.na(Val)==FALSE) %>%
       summarise(Median=median(Val),
-                Lower=quantile(Val,0.05),
-                Upper=quantile(Val, 0.95))
+                Lower=quantile(Val,0.10),
+                Upper=quantile(Val, 0.90))
 
     p <- ggplot(proj_df3) +
       geom_line(aes(x=Year, y=Val, color=Stock), data=df, size=1.2)
@@ -649,9 +591,140 @@ plot_B_proj <- function(MMSE, units=c('1000 lb', 'mt'),
 
   }
 
+  if (incRef) {
+    p <- p + geom_hline(aes(yintercept = Bref/1000, color=Stock),
+                   linetype=2,
+                   data=info$Ref)
+  }
 
 
   p
 }
 
 
+plot_C_proj <- function(MMSE, units=c('1000 lb', 'mt'),
+                        type=c('abs', 'rel'),
+                        sims=NULL,
+                        mps=NA,
+                        incyears=NULL,
+                        incquants=TRUE,
+                        incRef=FALSE,
+                        incHist=FALSE) {
+  units <- match.arg(units)
+  type <- match.arg(type)
+
+  ylab <- paste0('Total Catch (', units, ')')
+
+  # historical
+  multiHist <- MMSE@multiHist
+
+  info <- get_info(multiHist)
+  df <- get_ts(multiHist) %>% filter(Name=='Landings')  %>%
+    group_by(Stock, Year, Name) %>% summarise(Value=sum(Value))
+  df$Sim <- 1
+  df$MP <- ''
+  df$Phase <- 'Historical'
+
+
+  # projection
+  proj_info <- get_info_MMSE(MMSE)
+  proj_df <- make_proj_df(MMSE, 'Catch')
+  proj_df$Phase <- 'Projection'
+
+  # combine df
+  df <- df %>% select(Year, Sim, Stock, Val=Value, MP, Name, Phase)
+
+  proj_df <- proj_df %>% select(Year, Sim, Stock, Val, MP, Name=Var,Phase)
+  proj_df$Name <- switch(proj_df$Name[1],
+                         B='Biomass',
+                         Catch='Catch')
+
+  # add last historical year
+  df_lstyr <- df %>% filter(Year==max(df$Year))
+  mm <- unique(proj_df$MP)
+  templist <- list()
+  for (i in 1:length(mm)) {
+    tt <- df_lstyr
+    tt$MP <- mm[i]
+    templist[[i]] <- tt
+  }
+  df_lstyr <- do.call('rbind', templist)
+  ss <- unique(proj_df$Sim)
+  for (i in 1:length(ss)) {
+    tt <- df_lstyr
+    tt$Sim <- ss[i]
+    templist[[i]] <- tt
+  }
+  df_lstyr <- do.call('rbind', templist)
+
+  # proj_df <- rbind(df_lstyr, proj_df)
+
+  MPs <- MMSE@MPs[[1]]
+  if (all(is.na(mps))) mps <- 1:length(MPs)
+
+  # if (!is.null(incyears)) {
+  #   incyears <- c(2019, incyears)
+  #   all.year <- unique(proj_df$Year)
+  #   ig.year <- all.year[!all.year%in%incyears]
+  #   proj_df$Val[proj_df$Year %in% ig.year] <- NA
+  # }
+
+
+  df$Val <- df$Val/1000
+  proj_df$Val <- proj_df$Val/1000
+
+  proj_df2  <- proj_df%>% filter(MP%in%MPs[mps])
+
+  # plot by simulation
+  if (!is.null(sims)) {
+    proj_df2 <- proj_df2 %>% filter(Sim%in%sims)
+
+    p <- ggplot(proj_df2) +
+      geom_line(aes(x=Year, y=Val, color=Stock), data=df, size=1.2) +
+      geom_line(aes(x=Year, y=Val, color=Stock, linetype=MP,
+                    group=interaction(Sim, Stock, MP)),size=0.5) +
+      expand_limits(y=c(0,1)) +
+      theme_bw() +
+      labs(x='Year', y=ylab) +
+      scale_color_manual(values=c('red', 'blue')) +
+      guides(color='none', linetype='none')
+    lst.sim <- max(sims)
+
+    p <- p +
+      geom_line(aes(x=Year, y=Val, color=Stock, linetype=MP,
+                    group=interaction(Sim, Stock, MP)), size=1.2,
+                data=proj_df2%>%filter(Sim==lst.sim))
+
+  } else {
+    # summarise
+    proj_df3 <- proj_df2 %>% group_by(Year,MP, Stock) %>%
+      filter(is.na(Val)==FALSE) %>%
+      summarise(Median=median(Val),
+                Lower=quantile(Val,0.10),
+                Upper=quantile(Val, 0.90))
+
+    ymax <- quantile(proj_df$Val, 0.95)
+
+    proj_df3$Stock <- factor(proj_df3$Stock, levels=levels(df$Stock), ordered = TRUE)
+
+    p <- ggplot(proj_df3)
+    if (incHist)
+      p <- p + geom_line(aes(x=Year, y=Val, color=Stock), data=df, size=1.2)
+    if (incquants)
+      p <- p +  geom_ribbon(aes(x=Year, ymin=Lower, ymax=Upper, fill=Stock,
+                                linetype=MP,
+                                group=interaction(Stock, MP)), alpha=0.2)
+    p <- p +  geom_line(aes(x=Year, y=Median, color=Stock, linetype=MP,
+                            group=interaction(Stock, MP)),
+                        size=0.8) +
+      expand_limits(y=c(0,ymax)) +
+      theme_bw() +
+      labs(x='Year', y=ylab) +
+      scale_color_manual(values=c('red', 'blue')) +
+      scale_fill_manual(values=c('red', 'blue')) +
+      guides(color='none', linetype='none', fill='none')
+
+  }
+
+  p + theme(axis.text.y=element_blank())
+}
