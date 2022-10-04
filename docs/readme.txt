@@ -1,3 +1,0 @@
-- knit Rmds and copy over to homepage/docs
-- add links to docs in homepage/index.md
-- push to Github to make live at: https://safmc-mse.netlify.app/

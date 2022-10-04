@@ -29,17 +29,23 @@ This site will be updated periodically with notes on project progress, backgroun
 ## MSE Process Documents
 - [MSE Trial Specifications](/TS)
 
-## Background Material
-Coming soon.
-
-
-
-## Documents 
-- [MSE Trial Specifications](/docs/TrialSpecs.html)
-
-
 ## Presentations and Documents
-Coming soon.
 
-## Shiny App
-Coming soon.
+### Snapper-Grouper Advisory Panel Meeting, October 2022
+
+- [An Overview of the MSE Process: A demonstration using the Red Snapper and Gag Grouper](/resources/2022_Oct_Snapper_Grouper_Advisory_Panel/RedSnapper_Gag_demo.pdf)
+
+
+
+## Additional Resources and Material
+
+- [openMSE](https://openmse.com/) the MSE framework used to conduct the closed-loop simulation testing 
+
+
+
+
+
+
+
+
+
