@@ -27,7 +27,7 @@ This site will be updated periodically with notes on project progress, backgroun
 
 
 ## MSE Process Documents
-- [MSE Trial Specifications](trial_specs)
+- [MSE Trial Specifications](/TS)
 
 ## Background Material
 Coming soon.
