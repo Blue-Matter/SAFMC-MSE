@@ -38,9 +38,11 @@ This site will be updated periodically with notes on project progress, backgroun
 
 ## Additional Resources and Material
 
-- [openMSE](https://openmse.com/): the MSE framework used to conduct the closed-loop simulation testing 
+- [openMSE](https://openmse.com/): the MSE framework used to conduct the closed-loop simulation testing.
 
-- [The Data-Limited Methods Toolkit (DLMtool): An R package for informing management of data-limited populations](/resources/Methods Ecol Evol - 2018 - Carruthers - The Data‐Limited Methods Toolkit  DLMtool   An R package for informing management.pdf): scientific paper describing the development of the DLMtool package
+- [The Data-Limited Methods Toolkit (DLMtool): An R package for informing management of data-limited populations](/resources/Methods Ecol Evol - 2018 - Carruthers - The Data‐Limited Methods Toolkit  DLMtool   An R package for informing management.pdf): scientific paper describing the development of the DLMtool package.
+
+- [Management Strategy Evaluation for Fisheries](https://www.pewtrusts.org/en/research-and-analysis/fact-sheets/2016/11/management-strategy-evaluation-for-fisheries): An overview of management strategy evaluation, developed by The Pew Charitable Trusts.
 
 
 
