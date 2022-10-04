@@ -36,10 +36,12 @@ This site will be updated periodically with notes on project progress, backgroun
 - [An Overview of the MSE Process: A demonstration using the Red Snapper and Gag Grouper](/resources/2022_Oct_Snapper_Grouper_Advisory_Panel/RedSnapper_Gag_demo.pdf)
 
 
-
 ## Additional Resources and Material
 
-- [openMSE](https://openmse.com/) the MSE framework used to conduct the closed-loop simulation testing 
+- [openMSE](https://openmse.com/): the MSE framework used to conduct the closed-loop simulation testing 
+
+- [The Data-Limited Methods Toolkit (DLMtool): An R package for informing management of data-limited populations](/resources/Methods Ecol Evol - 2018 - Carruthers - The Data‐Limited Methods Toolkit  DLMtool   An R package for informing management.pdf): scientific paper describing the development of the DLMtool package
+
 
 
 
