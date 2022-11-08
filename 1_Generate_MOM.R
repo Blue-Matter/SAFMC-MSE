@@ -33,7 +33,7 @@ RS_fleets <- data.frame(i=1:nfleet,
                                'Recreational headboats',
                                'General recreational',
                                'Commerical handline - discards',
-                               'Recreational headbots - discards',
+                               'Recreational headboats - discards',
                                'General recreational - discards'))
 
 
@@ -45,7 +45,7 @@ GG_fleets <- data.frame(i=1:nfleet,
                                'Recreational headboats',
                                'General recreational',
                                'Commerical handline - discards',
-                               'Recreational headbots - discards',
+                               'Recreational headboats - discards',
                                'General recreational - discards'))
 
 
