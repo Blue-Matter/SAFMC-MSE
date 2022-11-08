@@ -16,15 +16,19 @@ This site will be updated periodically with notes on project progress, backgroun
 
 ## MSE Technical Group Members
 
-### Blue Matter Science
-- [Tom Carruthers](mailto:tom@bluematterscience.com)
-- [Adrian Hordyk](mailto:adrian@bluematterscience.com)
-- [Quang Huynh](mailto:quang@bluematterscience.com)
-
-### SAFMC 
-- [Chip Collier](mailto:chip.collier@safmc.net)
-- [John Carmichael](mailto:john.carmichael@safmc.net)
-
+|  Name|  Email|  Role|
+|:--|:--|:--|
+| Adrian Hordyk	| adrian@bluematterscience.com 	|Lead MSE Analyst |
+| Quang Huynh | quang@bluematterscience.com 	|Supporting MSE Analyst |
+| Tom Carruthers |	tom@bluematterscience.com	| Supporting MSE Analyst |
+| Chip Collier	| chip.collier@safmc.net	|  SAFMC Lead |
+| Cassidy Peterson	|	cassidy.peterson@noaa.gov	| MSE Specialist |
+| Erik Williams	|	erik.williams@noaa.gov	|  Stock Assessment Specialist |
+| Christina Wiegand	| 	christina.wiegand@safmc.net	|  Social Scientist |
+| Scott Crosson	|	scott.crosson@noaa.gov	|  Economist |
+| Mike Larkin	|	michael.larkin@noaa.gov	| Data Analyst |
+| Kai Lorenzen	|	klorenzen@ufl.edu	| Meeting Moderator/Facilitator |
+	
 
 ## MSE Process Documents
 - [MSE Trial Specifications](/TS)
@@ -33,6 +37,7 @@ This site will be updated periodically with notes on project progress, backgroun
 
 ### Snapper-Grouper Advisory Panel Meeting, October 2022
 
+- [Introduction to MSE: Philosophy, Concepts, Terminology and Process](/resources/2022_Oct_Snapper_Grouper_Advisory_Panel/Intro_to_MSE.pdf)
 - [An Overview of the MSE Process: A demonstration using the Red Snapper and Gag Grouper](/resources/2022_Oct_Snapper_Grouper_Advisory_Panel/RedSnapper_Gag_demo.pdf)
 
 
@@ -41,10 +46,6 @@ This site will be updated periodically with notes on project progress, backgroun
 - [openMSE](https://openmse.com/): the MSE framework used to conduct the closed-loop simulation testing.
 
 - [The Data-Limited Methods Toolkit (DLMtool): An R package for informing management of data-limited populations](/resources/Methods Ecol Evol - 2018 - Carruthers - The Data‐Limited Methods Toolkit  DLMtool   An R package for informing management.pdf): scientific paper describing the development of the DLMtool package.
-
-- [Management Strategy Evaluation for Fisheries](https://www.pewtrusts.org/en/research-and-analysis/fact-sheets/2016/11/management-strategy-evaluation-for-fisheries): An overview of management strategy evaluation, developed by The Pew Charitable Trusts.
-
-
 
 
 
