@@ -1,7 +1,4 @@
 ---
-# Feel free to add content and custom Front Matter to this file.
-# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
-
 layout: home
 ---
 
@@ -28,7 +25,11 @@ This site will be updated periodically with notes on project progress, backgroun
 | Scott Crosson	|	scott.crosson@noaa.gov	|  Economist |
 | Mike Larkin	|	michael.larkin@noaa.gov	| Data Analyst |
 | Kai Lorenzen	|	klorenzen@ufl.edu	| Meeting Moderator/Facilitator |
-	
+| Mike Schmidtke	| mike.schmidtke@safmc.net | SAFMC Fishery Scientist |
+| Judd Curtis	| judd.curtis@safmc.net | SAFMC Fishery Scientist |
+| Allie Iberle |	allie.iberle@safmc.net | SAFMC Fishery Scientist |
+
+
 
 ## MSE Process Documents
 - [MSE Trial Specifications](/TS)
