@@ -13,3 +13,13 @@ output:
 urlcolor: blue
 always_allow_html: true
 ---
+
+# Introduction
+
+This document will describe the technical specifications of the MSE process for the SAFMC Snapper-Grouper fishery.
+
+It will be updated once the initial operating models have been developed.
+
+
+
+
