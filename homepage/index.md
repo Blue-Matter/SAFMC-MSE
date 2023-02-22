@@ -44,8 +44,8 @@ This site will be updated periodically with notes on project progress, backgroun
 ## Background Documents
 
 ### Assessment Reports
-- [SEDAR 73 South Atlantic Red Snapper](/../research/SEDAR_Reports/SEDAR73_SARedSnapper_FullSAR_V3_0.pdf)
-
+- [SEDAR 71 South Atlantic Gag](/docs/SEDAR_Reports/SEDAR_71_SAR_4.19.21_final_withaddendum.pdf)
+- [SEDAR 73 South Atlantic Red Snapper](/docs/SEDAR_Reports/SEDAR73_SARedSnapper_FullSAR_V3_0.pdf)
 
 
 ## Additional Resources and Material

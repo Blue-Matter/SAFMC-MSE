@@ -1,0 +1,1 @@
+Reports and papers have been moved to /homepage/docs/
