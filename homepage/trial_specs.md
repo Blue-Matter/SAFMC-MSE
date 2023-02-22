@@ -1,5 +1,17 @@
-MSE Trial Specifications Document
-================
-Adrian Hordyk <adrian@bluematterscience.com>
-22 February, 2023
+---
+layout: page
+title: MSE Trial Specifications Document
+permalink: /TS/
+author: "Adrian Hordyk <adrian@bluematterscience.com>"
+date: 2023-02-22
+---
+
+# Introduction
+
+This document will describe the technical specifications of the MSE process for the SAFMC Snapper-Grouper fishery.
+
+It will be updated once the initial operating models have been developed.
+
+
+
 
