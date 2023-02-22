@@ -43,7 +43,7 @@ plugins:
 # their entries' file path in the `include:` list.
 #
 exclude:
-    - trial_speces.Rmd
+    - trial_specs.Rmd
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/
