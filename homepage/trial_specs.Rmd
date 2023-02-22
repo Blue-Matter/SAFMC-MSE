@@ -1,0 +1,18 @@
+---
+layout: page
+title: MSE Trial Specifications Document
+permalink: /TS/
+author: "Adrian Hordyk <adrian@bluematterscience.com>"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  bookdown::pdf_book:
+    keep_tex: true
+  rmdformats::robobook:
+    highlight: kate
+    toc_depth: 2
+    use_bookdown: yes
+urlcolor: blue
+bibliography: "`r rbbt::bbt_write_bib('biblio.json', overwrite = TRUE)`"
+csl: fish-and-fisheries.csl
+always_allow_html: true
+---
