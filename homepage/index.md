@@ -41,6 +41,12 @@ This site will be updated periodically with notes on project progress, backgroun
 - [Introduction to MSE: Philosophy, Concepts, Terminology and Process](/resources/2022_Oct_Snapper_Grouper_Advisory_Panel/Intro_to_MSE.pdf)
 - [An Overview of the MSE Process: A demonstration using the Red Snapper and Gag Grouper](/resources/2022_Oct_Snapper_Grouper_Advisory_Panel/RedSnapper_Gag_demo.pdf)
 
+## Background Documents
+
+### Assessment Reports
+- [SEDAR 73 South Atlantic Red Snapper](/../research/SEDAR_Reports/SEDAR73_SARedSnapper_FullSAR_V3_0.pdf)
+
+
 
 ## Additional Resources and Material
 
