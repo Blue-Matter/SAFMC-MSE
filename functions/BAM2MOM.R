@@ -1,7 +1,6 @@
-# For BAM2MOM - Discards and landings are modeled as separate fleets
-# May want to simplify aggregating landings and discards, i.e., comm landings, comm discards, rec landings, rec discards
-BAM2MOM <- function(rdat, nsim = 48, proyears = 50, interval = 2,
-                    stock_name, fleet_name, report = FALSE, ...) {
+
+BAM2MOM <- function(rdat, nsim = 48, proyears = 50, interval = 1,
+                    stock_name, fleet_name, LowerTri=0, report = FALSE, ...) {
 
   rdat <- bamExtras::standardize_rdat(rdat)
 
@@ -129,7 +128,7 @@ BAM2MOM <- function(rdat, nsim = 48, proyears = 50, interval = 2,
 
       bfec[, BAM_age + 1, , ] <- array(a.series$reprod, c(length(BAM_age), nsim, nyears, np)) %>%
         aperm(c(2, 1, 3, 4))
-      bfec * mataa
+      bfec # * mataa
     })
   } else {
     ##### For gag
@@ -148,7 +147,7 @@ BAM2MOM <- function(rdat, nsim = 48, proyears = 50, interval = 2,
   #plot(OM_SSB[1, ], typ = 'o')
   #lines(t.series$SSB, pch = 16)
 
-  R0 <- parms[["BH.R0"]]
+  R0 <- parms$R.virgin.bc #  [["BH.R0"]]
 
   h <- parms[["BH.steep"]]
   if(is.null(h)) h <- 0.999
@@ -179,8 +178,14 @@ BAM2MOM <- function(rdat, nsim = 48, proyears = 50, interval = 2,
                     phi0 = phi0,
                     Perr = Perr,
                     AC = AC,
+                    LowerTri=LowerTri,
                     fecaa = fecaa
   )
+
+  # Add names
+  names(MOM@Stocks) <- stock_name
+  names(MOM@Fleets) <- stock_name
+  names(MOM@Fleets[[1]]) <- fleet_name
 
   LatASD <- local({
     lsd <- array(0, c(nsim, n_age, nyears + proyears))
@@ -200,6 +205,7 @@ BAM2MOM <- function(rdat, nsim = 48, proyears = 50, interval = 2,
       MOM@cpars[[p]][[f]][["K"]] <- rep(parms$K, nsim)
       MOM@cpars[[p]][[f]][["t0"]] <- rep(parms$t0, nsim)
     }
+    MOM@cpars[[p]][[1]]$spawn_time_frac <- rep(parms$spawn.time, nsim)
   }
   return(MOM)
 }
