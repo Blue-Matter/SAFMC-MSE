@@ -22,7 +22,7 @@ title: SAFMC Snapper-Grouper MSE
 email: adrian@bluematterscience.com
 description: SAFMC Grouper-Snapper Fishery MSE
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://safmc-mse.netlify.app/" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://safmc-mse.bluematterscience.com/" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username:
 github_username:  'Blue-Matter/SAFMC-MSE'
 kramdown:
