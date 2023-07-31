@@ -1,13 +1,13 @@
-source('1a. Initialize.R')
+
+source('Build_Package/2. Set OM Parameters.R')
 
 # ---- Load Single-Stock MOM Objects ----
-RSMOM_season <- readRDS('Hist_Objects/RS.mom')
-GGMOM_season <- readRDS('Hist_Objects/GG.mom')
+RSMOM_season <- readRDS('Build_Package/Objects/RS_basecase.mom')
+GGMOM_season <- readRDS('Build_Package/Objects/GG_basecase.mom')
 
 names(GGMOM_season@Fleets[[1]])[2] <- 'Commercial Dive'
 
 MOMlist <- list(RSMOM_season, GGMOM_season)
-
 
 # ---- Combine Single Stock MOMs into Multi-Stock MOM ----
 
@@ -15,6 +15,7 @@ MOM <- MOMlist[[1]]
 MOM@Name <- 'Red Snapper & Gag Grouper MOM'
 
 n.moms <- length(MOMlist)
+
 
 # checks
 nsims <- lapply(MOMlist, slot, name='nsim') %>% unlist()
@@ -26,7 +27,6 @@ proyears <- proyears[1]
 if (!all(proyears==proyears[1]))
   stop('proyears must be the same for all MOMs')
 
-
 # check fleet names
 fl_list <- list()
 for (s in 1:n.moms) {
@@ -37,7 +37,6 @@ for (s in 1:n.moms) {
 all.fleets <- do.call('rbind', fl_list) %>% unique()  %>% unlist()
 n.fleet.by.stock <- lapply(fl_list, nrow) %>% unlist()
 max.fleet <- n.fleet.by.stock%>% max()
-
 
 # add dummy fleets to MOM
 for (s in 1:n.moms) {
@@ -79,6 +78,7 @@ for (s in 1:n.moms) {
 
 }
 
+
 # re-order fleets, cpars, and CatchFrac so names match
 fl_list <- list()
 for (s in 1:n.moms) {
@@ -96,6 +96,7 @@ for (s in 2:n.moms) {
   MOMlist[[s]]@Obs[[1]] <-  MOMlist[[s]]@Obs[[1]][ind]
   MOMlist[[s]]@Imps[[1]] <-  MOMlist[[s]]@Imps[[1]][ind]
 }
+
 
 
 # final check on fleet names
@@ -278,7 +279,7 @@ for (s in 1:n.moms) {
   for (fl in 1:n.fleet) {
 
     # Set all Obs to Perfect_Info for now
-    MOM@Obs[[s]][[fl]] <- Perfect_Info
+    MOM@Obs[[s]][[fl]] <- Obs_Model
 
     # set CAL samples high so can use results in PMs
     MOM@Obs[[s]][[fl]]@CAL_ESS <- c(10000, 10000)
@@ -288,9 +289,10 @@ for (s in 1:n.moms) {
 
 
 
+# ---- Save MOM as SAMSE Data Object ----
+MOM_001 <- MOM
 
-saveRDS(MOM, 'Hist_Objects/BaseCaseMOM.mom')
-
+usethis::use_data(MOM_001, overwrite = TRUE)
 
 
 

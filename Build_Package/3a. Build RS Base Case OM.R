@@ -1,8 +1,7 @@
 
-source('1a. Initialize.R')
+source('Build_Package/2. Set OM Parameters.R')
 
 # ---- Generate the Red Snapper Base Case Operating Model ----
-
 
 ##  Convert all weights to metric (kg) ----
 rdat_RedSnapper$a.series$weight <- rdat_RedSnapper$parms$wgt.a*
@@ -12,16 +11,18 @@ rdat_RedSnapper$a.series$weight <- rdat_RedSnapper$parms$wgt.a*
 RSMOM_SEDAR <- BAM2MOM(rdat=rdat_RedSnapper, stock_name='Red Snapper',
                        nsim = nsim, proyears = pyears)
 
-# Add CALbins to cpars
+
+## Add CALbins to cpars ----
 nfleet <- length(RSMOM_SEDAR@cpars[[1]])
 for (f in 1:nfleet) {
   RSMOM_SEDAR@cpars[[1]][[f]]$CAL_bins  <- CAL_bins
   RSMOM_SEDAR@cpars[[1]][[f]]$CAL_binsmid <- CAL_mids
 }
 
-
 ## Combine Landing and Discard Fleets together into Removals ----
 RSMOM_combined <- combineFleets(RSMOM_SEDAR)
+
+
 
 ## Create closure and size limit data.frame ----
 
@@ -58,8 +59,8 @@ df_list[[3]] <- data.frame(Year=year,
                                                           paste(year, '-11-13'),
                                                           paste(year, '-12-12'))),
                            Date_Closed=lubridate::as_date(c(paste(year, '-09-25'),
-                                                          paste(year, '-11-22'),
-                                                          paste(year, -12-20))),
+                                                            paste(year, '-11-22'),
+                                                            paste(year, '-12-20'))),
                            Size_Limit=NA,
                            Disc_M=0.38)
 
@@ -116,14 +117,12 @@ df_list[[9]] <- data.frame(Year=year,
 # 2019
 year <- 2019
 df_list[[10]] <- data.frame(Year=year,
-                           Date_Open=lubridate::as_date(paste(year, '-07-08')),
-                           Date_Closed=lubridate::as_date(paste(year, '-08-30')),
-                           Size_Limit=NA,
-                           Disc_M=0.36)
+                            Date_Open=lubridate::as_date(paste(year, '-07-08')),
+                            Date_Closed=lubridate::as_date(paste(year, '-08-30')),
+                            Size_Limit=NA,
+                            Disc_M=0.36)
 
 RS_Comm_Season <- do.call('rbind', df_list)
-
-saveRDS(RS_Comm_Season, 'Objects/RS_Comm_Season.rda')
 
 ### Recreational ----
 ## Table 2.2.2 in SEDAR 73 - Seasonal Closures
@@ -225,7 +224,6 @@ df_list[[10]] <- data.frame(Year=year,
 
 RS_Rec_Season <- do.call('rbind', df_list)
 
-saveRDS(RS_Rec_Season, 'Objects/RS_Rec_Season.rda')
 
 ## Calculate relative F by Season  ----
 
@@ -253,7 +251,6 @@ RS_HB_relF <- do.call('rbind', rel_F_list)
 RS_HB_relF$Fleet <- 'Recreational Headboat'
 
 
-
 ### General Recreational ----
 
 RS_GR_relF <- RS_HB_relF
@@ -278,7 +275,7 @@ p <- ggplot(df, aes(x=Year, y=value, color=name)) +
   scale_x_continuous(breaks= scales::pretty_breaks()) +
   coord_cartesian(clip = 'off')
 
-ggsave('img/RS_relativeF.png', width=8, height=3)
+ggsave('img/OM_Construction/BaseCase/RS_relativeF.png', width=8, height=3)
 
 # Generate OM with Seasonal Fleets ----
 RSMOM_season <- RSMOM_combined
@@ -286,14 +283,12 @@ RSMOM_season <- AddSeasonal_RS(RSMOM_season, RS_Comm_relF, On.Fleet=1, Off.Fleet
 RSMOM_season <- AddSeasonal_RS(RSMOM_season, RS_HB_relF, On.Fleet=2, Off.Fleet=5, Fleet='Recreational Headboat')
 RSMOM_season <- AddSeasonal_RS(RSMOM_season, RS_GR_relF, On.Fleet=3, Off.Fleet=6, Fleet='General Recreational')
 
-
-saveRDS(RSMOM_season, 'Hist_Objects/RS.mom')
+saveRDS(RSMOM_season, 'Build_Package/Objects/RS_basecase.mom')
 
 # Simulate Historical Fishery for RS Base Case ----
 RS_multiHist <- SimulateMOM(RSMOM_season)
-saveRDS(RS_multiHist, 'Hist_Objects/RS_basecase.hist')
+saveRDS(RS_multiHist, 'Build_Package/Objects/RS_basecase.hist')
 
 p <- plot_Catch_Discards(RS_multiHist)
-ggsave('img/RS_histLandings_Discards.png', width=8, height=4)
-
+ggsave('img/OM_Construction/BaseCase/RS_histLandings_Discards.png', width=8, height=4)
 

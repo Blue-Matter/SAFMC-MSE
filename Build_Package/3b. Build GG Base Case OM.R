@@ -1,5 +1,5 @@
+source('Build_Package/2. Set OM Parameters.R')
 
-source('1a. Initialize.R')
 
 # ---- Generate the Gag Grouper Base Case Operating Model ----
 
@@ -44,7 +44,7 @@ df_list <- list()
 year <- 1999
 df_list[[1]] <- data.frame(Year=year,
                            Date_Open=lubridate::as_date(c(paste(year, '-01-01'),
-                                                        paste(year, '-05-01'))),
+                                                          paste(year, '-05-01'))),
                            Date_Closed=lubridate::as_date(c(paste(year, '-03-01'),
                                                             paste(year+1, '-01-01'))),
                            Size_Limit=MSEgraph::inch2mm(20),
@@ -66,10 +66,10 @@ for (year in 2000:2009) {
 # 2010
 year <- 2010
 df_list[[12]] <- data.frame(Year=year,
-                           Date_Open=lubridate::as_date(paste(year, '-05-01')),
-                           Date_Closed=lubridate::as_date(paste(year+1, '-1-01')),
-                           Size_Limit=MSEgraph::inch2mm(24),
-                           Disc_M=0.4)
+                            Date_Open=lubridate::as_date(paste(year, '-05-01')),
+                            Date_Closed=lubridate::as_date(paste(year+1, '-1-01')),
+                            Size_Limit=MSEgraph::inch2mm(24),
+                            Disc_M=0.4)
 
 # 2011
 year <- 2011
@@ -147,8 +147,6 @@ df_list[[21]] <- data.frame(Year=year,
 
 GG_Comm_Season <- do.call('rbind', df_list)
 
-saveRDS(GG_Comm_Season, 'Objects/GG_Comm_Season.rda')
-
 
 ### Recreational ----
 ## Table 2.7.2 in SEDAR 71 - Seasonal Closures
@@ -170,7 +168,6 @@ for (year in years) {
 
 GG_Rec_Season <- do.call('rbind', df_list)
 
-saveRDS(GG_Rec_Season, 'Objects/GG_Rec_Season.rda')
 
 ## Calculate relative F by Season  ----
 
@@ -221,7 +218,8 @@ p <- ggplot(df, aes(x=Year, y=value, color=name)) +
   scale_x_continuous(breaks= scales::pretty_breaks()) +
   coord_cartesian(clip = 'off')
 
-ggsave('img/GG_relativeF.png', width=8, height=3)
+ggsave('img/OM_Construction/BaseCase/GG_relativeF.png', width=8, height=3)
+
 
 
 # Generate OM with Seasonal Fleets ----
@@ -231,13 +229,11 @@ GGMOM_season <- AddSeasonal_RS(GGMOM_season, GG_HB_relF, On.Fleet=3, Off.Fleet=6
 GGMOM_season <- AddSeasonal_RS(GGMOM_season, GG_GR_relF, On.Fleet=4, Off.Fleet=7, Fleet='General Recreational')
 
 
-
 # add size limit - knife-edge
 current_yr <- GGMOM_season@Fleets[[1]][[1]]@CurrentYr
 nyears <- GGMOM_season@Fleets[[1]][[1]]@nyears
 proyears <- GGMOM_season@proyears
 Years <- rev(seq(current_yr, by=-1, length=nyears))
-
 
 # Commercial
 
@@ -245,7 +241,7 @@ retA <- array(1, dim=dim(GGMOM_season@cpars[[1]][[1]]$V))
 
 Com_SL <- GG_Comm_Season %>% distinct(Year, Size_Limit)
 
-Com_SL <- bind_rows(data.frame(Year=1992:1998, Size_Limit=MSEgraph::inch2mm(20)),
+Com_SL <- bind_rows(data.frame(Year=1992:1998, Size_Limit=inch2mm(20)),
                     Com_SL)
 
 for (i in seq_along(Com_SL$Year)) {
@@ -284,17 +280,16 @@ GGMOM_season@cpars[[1]][[3]]$retA <- retA
 GGMOM_season@cpars[[1]][[4]]$retA <- retA
 
 
-saveRDS(GGMOM_season, 'Hist_Objects/GG.mom')
+saveRDS(GGMOM_season, 'Build_Package/Objects/GG_basecase.mom')
+
 
 # Simulate Historical Fishery for RS Base Case ----
 
 GG_multiHist <- SimulateMOM(GGMOM_season)
-saveRDS(GG_multiHist, 'Hist_Objects/GG_basecase.hist')
+saveRDS(GG_multiHist, 'Build_Package/Objects/GG_basecase.hist')
 
 names(GG_multiHist[[1]])[[2]] <- 'Commercial Dive'
 p <- plot_Catch_Discards(GG_multiHist)
-ggsave('img/GG_histLandings_Discards.png', width=8, height=4)
-
-
+ggsave('img/OM_Construction/BaseCase/GG_histLandings_Discards.png', width=8, height=4)
 
 
