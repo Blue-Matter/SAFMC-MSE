@@ -2,9 +2,13 @@
 
 export(AddSeasonal_RS)
 export(BAM2MOM)
+export(Calc_GG_Ref_Points)
+export(Calc_RS_Ref_Points)
+export(Calculate_F)
 export(Fleet_MMP)
 export(calc_seasons_RS_Comm)
 export(calc_seasons_RS_HB)
+export(calculate_allocation)
 export(combineFleets)
 export(fixedC_mean3)
 export(fixedF_mean3)
