@@ -523,7 +523,7 @@ fixedF_mean3 <- function(x, DataList, ...) {
   for (s in 1:nstocks) {
     for (f in 1:nfleets) {
       # calculate mean F from 3 last historical years
-      meanF <- mean(tail(DataList[[s]][[f]]@Misc$FleetPars$Find[x,],3))
+      meanF <- mean(tail(DataList[[s]][[f]]@Misc$FleetPars$Fishing_Mortality[x,],3))
       # populate the `F` value in `this_Fleet_Management` object
       this_Fleet_Management <- this_Fleet_Management %>%
         dplyr::mutate(F=replace(F, Stock==stocks[s] &Fleet==fleets[f], meanF))
@@ -555,7 +555,7 @@ fixedF_mean3_MLL <- function(x, DataList, ...) {
   for (s in 1:nstocks) {
     for (f in 1:nfleets) {
       # calculate mean F from 3 last historical years
-      meanF <- mean(tail(DataList[[s]][[f]]@Misc$FleetPars$Find[x,],3))
+      meanF <- mean(tail(DataList[[s]][[f]]@Misc$FleetPars$Fishing_Mortality[x,],3))
       # populate the `F` value in `this_Fleet_Management` object
       this_Fleet_Management <- this_Fleet_Management %>%
         dplyr::mutate(F=replace(F, Stock==stocks[s] &Fleet==fleets[f], meanF))
