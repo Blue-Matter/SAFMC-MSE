@@ -35,3 +35,94 @@ plot_Catch_Discards <- function(multiHist) {
     labs(x='Year', y='Landings/Discards (t)',
          color='')
 }
+
+
+#' Plot Spawning Stock and Reference Pints
+#'
+#' @param MMSE
+#'
+#' @return
+#' @export
+plot_SB <- function(MMSE) {
+  Ref_Points <- Calculate_Ref_Points(MMSE@multiHist)
+
+  SSB <- get_SSB(MMSE) %>% filter(Period=='Projection')
+
+  SSB_df <- SSB %>% group_by(Year, Stock, MP) %>%
+    dplyr::summarise(Mean=mean(Value),
+                     Lower=quantile(Value,0.25),
+                     Upper=quantile(Value, 0.75),
+                     .groups = 'drop')
+  SSB_df$MP <- factor(SSB_df$MP, levels=MMSE@MPs[[1]], ordered = TRUE)
+
+
+  SSB_df <- left_join(SSB_df, Ref_Points, by = join_by(Stock))
+  SSB_df$Stock <- factor(SSB_df$Stock, levels=names(MMSE@Stocks), ordered = TRUE)
+
+  ggplot(SSB_df, aes(x=Year)) +
+    facet_grid(Stock~MP, scales='free_y') +
+    geom_ribbon(aes(ymin=Lower, ymax=Upper), fill='lightgray') +
+    geom_line(aes(x=Year, y=Mean)) +
+    expand_limits(y=0) +
+    theme_bw() +
+    labs(y='Spawning Stock') +
+    geom_hline(aes(yintercept=MSST), linetype=2) +
+    geom_hline(aes(yintercept=SBtarg), linetype=3)
+
+}
+
+#' Plot Landings and Discards from Projection Period
+#'
+#' @param MMSE
+#' @param colors
+#'
+#' @return
+#' @export
+plot_Catch <- function(MMSE, colors=c('darkblue', 'darkred')) {
+
+  Landings <- get_Landings(MMSE)
+  Removals <- get_Removals(MMSE)
+
+  Discards <- Landings
+  Discards$Value <- Removals$Value - Landings$Value
+  Discards <- Discards %>% filter(Period=='Projection')
+  Landings <- Landings %>% filter(Period=='Projection')
+
+  Landings_df <- Landings %>%
+    group_by(Year, Stock, MP, Sim) %>%
+    dplyr::summarise(Value=sum(Value)/1000, .groups='drop') %>%
+    group_by(Year, Stock, MP) %>%
+    dplyr::summarise(Mean=mean(Value),
+                     Lower=quantile(Value,0.25),
+                     Upper=quantile(Value, 0.75),
+                     .groups = 'drop')
+  Landings_df$Variable <- 'Landings'
+
+  Discards_df <- Discards %>%
+    group_by(Year, Stock, MP, Sim) %>%
+    dplyr::summarise(Value=sum(Value)/1000, .groups='drop') %>%
+    group_by(Year, Stock, MP) %>%
+    dplyr::summarise(Mean=mean(Value),
+                     Lower=quantile(Value,0.25),
+                     Upper=quantile(Value, 0.75),
+                     .groups = 'drop')
+
+  Discards_df$Variable <- 'Discards'
+
+  df <- bind_rows(Landings_df, Discards_df)
+
+  df$MP <- factor(df$MP, levels=MMSE@MPs[[1]], ordered = TRUE)
+  df$Stock <- factor(df$Stock, levels=names(MMSE@Stocks), ordered = TRUE)
+  df$Variable <- factor(df$Variable, levels=c('Landings', 'Discards'), ordered = TRUE)
+
+  ggplot(df, aes(x=Year)) +
+    facet_grid(Stock~MP, scales='free_y') +
+    geom_ribbon(aes(ymin=Lower, ymax=Upper, fill=Variable), alpha=0.3) +
+    geom_line(aes(x=Year, y=Mean, color=Variable)) +
+    expand_limits(y=0) +
+    theme_bw() +
+    scale_fill_manual(values=colors) +
+    scale_color_manual(values=colors) +
+    labs(y='Landings (1000 t)')
+
+}
