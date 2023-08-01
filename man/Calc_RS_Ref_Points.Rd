@@ -4,10 +4,10 @@
 \alias{Calc_RS_Ref_Points}
 \title{Calculate Reference Points for Red Snapper}
 \usage{
-Calc_RS_Ref_Points(x, y, multiHist, SPR_targ = 0.3)
+Calc_RS_Ref_Points(x, y, multiHist)
 }
 \arguments{
-\item{SPR_targ}{}
+\item{multiHist}{}
 }
 \description{
 Calculate Reference Points for Red Snapper
