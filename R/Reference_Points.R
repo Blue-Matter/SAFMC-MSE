@@ -1,3 +1,33 @@
+#' Calculate Biological Reference Points
+#'
+#' @param multiHist
+#'
+#' @return
+#' @export
+Calculate_Ref_Points <- function(multiHist) {
+
+  # Red Snapper
+  y <- ncol(multiHist[[1]][[1]]@TSdata$Find)
+  SP_SPR_df <- Calc_RS_Ref_Points(1, y, multiHist)
+  SPR_targ <- 0.3
+  ind <- which.min(abs(SP_SPR_df$SPR-SPR_targ))
+  rsdf <- SP_SPR_df[ind,] %>% select(F, SPR, SBtarg=SB)
+  rsdf$MSST <- rsdf$SB*0.75
+  rsdf$Stock <- 'Red Snapper'
+
+  # Gag Grouper
+  y <- ncol(multiHist[[2]][[1]]@TSdata$Find)
+  GG_SP_SPR_df <- Calc_GG_Ref_Points(1, y, multiHist)
+
+  ind <- which.max(GG_SP_SPR_df$Removals)
+  GG_Ref_df <- GG_SP_SPR_df[ind,]
+  ggdf <- GG_Ref_df %>% select(F, SPR, SBtarg=SB)
+  ggdf$MSST <- ggdf$SB*0.75
+  ggdf$Stock <- "Gag Grouper"
+
+  bind_rows(rsdf, ggdf)
+
+}
 
 
 
@@ -6,13 +36,12 @@
 #' @param x
 #' @param y
 #' @param multiHist
-#' @param SPR_targ
 #'
 #' @return
 #' @export
 #'
 #' @examples
-Calc_RS_Ref_Points <- function(x, y, multiHist, SPR_targ=0.3) {
+Calc_RS_Ref_Points <- function(x, y, multiHist) {
 
   M_at_Age <- multiHist[[1]][[1]]@AtAge$N.Mortality[x,,y]
   maxage <- length(M_at_Age)-1
