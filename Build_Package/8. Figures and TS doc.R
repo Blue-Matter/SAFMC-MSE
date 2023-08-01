@@ -352,6 +352,6 @@ p4 <- ggplot(GG_rec_dev_hist, aes(x=Rec_dev)) +
   expand_limits(x=c(0, max(rr))) +
   labs(x='Deviations', y='Count')
 
-cowplot::plot_grid(p1, p3, p2, p4, labels=c('a)', 'b)', 'c)', 'd)'))
+cowplot::plot_grid(p1, p2, p3, p4, labels=c('a)', 'b)', 'c)', 'd)'))
 
 ggsave('img/OM_Properties/Base_Case_recdev_stats.png', width=6, height=4)
