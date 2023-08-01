@@ -126,3 +126,39 @@ plot_Catch <- function(MMSE, colors=c('darkblue', 'darkred')) {
     labs(y='Landings (1000 t)')
 
 }
+
+#' Plot Total Fishing Mortality
+#'
+#' @param MMSE
+#'
+#' @return
+#' @export
+plot_F <- function(MMSE) {
+
+  F_DF <- get_F(MMSE) %>%  filter(Period=='Projection') %>%
+    group_by(Year, Stock, MP, Sim) %>%
+    summarize(Value=sum(Value), .groups='drop')
+
+  F_DF <- F_DF %>%
+    group_by(Year, Stock, MP) %>%
+    dplyr::summarise(Mean=mean(Value),
+                     Lower=quantile(Value,0.25),
+                     Upper=quantile(Value, 0.75),
+                     .groups = 'drop')
+
+  F_DF$MP <- factor(F_DF$MP, levels=MMSE@MPs[[1]], ordered = TRUE)
+  F_DF$Stock <- factor(F_DF$Stock, levels=names(MMSE@Stocks), ordered = TRUE)
+
+  ggplot(F_DF, aes(x=Year)) +
+    facet_grid(Stock~MP, scales='free_y') +
+    geom_ribbon(aes(ymin=Lower, ymax=Upper), alpha=0.3) +
+    geom_line(aes(x=Year, y=Mean)) +
+    expand_limits(y=0) +
+    theme_bw() +
+    scale_fill_manual(values=colors) +
+    scale_color_manual(values=colors) +
+    labs(y='Landings (1000 t)')
+
+}
+
+
