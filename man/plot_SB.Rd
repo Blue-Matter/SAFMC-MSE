@@ -4,10 +4,10 @@
 \alias{plot_SB}
 \title{Plot Spawning Stock and Reference Pints}
 \usage{
-plot_SB(MMSE)
+plot_SB(MMSE, inc.hist = T)
 }
 \arguments{
-\item{MMSE}{}
+\item{inc.hist}{Include historical period?}
 }
 \description{
 Plot Spawning Stock and Reference Pints

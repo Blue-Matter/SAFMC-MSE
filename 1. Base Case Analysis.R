@@ -73,17 +73,18 @@ StatusQuo <- function(x, DataList, ...) {
   for (s in 1:nstocks) {
     for (f in 1:nfleets) {
       # calculate mean F from 3 last historical years
-      meanF <- mean(tail(DataList[[s]][[f]]@Misc$FleetPars$Fishing_Mortality[x,],3))
+      meanF <- mean(DataList[[s]][[f]]@Misc$FleetPars$Fishing_Mortality[x,68:70])
       # populate the `F` value in `this_Fleet_Management` object
       this_Fleet_Management <- this_Fleet_Management %>%
         dplyr::mutate(F=replace(F, Stock==stocks[s] &Fleet==fleets[f], meanF))
     }
   }
   # call internal `Fleet_MMP` function with `this_Fleet_Management` object
-  Fleet_MMP(x, DataList, this_Fleet_Management)
+  Fleet_MMP(x, DataList, Fleet_Management=this_Fleet_Management)
 }
 # define as class `MMP`
 class(StatusQuo) <- 'MMP'
+
 
 
 # Overall fishing mortality is set to the respective MFMT for each stock
@@ -105,7 +106,7 @@ Ftarget <- function(x, DataList, ...) {
   for (s in 1:nstocks) {
     for (f in 1:nfleets) {
       # calculate mean F from 3 last historical years
-      meanF <- mean(tail(DataList[[s]][[f]]@Misc$FleetPars$Fishing_Mortality[x,],3))
+      meanF <- mean(DataList[[s]][[f]]@Misc$FleetPars$Fishing_Mortality[x,68:70])
 
       # populate the `F` value in `this_Fleet_Management` object
       this_Fleet_Management <- this_Fleet_Management %>%
@@ -133,7 +134,7 @@ class(Ftarget) <- 'MMP'
 
 # ----- Run Projections -----
 
-run_projections <- TRUE
+run_projections <- FALSE
 
 if (run_projections) {
   # Run Projections with MPs
@@ -150,13 +151,12 @@ if (run_projections) {
   MMSE <- readRDS('MSE_Objects/001_BaseCase.mmse')
 }
 
-
 # ---- Time-Series Plots -----
+plot_Fmort(MMSE)
+
 plot_SB(MMSE)
 
 plot_Catch(MMSE)
-
-plot_F(MMSE)
 
 
 # ----- Calculate Performance Metrics -----
@@ -177,7 +177,6 @@ Landings_Removals(MMSE) # mean ratio of landings to overall removals (landings +
 TradeOff(MMSE, c('P_MSST', 'P_MFMT'))
 
 TradeOff(MMSE, c('Landings_10', 'Landings_20'))
-
 
 
 

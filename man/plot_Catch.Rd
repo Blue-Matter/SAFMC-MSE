@@ -4,10 +4,10 @@
 \alias{plot_Catch}
 \title{Plot Landings and Discards from Projection Period}
 \usage{
-plot_Catch(MMSE, colors = c("darkblue", "darkred"))
+plot_Catch(MMSE, colors = c("darkblue", "darkred"), inc.hist = FALSE)
 }
 \arguments{
-\item{colors}{}
+\item{inc.hist}{Include historical period?}
 }
 \description{
 Plot Landings and Discards from Projection Period

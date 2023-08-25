@@ -34,7 +34,7 @@ Fleet_MMP <- function(x, DataList, Fleet_Management, ...) {
       this_fleet_management <- Fleet_Management %>% dplyr::filter(Stock==stocks[s], Fleet==fleets[fl])
 
       # 2019 F
-      reference_F <- DataList[[s]][[fl]]@Misc$FleetPars$FinF[x] * DataList[[s]][[fl]]@Misc$FleetPars$qs[x]
+      reference_F <- DataList[[s]][[fl]]@Misc$FleetPars$Fishing_Mortality[x,70]
 
       if (!is.na(this_fleet_management$F)) {
         # F has been set
