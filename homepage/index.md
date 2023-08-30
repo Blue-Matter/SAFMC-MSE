@@ -32,7 +32,7 @@ This site will be updated periodically with notes on project progress, backgroun
 
 
 ## MSE Process Documents
-- [MSE Trial Specifications](/TS)
+- [MSE Trial Specifications](/TS/TS.html)
 
 ## Presentations and Documents
 
