@@ -4,7 +4,7 @@
 \alias{plot_Fmort}
 \title{Plot Total Fishing Mortality}
 \usage{
-plot_Fmort(MMSE, inc.hist = F)
+plot_Fmort(MMSE, inc.hist = TRUE)
 }
 \arguments{
 \item{inc.hist}{Include historical period?}
