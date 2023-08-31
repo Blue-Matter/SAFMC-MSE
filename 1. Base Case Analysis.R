@@ -152,18 +152,30 @@ if (run_projections) {
 }
 
 # ---- Time-Series Plots -----
+
+MMSE <- multiMSE(MOM_001, MPs=c('StatusQuo', 'Ftarget'))
+
+
 plot_Fmort(MMSE)
+ggsave('img/MSE/F.png', width=8, height=6)
+
+plot_Catch(MMSE)
+
+ggsave('img/MSE/Catch.png', width=8, height=6)
 
 plot_SB(MMSE)
 
-plot_Catch(MMSE)
+ggsave('img/MSE/SB.png', width=8, height=6)
+
+
 
 
 # ----- Calculate Performance Metrics -----
 
+P_MFMT(MMSE)  # Probability F < MFMT
+
 P_MSST(MMSE) # Probability SB>MSST
 
-P_MFMT(MMSE)  # Probability F < MFMT
 
 Landings_10(MMSE) # mean landings in first 10 years
 Landings_20(MMSE) # mean landings in last 10 years
@@ -176,8 +188,11 @@ Landings_Removals(MMSE) # mean ratio of landings to overall removals (landings +
 
 TradeOff(MMSE, c('P_MSST', 'P_MFMT'))
 
+ggsave('img/MSE/TO_1.png', width=8, height=6)
+
 TradeOff(MMSE, c('Landings_10', 'Landings_20'))
 
+ggsave('img/MSE/TO_2.png', width=8, height=6)
 
 
 

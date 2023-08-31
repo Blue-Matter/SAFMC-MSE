@@ -87,7 +87,7 @@ plot_SB <- function(MMSE, inc.hist=T) {
     geom_hline(aes(yintercept=SBtarg), linetype=3)
 
   if (inc.hist) {
-    lstyr <- Discards_hist %>% filter(Period=='Historical')
+    lstyr <- SSB_hist %>% filter(Period=='Historical')
     p <- p + geom_vline(xintercept = max(lstyr$Year), linetype=2, col='darkgray')
   }
   p
