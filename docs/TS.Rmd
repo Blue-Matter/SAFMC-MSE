@@ -100,10 +100,9 @@ knitr::include_graphics("EEZ-1.jpg")
 ## Overview of Red Snapper Management
 The red snapper fishery has separate management for the recreational and commercial sectors.
 
-The regulations for the recreational fishery are set each year. If NOAA Fisheries determines that a season is allowed, the recreational season for the Red Snapper fishery opens the second Friday in July. The recreational sector will be open for harvest for 2 days, before being closed to retention again. The recreational fishery is managed with a bag limit of one fish per trip per angler.
+The regulations for the recreational fishery are set each year. If NOAA Fisheries determines that a season is allowed, the recreational season for the Red Snapper fishery opens the second Friday in July. The recreational sector season length varies based on previous years landings.  The recreational season in 2022 and 2023 was 2 days.  Afterward the season was closed until the following July. The recreational fishery is managed with a bag limit of one fish per day per angler.
 
-The commercial fishery has a 75 lb gutted weight trip limit, and a commercial annual catch limit (ACL; 124,815 lbs whole weight in 2023). 
-The commercial fishery is closed to retention from August 31 to July 10 the following year. The fishery is then open until the ACL is caught, and is then again closed to retention to the end of August the following year. 
+The commercial fishery has a 75 lb gutted weight trip limit, and a commercial annual catch limit (ACL; 124,815 lbs whole weight in 2023). The commercial fishery opens the second Monday in July.  The commercial fishery remains open until the ACL is met.  In recent years (2022 and 2023), the commercial fishery has closed in August is closed until the following year.
 
 The red snapper fishery currently does not have a size limit for the recreational or commercial sectors.  
 
@@ -115,9 +114,9 @@ More information on the current management regulations for the red snapper fishe
 
 The gag grouper fishery has separate management for the recreational and commercial sectors.
 
-The recreational fishery is closed to retention from the beginning of January to the end of April each year. Recreational fishers have a bag limit of 1 fish per day. 
+The recreational fishery is closed to retention from the beginning of of January 1 through April 30 each year. Recreational fishers have a bag limit of 1 fish per person per day. 
 
-The recreational fishery is closed to retention from the beginning of January to the May 1 each year. Commercial fishers have a trip limit of 1000 lbs (gutted weight). 
+The commercial fishery is closed to retention from the beginning of January 1 through April 30 each year. Commercial fishers have a trip limit of 1000 lbs (gutted weight). 
 
 A minimum legal length of 24 inch (total length) in in place for both commercial and recreational fishers. 
 
@@ -683,7 +682,7 @@ Table: (\#tab:PM-table) Performance metrics defined for the Red Snapper and Gag 
 | Reduce discards | Ratio of kept to discarded fish |   Commercial & Recreational  |
 | Catch and keep enough to make the trip worthwhile  | Average catch rate relative to current  |   Recreational |
 | High probability of catching reasonably sized fish  | Probability of catching a 10 lb fish |   Recreational |
-| High probability of catching trophy sized fish  | Probability of catching a 30 lb red snapper and 45 lb gag  |   Recreational |
+| High probability of catching trophy sized fish  | Probability of catching a 25 lb red snapper and 45 lb gag  |   Recreational |
 | Maximize fishing opportunity | Average fishing effort relative to recent historical |   Recreational |
           
 Examples plots of the Performance Metrics will be added.
