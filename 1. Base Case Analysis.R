@@ -21,7 +21,7 @@ remotes::install_github('blue-matter/SAFMC-MSE')
 
 library(SAMSE)
 
-run_hist <- FALSE
+run_hist <- TRUE
 
 if (run_hist) {
   # Simulate Base Case OM (MOM_001)
@@ -134,7 +134,7 @@ class(Ftarget) <- 'MMP'
 
 # ----- Run Projections -----
 
-run_projections <- FALSE
+run_projections <- TRUE
 
 if (run_projections) {
   # Run Projections with MPs
@@ -152,8 +152,6 @@ if (run_projections) {
 }
 
 # ---- Time-Series Plots -----
-
-MMSE <- multiMSE(MOM_001, MPs=c('StatusQuo', 'Ftarget'))
 
 
 plot_Fmort(MMSE)
