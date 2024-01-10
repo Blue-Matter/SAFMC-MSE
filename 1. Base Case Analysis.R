@@ -24,17 +24,17 @@ library(SAMSE)
 run_hist <- TRUE
 
 if (run_hist) {
-  # Simulate Base Case OM (MOM_001)
-  multiHist <- SimulateMOM(MOM_001)
+  # Simulate Base Case OM (OM_01)
+  multiHist <- SimulateMOM(OM_01)
 
   # Save to disk
   if (!dir.exists('Hist_Objects'))
     dir.create('Hist_Objects')
-  saveRDS(multiHist, 'Hist_Objects/001_BaseCase.hist')
+  saveRDS(multiHist, 'Hist_Objects/01.hist')
 
 } else {
   # Load from disk
-  multiHist <- readRDS('Hist_Objects/001_BaseCase.hist')
+  multiHist <- readRDS('Hist_Objects/01.hist')
 }
 
 
@@ -145,10 +145,10 @@ if (run_projections) {
   # Save to disk
   if (!dir.exists('MSE_Objects'))
     dir.create('MSE_Objects')
-  saveRDS(MMSE, 'MSE_Objects/001_BaseCase.mmse')
+  saveRDS(MMSE, 'MSE_Objects/01.mmse')
 
 } else {
-  MMSE <- readRDS('MSE_Objects/001_BaseCase.mmse')
+  MMSE <- readRDS('MSE_Objects/01.mmse')
 }
 
 # ---- Time-Series Plots -----

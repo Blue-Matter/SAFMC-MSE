@@ -1,0 +1,11 @@
+OM,Description
+OM_01,Base Case Operating Model
+OM_02,Natural mortality-at-age is scaled to a lower value
+OM_03,Natural mortality-at-age is scaled to a higher value
+OM_04,Cyclic patterns in recruitment due to changes in enviromental conditions
+OM_05,Sporadic recruitment failures in projection years
+OM_06,Decline in growth in projection years
+OM_07,Recreational landings decreased by 40%
+OM_08,Recreational effort is increased by 2% per year
+OM_09,Lower assume fraction of unfished biomass in southernmost region
+OM_10,Higher assume fraction of unfished biomass in southernmost region

@@ -45,7 +45,7 @@ ggplot(Select_Retain_2 %>% filter(Stock=='Red Snapper', Fleets !="Commercial Div
   facet_grid(Season~Fleets) +
   geom_line() +
   theme_bw() +
-  labs(linetype='Legend', x='Age (year)', y='Probability')
+  labs(linetype='', x='Age (year)', y='Probability')
 
 ggsave('img/OM_Properties/RS_Select_hist.png', width=8, height=4)
 
@@ -54,7 +54,7 @@ ggplot(Select_Retain_2 %>% filter(Stock!='Red Snapper'),
   facet_grid(Season~Fleets) +
   geom_line() +
   theme_bw() +
-  labs(linetype='Legend', x='Age (year)', y='Probability')
+  labs(linetype='', x='Age (year)', y='Probability')
 
 ggsave('img/OM_Properties/GG_Select_hist.png', width=8, height=4)
 

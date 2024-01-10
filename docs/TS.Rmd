@@ -10,6 +10,8 @@ output:
   bookdown::pdf_book:
     keep_tex: true
 urlcolor: blue
+bibliography: "`r rbbt::bbt_write_bib('biblio.bib', overwrite = TRUE)`"
+csl: fish-and-fisheries.csl
 always_allow_html: true
 ---
 
@@ -39,7 +41,6 @@ source('../Build_Package/2. Set OM Parameters.R')
 # Introduction
 The South Atlantic Fishery Management Council has started a Management Strategy Evaluation (MSE) process for the Snapper-Grouper fishery, currently managed under the [Snapper-Grouper Fishery Management Plan](https://safmc.net/fishery-management-plans/snapper-grouper/). The Snapper-Grouper fishery includes 55 species of snappers, groupers, and other species. 
 
-
 This document describes the technical specifications of the MSE process. It is a living document that will be continually updated to reflect the current state of the MSE work. Comments, questions, and feedback are welcome by contacting the [MSE Technical Group Members](https://safmc-mse.bluematterscience.com/). 
 
 More information on the MSE process can be found on the [SAFMC Snapper-Grouper MSE homepage](https://safmc-mse.bluematterscience.com/).
@@ -55,7 +56,7 @@ There are three main components in an MSE analysis:
    
 2. **Management Procedures (MPs)**
 
-    Management procedures are a set of rules that convert fishery data into management advice, e.g., a total allowable catch limit (TAC), a size limit, or some combination of different management rules. The main goal of MSE is to evaluate the performance of different MPs and identify the MP that is most robust to the uncertainty in the system.
+    Management procedures are a set of rules that convert fishery data into management advice, e.g., a total allowable catch limit (TAC), a size limit, an effort control, a spatial closure, or some combination of different management measures. The main goal of MSE is to evaluate the performance of different MPs and identify the MP that is most robust to the uncertainty in the system.
 
 3. **Performance Metrics (PMs)**
 
@@ -66,7 +67,7 @@ This document describes the OMs, MPs, and PMs that have been developed for the S
 
 # The `SAMSE` R Package
 
-All code related to the MSE process is available in the [SAFMC-MSE Github Repository](https://github.com/Blue-Matter/SAFMC-MSE). The repository is currently set to private and only accessible to MSE Technical Group. Please contact the [MSE Technical Group](https://safmc-mse.bluematterscience.com/) if you would like access. 
+All code related to the MSE process is available in the [SAFMC-MSE Github Repository](https://github.com/Blue-Matter/SAFMC-MSE). 
 
 The [SAFMC-MSE Github Repository](https://github.com/Blue-Matter/SAFMC-MSE) includes an R package called `SAMSE`, which contains all code for running the closed-loop simulations and examining the results. This package can be installed directly from GitHub: 
 
@@ -90,7 +91,7 @@ The MSE framework has been designed so that it can be easily expanded to include
 
 The most recent stock assessments for these two stocks were conducted in 2021 ([SEDAR 73](https://sedarweb.org/assessments/sedar-73/) and [SEDAR 71](https://sedarweb.org/assessments/sedar-71/) for Red Snapper and Gag respectively).
 
-The red snapper and gag fisheries are managed under the [Snapper-Grouper Fishery Management Plan](https://safmc.net/fishery-management-plans/snapper-grouper/), which includes snappers, groupers and related demersal species of the continental shelf of the SE United States exclusive economic zone (EEZ), extending from the North Carolina/Virginia border through to the Atlantic size of the Florida Keys 83&deg; W longitude (Figure \@ref(fig:eez)). 
+The Red Snapper and Gag fisheries are managed under the [Snapper-Grouper Fishery Management Plan](https://safmc.net/fishery-management-plans/snapper-grouper/), which includes snappers, groupers and related demersal species of the continental shelf of the SE United States exclusive economic zone (EEZ), extending from the North Carolina/Virginia border through to the Atlantic size of the Florida Keys 83&deg; W longitude (Figure \@ref(fig:eez)). 
 
 
 ```{r eez, fig.cap='The geographical area of management for the South Atlantic Fishery Management Council.', include=TRUE}
@@ -98,21 +99,21 @@ knitr::include_graphics("EEZ-1.jpg")
 ```
 
 ## Overview of Red Snapper Management
-The red snapper fishery has separate management for the recreational and commercial sectors.
+The Red Snapper fishery has separate management for the recreational and commercial sectors.
 
-The regulations for the recreational fishery are set each year. If NOAA Fisheries determines that a season is allowed, the recreational season for the Red Snapper fishery opens the second Friday in July. The recreational sector season length varies based on previous years landings.  The recreational season in 2022 and 2023 was 2 days.  Afterward the season was closed until the following July. The recreational fishery is managed with a bag limit of one fish per day per angler.
+The regulations for the recreational fishery are set each year. If NOAA Fisheries determines that a season is allowed, the recreational season for the Red Snapper fishery opens the second Friday in July. The recreational sector season length varies based on previous years landings.  The recreational season in 2022 and 2023 was 2 days. The season was then closed until the following July. The recreational fishery is managed with a bag limit of one fish per day per angler.
 
 The commercial fishery has a 75 lb gutted weight trip limit, and a commercial annual catch limit (ACL; 124,815 lbs whole weight in 2023). The commercial fishery opens the second Monday in July.  The commercial fishery remains open until the ACL is met.  In recent years (2022 and 2023), the commercial fishery has closed in August is closed until the following year.
 
-The red snapper fishery currently does not have a size limit for the recreational or commercial sectors.  
+The Red Snapper fishery currently does not have a size limit for the recreational or commercial sectors.  
 
 The annual catch limit for the entire stock is split between the recreational (71.93%) and the commercial (28.07%) fleets. 
 
-More information on the current management regulations for the red snapper fishery is available [here](https://safmc.net/species/snapper-red/).
+More information on the current management regulations for the Red Snapper fishery is available [here](https://safmc.net/species/snapper-red/).
 
 ## Overview of Gag Grouper Management
 
-The gag grouper fishery has separate management for the recreational and commercial sectors.
+The Gag Grouper fishery has separate management for the recreational and commercial sectors.
 
 The recreational fishery is closed to retention from the beginning of of January 1 through April 30 each year. Recreational fishers have a bag limit of 1 fish per person per day. 
 
@@ -122,12 +123,25 @@ A minimum legal length of 24 inch (total length) in in place for both commercial
 
 The annual catch limit for the entire stock is split between the recreational (49%) and the commercial (51%) fleets. 
 
-More information on the current management regulations for the gag grouper fishery is available [here](https://safmc.net/species/grouper-gag/).
+More information on the current management regulations for the Gag Grouper fishery is available [here](https://safmc.net/species/grouper-gag/).
 
-# Methodology for Generating Operating Models
 
+# General Process for Generating Operating Models
+
+This section describes the general process for generating operating models from SEDAR assessments.
+
+The operating models (OMs) used in the MSE are age-structured, with an option for spatial structure, and age-based movement.
+
+Single-stock operating models were first constructed from the SEDAR assessments. The single-stock OMs were then combined into a multi-stock OM that includes options for interactions between species and the fishing fleets exploiting these stocks.
+
+The OMs currently have `r nsim` stochastic simulations and `r pyears` projection years.
+
+Note that all biomass, catch, and size values within the MSE are in metric units of kilograms and millimeters. Any values can be converted to pounds and inches for presentation of final results.
+
+The following sub-sections describe the process for generating the Red Snapper and Gag Grouper OMs from their respective SEDAR assessments. Operating models for other species can be added to the MSE framework by following this process.
+
+## Process to Create Seasonal Fleet Structure
 The recent assessments of Red Snapper and Gag Grouper were used to generate the operating models for these fisheries. The assessments were conducted with the [Beaufort Assessment Model (BAM)](https://repository.library.noaa.gov/view/noaa/4847). 
-
 The assessments modelled the landings and discards for each fleet as two separate fleets: Landings and Discards. The Discards fleet includes both discards that occured during the fishing season, and discards that occur when the fishery was closed to retention (closed season).
 
 To be able to evaluate management actions such as different season lengths, or minimum size limits, the operating model requires a different fleet structure to that used in the assessment.
@@ -136,7 +150,7 @@ The fleet structure for the operating model requires the removals to be split in
 
 The general process for re-structuring the fleets is described in the steps below. The next section describes the implementation of this process for the Base Case models for the Red Snapper and Gag Grouper.
 
-**1. Combine Landings and Discards into Total Removals**
+### Combine Landings and Discards into Total Removals**
 
 Total fishing mortality ($F$) was calculated for each fleet and each year by summing the estimated fishing mortality from the landings and discards sub-fleets:
 
@@ -145,8 +159,7 @@ F_{\text{total},y}^f = F_{\text{landings},y}^f+ F_{\text{discards},y}^f
 (\#eq:eq1)
 \end{equation}
 
-
-**2. Calculate proportion of Total Removals taken during On- and Off-Season**
+### Calculate proportion of Total Removals taken during On- and Off-Season**
 
 Next, the reported fishery data (logbooks) were used to calculate the proportion of total removals (catch + discards) taken during the On- and Off-Seasons for each fleet and each year: 
 
@@ -168,8 +181,7 @@ C_{\text{total},y} = C_{\text{On},y}^f + C_{\text{Off},y}^f
 
 where $C_\text{total}$ is the total reported removals by fleet $f$ in year $y$, $C_{\text{On}}$ is the reported catch taken when the fishery was open, $C_{\text{Off}}$ is the reported removals when fishery was closed, and $\tilde{C}_{\text{On}}$ and $\tilde{C}_{\text{Off}}$ are the fraction of catches taken during the On- and Off-Seasons respectively.
 
-
-**3. Allocate proportion of total fishing mortality into On- and Off-Seasons**
+### Allocate proportion of total fishing mortality into On- and Off-Seasons**
 Finally, the total fishing mortality for each fleet was divided into On- and Off-Seasons by multiplying $F_{\text{total},y}$ by the fraction of removals taken during the On- and Off-Seasons:
 
 \begin{equation}
@@ -182,26 +194,11 @@ F_{\text{Off},y}^f= \tilde{C}_{\text{Off},y}^f F_{\text{total},y}^f
 (\#eq:eq6)
 \end{equation}
 
-
 This results in an operating model with the fleets structured into On- and Off-Seasons components for each fleet.
 
-# Base Case Operating Model 
+## Red Snapper
 
-The operating models (OMs) used in the MSE are age-structured, with an option for spatial structure, and age-based movement.
-
-Single-stock operating models were first constructed for the red snapper and gag grouper fisheries. The single-stock OMs were then combined into a multi-stock OM that includes options for interactions between species and the fishing fleets exploiting these stocks.
-
-The OMs currently have `r nsim` simulations and `r pyears` projection years.
-
-Note that all biomass, catch, and size values within the MSE are in metric units of kilograms and millimeters. Any values can be converted to pounds and inches for presentation of final results.
-
-The following sub-sections describe the construction of the Base Case OMs for red snapper and gag grouper.
-
-## Generating Operating Models from SEDAR Assessments 
-
-### Red Snapper
-
-The red snapper OM was based on the most recent stock assessment ([SEDAR 73](https://sedarweb.org/assessments/sedar-73/)). This assessment included six fleets:
+The Red Snapper OM was based on the most recent stock assessment ([SEDAR 73](https://sedarweb.org/assessments/sedar-73/)). This assessment included six fleets:
 
 1. Commercial Handline (cHL)
 2. Commercial Handline - Discards (cHL.D)
@@ -221,7 +218,7 @@ Following the process described above, the operating model was developed with a 
 
 The On- and Off-Season fleet structure was generated by calculating the proportion of total removals for each fleet that were taken during the open and closed seasons.
 
-#### Commercial Handline
+### Commercial Handline
 
 The proportion of total removals taken during the open and closed seasons for the Commercial Handline fleet was calculated from the Commercial logbook data, filtered to only include records from the SAMFC region.
 
@@ -231,7 +228,7 @@ The values for discard mortality for the Commercial Handline fleet were taken fr
 
 The relative fishing mortality for the On- and Off-Seasons was calculated as the proportion of total removals that occurred during the open and closed seasons (Figure \@ref(fig:plotRSrelativeF)).
 
-#### Recreational Headboat
+### Recreational Headboat
 
 The proportion of total removals taken during the open and closed seasons for the Recreational Headboat fleet was calculated from the Headboat logbook data, filtered to only include records from the SAMFC region.
 
@@ -241,7 +238,7 @@ The values for discard mortality for the Recreational Headboat fleet were taken 
 
 The relative fishing mortality for the On- and Off-Seasons was calculated as the proportion of total removals that occurred during the open and closed seasons (Figure \@ref(fig:plotRSrelativeF)).
 
-#### General Recreational
+### General Recreational
 
 The relative pattern in fishing mortality for the On- and Off-Season components of the General Recreational fleet was assumed to be the same as the Recreational Headboat fleet (Figure \@ref(fig:plotRSrelativeF)).
 
@@ -257,8 +254,7 @@ This results in an operating model with 6 fleets, with estimated landings and di
 knitr::include_graphics("../img/OM_Construction/BaseCase/RS_histLandings_Discards.png")
 ```
 
-
-### Gag Grouper 
+## Gag Grouper 
 
 The gag OM was based on the most recent stock assessment ([SEDAR 71](https://sedarweb.org/assessments/sedar-71/)). This assessment included seven fleets:
 
@@ -286,7 +282,7 @@ The SEDAR 71 model was converted to the OM with the On- and Off-Season structure
 
 The landings- and discard-at-age from the SEDAR 73 model for the three fleets (cHL, rHB, and rGN) were combined into total removals. This results in a model that describe the total removals-at-age by year for the three fleets. The On- and Off-Season fleet structure was then generated by calculating the proportion of total removals that were taken during the open and closed seasons.
 
-#### Commercial Handline
+### Commercial Handline
 
 The proportion of total removals taken during the open and closed seasons for the Commercial Handline fleet was calculated from the Commercial logbook data, filtered to only include records from the SAMFC region.
 
@@ -296,7 +292,7 @@ Following the assessment, discard mortality was assumed to be 0.4 for the Commer
 
 The relative fishing mortality for the On- and Off-Seasons was calculated as the proportion of total removals that occurred during the open and closed seasons (Figure \@ref(fig:plotGGrelativeF)).
 
-#### Recreational Headboat
+### Recreational Headboat
 
 The proportion of total removals taken during the open and closed seasons for the Recreational Headboat fleet was calculated from the Headboat logbook data, filtered to only include records from the SAMFC region.
 
@@ -304,14 +300,13 @@ Information on the dates when the fishery was open and closed for the Recreation
 
 The relative fishing mortality for the On- and Off-Seasons was calculated as the proportion of total removals that occurred during the open and closed seasons (Figure \@ref(fig:plotGGrelativeF)).
 
-#### General Recreational
+### General Recreational
 
 Following the approach used for Red Snapper, the relative pattern in fishing mortality for the On- and Off-Season components of the General Recreational fleet was assumed to be the same as the Recreational Headboat fleet (Figure \@ref(fig:plotGGrelativeF)).
 
 ```{r plotGGrelativeF, fig.cap='The proportion of overall fishing mortality for the On-Season and Off-Season fleets for the Gag Grouper fishery.', include=TRUE}
 knitr::include_graphics("../img/OM_Construction/BaseCase/GG_relativeF.png")
 ```
-
 
 The operating model was constructed by allocating, for each fleet, the total fishing mortality (removals) in each year between On- and Off-Season components of the fleet according to the pattern in relative F described above.
 
@@ -330,9 +325,47 @@ The initial year of the Gag Grouper assessment is 1962, 12 years later than the 
 
 To maintain the same fleet structure, the Commercial Dive fleet was added to the Red Snapper model, but fishing mortality set to 0 for all years.
 
+
+# Base Case Operating Model
+
+The Base Case operating model for Red Snapper and Gag fisheries was based directly on the respective SEDAR assessments for each species, following the process described above. This section summarizes the main properties of the Base Case OM.
+
+Alternative operating models are developed as modifications of the Base Case OM. These alternative operating models are intended to span the critical uncertainties in the knowledge of the fishery systems, and are described in Section \@ref(altoms).
+
+## Selectivity and Retention Schedules
+
+Figures \@ref(fig:RSselect) and \@ref(fig:GGselect) show the selectivity- and retention-at-age curves in the last historical year (2019) for the On- and Off-Season fleets for the Red Snapper and Gag Grouper respectively. The selectivity pattern of the On-Season and Off-Season fleets is assumed to be the same.
+
+The selectivity and retention curves remain the same in the projection period unless changed by a management procedure. Retention curves with a maximum value less than one indicate a general level of discarding.
+
+```{r RSselect, fig.cap='The selectivity- (solid line) and retention-at-age (dashed line) curves for the Red Snapper in the multi-species operating model. The plot shows the curves from the last historical year (2019).', include=TRUE}
+knitr::include_graphics("../img/OM_Properties/RS_Select_hist.png")
+```
+
+```{r GGselect, fig.cap='The selectivity- (solid line) and retention-at-age (dashed line) curves for the Gag Grouper in the multi-species operating model. The plot shows the curves from the last historical year (2019).', include=TRUE}
+knitr::include_graphics("../img/OM_Properties/GG_Select_hist.png")
+```
+
+## Removals, Landings, and Discards
+
+ Figures \@ref(fig:plotRSGGRemovalshist),  \@ref(fig:plotRSGGLandingshist), and  \@ref(fig:plotRSGGDiscardshist) show historical overall removals, and landings and discards by fleet respectively for the Red Snapper and Gag Grouper multi-species Base Case operating model.
+
+```{r plotRSGGRemovalshist, fig.cap='The overall removals (1,000 t) from the historical period of the Red Snapper and Gag Grouper multi-species operating model.', include=TRUE, out.width = "600px"}
+knitr::include_graphics("../img/OM_Properties/RS_GG_Removals_hist.png")
+```
+
+```{r plotRSGGLandingshist, fig.cap='The landings (1,000 t) by fleet from the historical period of the Red Snapper and Gag Grouper multi-species operating model. Note the different scale on the y-axes.', include=TRUE, out.width = "600px"}
+knitr::include_graphics("../img/OM_Properties/RS_GG_Landings_hist.png")
+```
+
+```{r plotRSGGDiscardshist, fig.cap='The discards (1,000 t) by fleet from the historical period of the Red Snapper and Gag Grouper multi-species operating model. Note the different scale on the y-axes.', include=TRUE, out.width = "600px"}
+knitr::include_graphics("../img/OM_Properties/RS_GG_Discards_hist.png")
+```
+
+
 ## Calculation of Reference Points
 
-The reference points were calculated following the same method described in the SEDAR reports for the two stocks.
+The reference points are calculated following the same method described in the SEDAR reports. This section describes the calculation of reference points for the Red Snapper and Gag Grouper. The calculation for other species added to the MSE analysis will follow a similar process.
 
 ### Red Snapper
 
@@ -350,7 +383,6 @@ It should be noted that the calculation of $F_{30\%}$ and associated metrics is 
 knitr::include_graphics("../img/OM_Properties/RS_Ref_Points.png")
 ```
 
-
 ### Gag Grouper
 
 The maximum fishing mortality threshold (MFMT) for Gag Grouper is defined by the SAMFC as $F_{\text{MSY}}$, and the minimum stock size threshold (MSST) as $75\%\text{SSB}_{\text{MSY}}$. Overfishing is defined as F > MFMT and overfished as SSB < MSST.
@@ -367,55 +399,7 @@ It should be noted that the calculation of $F_{\text{MSY}}$ and associated metri
 knitr::include_graphics("../img/OM_Properties/GG_Ref_Points.png")
 ```
   
-## Spatial Structure
-
-Spatial structure has been defined as three areas (Figure \@ref(fig:spatialareas)):
-
-  1. North and South Carolina
-  2. Georgia -- Cape Canaveral
-  3. Cape Canaveral -- Florida
-
-Additional spatial structure for near-shore and off-shore regions has also been proposed.
-
-Spatial structure for the stocks and fishing fleets has not currently been defined in the operating models. Spatial structure will be added once spatial management options have been proposed and developed.
-
-```{r spatialareas, fig.cap='The three spatial regions defined for the SAMFC MSE.', include=TRUE, out.width = "400px"}
-knitr::include_graphics("../img/Spatial/3_Area.png")
-```
-
-## Properties of the Base Case OM
-
-### Selectivity and Retention Schedules
-
-Figures \@ref(fig:RSselect) and \@ref(fig:GGselect) show the selectivity- and retention-at-age curves in the last historical year (2019) for the On- and Off-Season fleets for the Red Snapper and Gag Grouper respectively. The selectivity pattern of the On-Season and Off-Season fleets is assumed to be the same.
-
-The selectivity and retention curves remain the same in the projection period unless changed by a management procedure. Retention curves with a maximum value less than one indicate a general level of discarding.
-
-```{r RSselect, fig.cap='The selectivity- (solid line) and retention-at-age (dashed line) curves for the Red Snapper in the multi-species operating model. The plot shows the curves from the last historical year (2019).', include=TRUE}
-knitr::include_graphics("../img/OM_Properties/RS_Select_hist.png")
-```
-
-```{r GGselect, fig.cap='The selectivity- (solid line) and retention-at-age (dashed line) curves for the Gag Grouper in the multi-species operating model. The plot shows the curves from the last historical year (2019).', include=TRUE}
-knitr::include_graphics("../img/OM_Properties/GG_Select_hist.png")
-```
-
-### Removals, Landings, and Discards
-
- Figures \@ref(fig:plotRSGGRemovalshist),  \@ref(fig:plotRSGGLandingshist), and  \@ref(fig:plotRSGGDiscardshist) show historical overall removals, and landings and discards by fleet respectively for the Red Snapper and Gag Grouper multi-species Base Case operating model.
-
-```{r plotRSGGRemovalshist, fig.cap='The overall removals (1,000 t) from the historical period of the Red Snapper and Gag Grouper multi-species operating model.', include=TRUE, out.width = "600px"}
-knitr::include_graphics("../img/OM_Properties/RS_GG_Removals_hist.png")
-```
-
-```{r plotRSGGLandingshist, fig.cap='The landings (1,000 t) by fleet from the historical period of the Red Snapper and Gag Grouper multi-species operating model. Note the different scale on the y-axes.', include=TRUE, out.width = "600px"}
-knitr::include_graphics("../img/OM_Properties/RS_GG_Landings_hist.png")
-```
-
-```{r plotRSGGDiscardshist, fig.cap='The discards (1,000 t) by fleet from the historical period of the Red Snapper and Gag Grouper multi-species operating model. Note the different scale on the y-axes.', include=TRUE, out.width = "600px"}
-knitr::include_graphics("../img/OM_Properties/RS_GG_Discards_hist.png")
-```
-
-### Biomass and Reference Points
+## Biomass and Reference Points
 
 Figures \@ref(fig:plotRSSBref) and \@ref(fig:plotGGSBref) show the predicted spawning biomass and the corresponding reference points for the Red Snapper and Gag Grouper stocks in the Base Case multi-stock operating model. Both stocks are below the MSST reference point in the terminal year (2019). Red Snapper appears to be rebuilding towards MSST, while the trend for Gag Grouper is a continuing decline.
 
@@ -427,15 +411,102 @@ knitr::include_graphics("../img/OM_Properties/RS_SSB_ref_hist.png")
 knitr::include_graphics("../img/OM_Properties/GG_SSB_ref_hist.png")
 ```
 
-# Key Uncertainties in Base Case Operating Models
 
-The following is a list of uncertainties that may need to be consider in alternative operating models:
+# Spatial Structure, Distribution, and Movement
 
-* Magnitude of reported discards: observer data suggests discard for commercial fleet are higher than reported
-* Life history parameters: uncertainties evaluated in stock assessments
+The SEDAR assessments do not include spatial structure. Consequently, information on the spatial distribution and movement of the stocks has to be obtained from elsewhere, and the spatial structure added into the operating model developed from the SEDAR assessments.
 
-This list will continued to be developed.
-  
+There are three pieces of information required for including spatial structure in an MSE:
+
+1. The spatial structure of the model, specifically the relative size of each area
+2. The relative distribution of unfished abundance for each species in each area
+3. The probability of fish from each species moving from one area to another in each year
+
+## Definition of Spatial Structure 
+
+The spatial structure of the MSE has been defined as 6 areas, including 3 geographic regions (Figure \@ref(fig:spatialareas)) and a Nearshore (<100ft) and Offshore (>100ft) component for each region (black line in Figure \@ref(fig:spatialareas)).
+
+The relative size of each area was determined by first calculating the surface area of the entire area included in the MSE (all colored regions in Figure \@ref(fig:spatialareas)), and then calculating the proportion of the total area that was within the Nearshore and Offshore region of each geographic area (Table \@ref(tab:areasize)). 
+
+> Note: this calcutation assumes that suitable potential habitat is equally distributed across the entire region.
+
+```{r spatialareas, fig.cap='The six spatial areas defined in the MSE, with three geographic regions (colors) and a division of each in Nearshore (<100ft) and Offshore (>100ft) (black line).', include=TRUE}
+knitr::include_graphics("../img/Spatial/Map.png")
+```
+
+```{r areasize, include=TRUE} 
+dat <- readRDS('../data_spatial/areas_df.rds') %>%
+  mutate('Relative Size'=round(Relative.Size,3)) %>%
+  select(-Relative.Size)
+knitr::kable(dat, caption='The relative size of the six areas defined for the SAFMC MSE.')
+```
+
+## Latitudinal Distribution of Unfished Abundance  
+
+Information on the unfished distribution of Red Snapper and Gag is not available. Instead, the assumed unfished distribution was derived from various sources of information, including the CDNR Reef Fish Survey [@bubley2023] and studies reported in the literature.
+
+It may also be possible to use other data, such as CPUE information from MRIP and headboat surveys or a deepwater longline survey, to calculate improved estimate of the relative abundance of Red Snapper and Gag Grouper across the three regions.
+
+**Red Snapper**
+
+Data from the SCDNR Reef Fish Survey [@bubley2023] was used to calculate the average relative abundance from 1990 -- 2022 of Red Snapper and Gag in each of the three geographic areas included in the MSE. 
+
+This analysis reports that the highest abundance of Red Snapper is in the Georgia - Cape Canaveral region, and the abundance in North and South Carolina is about 1/4 of that in the Georgia - Cape Canaveral region. The data from the survey suggests that the relative abundance in the Cape Canaveral - Florida region is about 7% of that in the Georgia - Cape Canaveral region. 
+
+However, the SCDNR survey did not include the entire Florida region included in the SAFMC management area, but stopped at the St. Lucie Inlet, FL. Consequently, the SCDNR survey data may significantly under-estimate the relative average abundance of Red Snapper in the Florida region included in the MSE. 
+
+The most recent assessment of Red Snapper from the Gulf of Mexico ([SEDAR 52](https://sedarweb.org/documents/sedar-52-gulf-of-mexico-red-snapper-final-stock-assessment-report/)) estimates an unfished biomass in the east of the GoM about 6 times higher than the unfished biomass estimated for Red Snapper in the SAMFC region ([SEDAR 73](https://sedarweb.org/documents/sedar-73-stock-assessment-report-south-atlantic-red-snapper/)). This suggests that the abundance of Red Snapper is considerably higher in the Gulf of Mexico, and indicates a pattern of decreasing abundance of Red Snapper with increasing latitude, a result supported by the SCDNR survey [@bubley2023].
+
+Based on this information, the Base Case OM currently assumes that the unfished abundance of Red Snapper in the Cape Canaveral - Florida region is twice as high as that in the Georgia - Cape Canaveral region (Table \@ref(tab:BCdist)). 
+
+Alternative operating models can be developed to evaluate the sensitivity of the results to this assumption.
+
+**Gag**
+
+The analysis of the SCDNR Reef Fish Survey [@bubley2023] data reveals that the abundance of Gag in the North and South Carolina region is about 2.5 times higher than that in the Georgia - Cape Canaveral region, and the lowest abundance south of Cape Canaveral. This suggests a pattern of increasing abundance of Gag with increasing latitude. This is supported by the study of @gruss2017, who report that Gag are most common in the north-east region of the Gulf of Mexico compared to regions further south. 
+
+Given this information, and the fact that the SCDNR survey likely under-estimates the abundance of Gag in the Cape Canaveral - Florida region, the Base Case OM assumes that the unfished abundance in the  Cape Canaveral - Florida region is half of that in the Georgia - Cape Canaveral region (Table \@ref(tab:BCdist)). 
+
+Alternative operating models can be developed to evaluate the sensitivity of the results to this assumption.
+
+```{r BCdist, include=TRUE} 
+dat <- readRDS('../data_spatial/Frac_region_BC.rds') 
+colnames(dat)[2] <- 'Red Snapper'
+knitr::kable(dat, caption='The assumed relative unfished abundance of Red Snapper and Gag in the three geographic regions.')
+```
+
+## Age-Specific Distribution by Depth Zone
+
+The relative geographic distribution of each species is combined with information about the relative distribution by depth (Nearshore and Offshore) of each age-class to calculate the overall distribution across the 6 areas (Figure \@ref(fig:spatialareas)).  
+
+**Red Snapper**
+
+@mitchell2014 used data from two fishery-independent surveys in the southeastern US Atlantic Ocean to calculate the depth distribution of Red Snapper. They found that most recruitment occurred in the shallow nearshore waters, but after about 3 years (> 50 cm FL) there was no detectable difference in the depth-distribution of Red Snapper by age or length. 
+
+Following the results reported in @mitchell2014, the Base Case OM assumes that almost all age-0 fish (recruits) are located in the Nearshore region, with a decline in the fraction in the Nearshore region from 95% at age-0 to 50% at age-4. All fish older than age-4 are assumed to be equally distributed between Nearshore and Offshore regions (Figure \@ref(fig:basecasedist)).
+
+**Gag** 
+
+The age-specific depth distribution of Gag was based on the analysis of @carruthers2015, who used a spatial populations dynamics model to estimate the fraction of unfished individuals by age-class in the nearshore and offshore regions of the Gulf of Mexico. They found that juvenile Gag are most likely to be in the nearshore region, but move offshore as they increase in age (Fig 8 in @carruthers2015).
+
+Based on this analysis, the Base Case OM assumed the age-specific unfished distribution of Gag in the SAMFC management area is similar to that in the Gulf of Mexico  (Figure \@ref(fig:basecasedist)). 
+
+```{r basecasedist, fig.cap='The assumed unfished distribution by age, depth, and geographic region for the Red Snapper and Gag Base Case operating model.', include=TRUE}
+knitr::include_graphics("../img/Spatial/BaseCase_dist.png")
+```
+
+## Probability of Movement 
+
+The final piece of information required for adding spatial structure to the MSE is a prior on the the probability of fish remaining in an area in any given year, and for those that move, the relative probability of moving to the each of the other areas.
+
+Given the relatively high spatial structure of the Red Snapper and Gag, particularly the latitudinal gradient in abundance, and the reported site fidelity of Red Snapper [@topping2011], the Base Case OM assumed a prior probability of 0.95 that fish remain within an area in a given year. 
+
+Of those that move, the OM assumed that the probability of moving to a geographically distant area (e.g., Area 1 to Area 5, or vice versa) was 100 times less than the probability of moving to a closer area (e.g., Area 1 to Area 2).
+
+## Calculating Movement Matrix 
+
+A movement matrix is calculated within the MSE framework using the specified information on the assumed age-specific unfished distribution by area and depth, and the probability of moving to any given area. This model uses the specified relative probability of moving to each area, and optimizes the probability of remaining in a given area to solve for the specified relative distribution by area. See `?makemov2` in the `MSEtool` R package for more information on this method.
+
 # Assumptions for Projection Dynamics
 
 ## Recruitment Process Error
@@ -482,7 +553,78 @@ Any error in the implementation of management regulations set by the Management 
 
 Currently the Base Case OM assumes no observation error on the simulated data. This assumption will be revised when management procedures that use specific data to set management advice are developed.
 
+
+# Alternative Operating Models {#altoms}
+
+The alternative operating models are developed as variations of the Base Case OM, and are intended to span the key uncertainties in the understanding of the fishery system.
+
+The uncertainties considered in the alternative operating models have been identified from the most consequential sensitivity tests in the Red Snapper  ([SEDAR 73](https://sedarweb.org/assessments/sedar-73/)) and Gag stock assessments ([SEDAR 71](https://sedarweb.org/assessments/sedar-71/)), and from discussions with the Snapper-Grouper Advisory Panel.
+
+```{r}
+OMdat <- read.csv('../OM_details/OM_descriptions.csv')
+```
+
+Currently `r nrow(OMdat)` operating models (including the Base Case) have been developed. Table \@ref(tab:omdesc) provides a summary of the operating models. The sub-sections below describe more details for each of the alternative operating models. 
+
+```{r omdesc, include=TRUE} 
+
+knitr::kable(OMdat, caption='Summary of the operating models developed for the MSE.')
+```
+
+
+## Natural Mortality: OM_02 & OM_03
+
+The sensitivity tests in the Red Snapper and Gag assessments revealed that the results were most sensitive to the assumed values for the age-specific natural mortality (*M*). 
+
+Two operating models were developed to span the lower and upper bounds of *M* considered in the sensitivity tests of the two assessments. 
+
+In `OM_02`, the Lorenzen curve describing M-at-age was scaled to the lower values from the sensitivity tests: M = 0.07 and M = 0.10 for Red Snapper and Gag respectively.
+
+In `OM_03`, the Lorenzen curve describing M-at-age was scaled to the higher values from the sensitivity tests: M = 0.15 and M = 0.25 for Red Snapper and Gag respectively.
+
+The *M* for adult Red Snapper and Gag in the Base Case OM is 0.11 and 0.17 respectively.
+
+## Changes in Future Productivity: OM_04, OM_05, and OM_06 
+
+Three operating models were developed to consider changes in productivity in the future, such as those caused by changes to climate and oceanographic conditions in the future, or by increased coastal development.
+
+In `OM_04` a cyclic recruitment pattern is superimposed over the log-normally distributed recruitment process error included in the Base Case OM.
+
+In `OM_05` recruitment is randomly reduced to very low levels in some years, to represent an unexpected recruitment failure caused by loss of nursery habitat or adverse climate conditions. The declines in recruitment are correlated across the stocks in the MSE.
+
+In `OM_06` the mean length-at-age, weight-at-age, and corresponding maturity-at-age schedules are modified to represent a gradual decline in growth over the projection years. 
+
+## Uncertainties in Data: OM_07
+
+`OM_07` considers uncertainty in the relative landings of the commercial and for-hire vessels relative to the recreational fleet. There is some evidence to suggest that the recreational catch has been over-estimated. This uncertainty is considered by re-running the assessment models with the recreational landings reduced by 40%. 
+
+## Uncertainties in Future Fleet Dynamics: OM_08
+
+`OM_08` considers  an average increase of 2% per year in fishing effort for the recreational fleet in the projection years, due to either technology creep or existing latent effort. 
+
+## Uncertainties in Spatial Dynamics: OM_9 & OM_10
+
+`OM_09` and `OM_10` consider alternative scenarios for the assumed proportion of the unfished stock that is in the Cape Canaveral -- Florida region of the MSE. 
+
+`OM_09` assumes a lower value for the assumed fraction in the southernmost region.
+
+`OM_10` assumes a higher value for the assumed fraction in the southernmost region.
+
+
 # Management Procedures
+
+<!--
+- status quo
+
+- size limits
+- slot limits
+- effort control
+
+- increased use of descending devices 
+
+- bag limits - requires data:
+
+-->
 
 ## Fleet-Specific Fishing Mortality or Removals
 
@@ -687,5 +829,7 @@ Table: (\#tab:PM-table) Performance metrics defined for the Red Snapper and Gag 
           
 Examples plots of the Performance Metrics will be added.
         
+# References 
+
         
 
