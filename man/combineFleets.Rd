@@ -11,7 +11,8 @@ combineFleets(MOM, stock = 1, fleets = list(c(1, 4), c(2, 5), c(3, 6)))
 
 \item{stock}{The stock number (currently only works for 1 stock)}
 
-\item{fleets}{List with each element numeric vector length 2 to indicate landing and discard fleet. Length 1 means only a landing fleet}
+\item{fleets}{List with each element numeric vector length 2 to indicate landing and discard fleet.
+Length 1 means only a landing fleet}
 }
 \value{
 An object of class \code{MOM} with \code{length(fleets)} fleets

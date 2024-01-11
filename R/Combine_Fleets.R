@@ -3,7 +3,8 @@
 #'
 #' @param MOM An object of class `MOM`
 #' @param stock The stock number (currently only works for 1 stock)
-#' @param fleets List with each element numeric vector length 2 to indicate landing and discard fleet. Length 1 means only a landing fleet
+#' @param fleets List with each element numeric vector length 2 to indicate landing and discard fleet.
+#' Length 1 means only a landing fleet
 #'
 #' @return An object of class `MOM` with `length(fleets)` fleets
 #' @export

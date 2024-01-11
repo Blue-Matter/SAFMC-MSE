@@ -1,6 +1,36 @@
 
 source('Build_Package/2. Set OM Parameters.R')
 
+rdat <- rdat_RedSnapper
+stock_name <- 'Red Snapper'
+nsim
+pyears
+
+Fleet_Structure_GG <- data.frame(Name=c('Commercial Handline',
+                                        'Recreational Headboat',
+                                        'General Recreational',
+                                        'Commercial Dive'),
+                                 Landing=c(1,3,4, 2),
+                                 Discard=c(5,6,7, NA))
+
+
+Fleet_Structure_RS <- data.frame(Name=c('Commercial Handline',
+                                        'Recreational Headboat',
+                                        'General Recreational'),
+                                 Landing=c(1,2,3),
+                                 Discard=c(4,5,6))
+
+Fleet_Structure <- Fleet_Structure_RS
+
+
+seasonal_F_RS <- list(RS_Comm_relF, RS_HB_relF, RS_GR_relF)
+
+seasonal_F_List <- seasonal_F_RS
+
+structure_OM <- function(rdat, stock_name, nsim, pyears, CAL_bins, Fleet_Structure,
+                         seasonal_F_List)
+
+
 # ---- Generate the Red Snapper Base Case Operating Model ----
 
 ##  Convert all weights to metric (kg) ----
