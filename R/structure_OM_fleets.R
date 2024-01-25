@@ -35,6 +35,13 @@ structure_OM <- function(rdat, stock_name, nsim, pyears, CAL_bins, Fleet_Structu
   OM <- BAM2MOM(rdat=rdat, stock_name=stock_name,
                          nsim = nsim, proyears = pyears)
 
+  for (st in 1:length(OM@Stocks)) {
+    for (fl in 1:length(OM@Fleets[[1]])) {
+      OM@Fleets[[st]][[fl]]@Spat_targ <- c(0,0)
+    }
+  }
+
+
   # Add CALbins to cpars
   nfleet <- length(OM@cpars[[1]])
   for (f in 1:nfleet) {
@@ -51,6 +58,7 @@ structure_OM <- function(rdat, stock_name, nsim, pyears, CAL_bins, Fleet_Structu
   }
   OM_combined <- combineFleets(OM, fleets=fleet_structure)
 
+
   # Generate OM with Seasonal Fleets ----
   OM_season <- OM_combined
 
@@ -64,5 +72,10 @@ structure_OM <- function(rdat, stock_name, nsim, pyears, CAL_bins, Fleet_Structu
                                 Off.Fleet=temp$Discard,
                                 Fleet=temp$Name)
   }
+  nms <- names(OM_season@Fleets[[1]])
+  nms[nms=='cDV'] <- 'Commercial Dive'
+  names(OM_season@Fleets[[1]]) <- nms
+
   OM_season
+
 }

@@ -34,7 +34,7 @@ options(scipen=999)
 ```
 
 ```{r intialize}
-source('../Build_Package/2. Set OM Parameters.R')
+source('../Build_Package/1b. Set OM Parameters.R')
 ```
 
 
@@ -436,9 +436,9 @@ knitr::include_graphics("../img/Spatial/Map.png")
 
 ```{r areasize, include=TRUE} 
 dat <- readRDS('../data_spatial/areas_df.rds') %>%
-  mutate('Relative Size'=round(Relative.Size,3)) %>%
+  mutate('Relative Size'=round(Relative.Size,3)*100) %>%
   select(-Relative.Size)
-knitr::kable(dat, caption='The relative size of the six areas defined for the SAFMC MSE.')
+knitr::kable(dat, caption='The relative size (%) of the six areas defined for the SAFMC MSE.')
 ```
 
 ## Latitudinal Distribution of Unfished Abundance  
@@ -470,8 +470,8 @@ Given this information, and the fact that the SCDNR survey likely under-estimate
 Alternative operating models can be developed to evaluate the sensitivity of the results to this assumption.
 
 ```{r BCdist, include=TRUE} 
-dat <- readRDS('../data_spatial/Frac_region_BC.rds') 
-colnames(dat)[2] <- 'Red Snapper'
+dat <- readRDS('../Build_Package/Objects/BaseCase/Spatial_Regional_Dist.rds') 
+dat <- dat %>% tidyr::pivot_wider(., names_from ='Stock', values_from=Frac_Area)
 knitr::kable(dat, caption='The assumed relative unfished abundance of Red Snapper and Gag in the three geographic regions.')
 ```
 
@@ -517,7 +517,7 @@ RS_rec_devs <- base_case_process_error %>% filter(Stock=='Red Snapper')
 GG_rec_devs <- base_case_process_error %>% filter(Stock=='Gag Grouper')
 ```
 
-The recruitment deviations for the projection period are generated from a log-normal distribution, with the standard deviation and lag-1 auto-correlation factor reported by the stock assessments (Figure \@ref(fig:RS-rec-dev-stats)).
+The variance-covariance matrix was estimated from the historical log recruitment deviations of each species in the analysis. A truncated multivariate normal distribution, truncated at 2 standard deviations, was then used to generate correlated random log recruitment deviations for the projection period, with the standard deviation and lag-1 auto-correlation factor reported by the stock assessments (Figure \@ref(fig:RS-rec-dev-stats)).
 
 ```{r RS-rec-dev-stats, fig.cap='Distribution of the log recruitment deviations for a) Red Snapper and b) Gag Grouper, with a fitted normal distribution shown in blue. Panels c) and d) show the deviations in normal space, and include the log-normal distribution used to generate recruitment process error for the projection period.', include=TRUE}
 knitr::include_graphics("../img/OM_Properties/Base_Case_recdev_stats.png")

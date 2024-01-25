@@ -84,6 +84,8 @@ combineFleets <- function(MOM, stock=1, fleets=list(c(1,4),
   newMOM@Fleets[[1]][disc.fleets] <- NULL
   newMOM@cpars[[1]][disc.fleets] <- NULL
 
+
+
   newMOM
 }
 

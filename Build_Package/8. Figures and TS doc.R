@@ -6,7 +6,8 @@
 
 #
 library(SAMSE)
-MOM_multiHist <- readRDS('Hist_Objects/001_BaseCase.hist')
+MOM_multiHist <- readRDS('Hist_Objects/01.hist')
+
 
 # Plots ----
 ## Selectivity & Retention Curves by Fleet ----
@@ -28,6 +29,7 @@ Process_Select <- function(df, ...) {
 
 # modify to scale to maximum value of 1
 Select_Retain_2 <- Select_Retain %>% group_by(Stock, Fleet) %>% dplyr::group_modify(.,Process_Select)
+Select_Retain_2$Variable[Select_Retain_2$Variable=='Select'] <- 'Selectivity'
 
 # add Zeros
 Select_Retain_2$Value[Select_Retain_2$Stock=='Red Snapper' & Select_Retain_2$Fleet=='Commercial Dive'] <- 0
@@ -37,8 +39,9 @@ Select_Retain_2$Value[Select_Retain_2$Stock!='Red Snapper' & Select_Retain_2$Age
 Select_Retain_2$Stock <- factor(Select_Retain_2$Stock, c('Red Snapper', 'Gag Grouper'), ordered = TRUE)
 Select_Retain_2$Fleet[Select_Retain_2$Fleet=='cDV'] <- 'Commercial Dive'
 
-Select_Retain_2$Variable <- factor(Select_Retain_2$Variable, levels=c('Select', 'Retention'), ordered = TRUE)
+Select_Retain_2$Variable <- factor(Select_Retain_2$Variable, levels=c('Selectivity', 'Retention'), ordered = TRUE)
 Select_Retain_2$Season <- factor(Select_Retain_2$Season, levels=c('On', 'Off'), ordered = TRUE)
+
 
 ggplot(Select_Retain_2 %>% filter(Stock=='Red Snapper', Fleets !="Commercial Dive"),
        aes(x=Age, y=Value, linetype=Variable)) +
@@ -69,6 +72,7 @@ ggplot(Removals %>% filter(Sim==1), aes(x=Year, y=Value/1000)) +
   facet_wrap(~Stock, scales = 'free_y') +
   geom_line() +
   labs(y='Total Removals (1,000 t)') +
+  expand_limits(y=0) +
   theme_bw()
 
 ggsave('img/OM_Properties/RS_GG_Removals_hist.png', width=6, height=3)
@@ -248,11 +252,31 @@ ggsave('img/OM_Properties/GG_SSB_ref_hist.png', p2, width=6, height=4)
 
 Years <- get_Years(MOM_multiHist)
 
+RSrec_deviations <- OM_01@cpars$`Red Snapper`$`Commercial Handline: On-Season`$Perr_y[,21:90] %>% log()
+GGrec_deviations <- OM_01@cpars$`Gag Grouper`$`Commercial Handline: On-Season`$Perr_y[,21:90] %>% log()
+
+df <- data.frame(RS=as.vector(RSrec_deviations), GG=as.vector(GGrec_deviations))
+ind <- which(!(round(df$RS,3)==0 | round(df$GG,3)==0))
+
+df <- df[ind,]
+lims <- range(df)
+p <- ggplot(df, aes(x=RS, y=GG)) +
+  geom_point() +
+  xlim(lims) +
+  ylim(lims) +
+  theme_bw() +
+  geom_smooth(method='lm', se=FALSE) +
+  labs(title='Log Recruitment Deviations',
+       x='Red Snapper',
+       y='Gag')
+p
+ggsave('img/OM_Properties/correlated_rec_devs.png', p, width=5, height=5)
+
 ## Red Snapper
 
-rec_deviations <- MOM_001@cpars$`Red Snapper`$`Commercial Handline: On-Season`$Perr_y
+rec_deviations <- OM_01@cpars$`Red Snapper`$`Commercial Handline: On-Season`$Perr_y
 dd <- dim(rec_deviations)
-rec_deviations <- rec_deviations[,(MOM_001@Stocks$`Red Snapper`@maxage+1):dd[2]]
+rec_deviations <- rec_deviations[,(OM_01@Stocks$`Red Snapper`@maxage+1):dd[2]]
 
 RS_dev_devs <- data.frame(Sim=1:nsim, Year=rep(Years$Year, each=nsim), Rec_dev=as.vector(rec_deviations), Stock='Red Snapper')
 RS_dev_devs <- left_join(RS_dev_devs, Years, by = join_by(Year))
@@ -271,9 +295,9 @@ ggplot(RS_dev_devs_p) +
 ggsave('img/OM_Properties/RS_rec_devs.png', width=6, height=6)
 
 ## Gag Grouper
-rec_deviations <- MOM_001@cpars$`Gag Grouper`$`Commercial Handline: On-Season`$Perr_y
+rec_deviations <- OM_01@cpars$`Gag Grouper`$`Commercial Handline: On-Season`$Perr_y
 dd <- dim(rec_deviations)
-rec_deviations <- rec_deviations[,(MOM_001@Stocks$`Gag Grouper`@maxage+1):dd[2]]
+rec_deviations <- rec_deviations[,(OM_01@Stocks$`Gag Grouper`@maxage+1):dd[2]]
 
 GG_dev_devs <- data.frame(Sim=1:nsim, Year=rep(Years$Year, each=nsim), Rec_dev=as.vector(rec_deviations), Stock='Gag Grouper')
 GG_dev_devs <- left_join(GG_dev_devs, Years, by = join_by(Year))

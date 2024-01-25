@@ -1,299 +1,253 @@
 
-source('Build_Package/2. Set OM Parameters.R')
+source('Build_Package/1b. Set OM Parameters.R')
 
-# ---- Load Single-Stock MOM Objects ----
-RSMOM_season <- readRDS('Build_Package/Objects/RS_basecase.mom')
-GGMOM_season <- readRDS('Build_Package/Objects/GG_basecase.mom')
+# ----- Build RS OM ----
 
-names(GGMOM_season@Fleets[[1]])[2] <- 'Commercial Dive'
+Fleet_Structure <- data.frame(Name=c('Commercial Handline',
+                                     'Recreational Headboat',
+                                     'General Recreational'),
+                              Landing=c(1,2,3),
+                              Discard=c(4,5,6))
 
-MOMlist <- list(RSMOM_season, GGMOM_season)
+saveRDS(Fleet_Structure, 'Build_Package/Objects/Stock_data/RS_Fleet_Structure.rds')
 
-# ---- Combine Single Stock MOMs into Multi-Stock MOM ----
+seasonal_F_List <- readRDS('Build_Package/Objects/Stock_data/RS_seasonalF.rds')
 
-MOM <- MOMlist[[1]]
-MOM@Name <- 'Red Snapper & Gag Grouper MOM'
+RSMOM_season <- structure_OM(rdat=rdat_RedSnapper,
+                             stock_name='Red Snapper',
+                             nsim=nsim,
+                             pyears,
+                             CAL_bins,
+                             Fleet_Structure,
+                             seasonal_F_List= seasonal_F_List)
 
-n.moms <- length(MOMlist)
+
+saveRDS(RSMOM_season, 'Build_Package/Objects/Stock_OMs/RS_basecase.mom')
+
+# ---- Build Gag OM ----
+
+Fleet_Structure <- data.frame(Name=c('Commercial Handline',
+                                     'Recreational Headboat',
+                                     'General Recreational',
+                                     'Commercial Dive'),
+                              Landing=c(1,3,4, 2),
+                              Discard=c(5,6,7, NA))
+
+saveRDS(Fleet_Structure, 'Build_Package/Objects/Stock_data/GG_Fleet_Structure.rds')
+
+seasonal_F_List <- readRDS('Build_Package/Objects/Stock_data/GG_seasonalF.rds')
+
+GGMOM_season <- structure_OM(rdat=rdat_GagGrouper,
+                             stock_name='Gag Grouper',
+                             nsim=nsim,
+                             pyears,
+                             CAL_bins,
+                             Fleet_Structure,
+                             seasonal_F_List= seasonal_F_List)
 
 
-# checks
-nsims <- lapply(MOMlist, slot, name='nsim') %>% unlist()
-if (!all(nsims==nsims[1]))
-  stop('nsim must be the same for all MOMs')
-nsim <- nsim[1]
-proyears <- lapply(MOMlist, slot, name='proyears') %>% unlist()
-proyears <- proyears[1]
-if (!all(proyears==proyears[1]))
-  stop('proyears must be the same for all MOMs')
+GG_Comm_Season <- readRDS('Build_Package/Objects/Stock_data/GG_Comm_Season.rds')
+GG_Rec_Season <- readRDS('Build_Package/Objects/Stock_data/GG_Rec_Season.rds')
 
-# check fleet names
-fl_list <- list()
-for (s in 1:n.moms) {
-  n.fleets <- MOMlist[[s]]@Fleets[[1]] %>% length()
-  fleet.names <- names(MOMlist[[s]]@Fleets[[1]])
-  fl_list[[s]] <- data.frame(Fleets=fleet.names)
+
+Comm_SzLim <- data.frame(Year=1992:1998, Size_Limit=inch2mm(20))
+RecSzLim <- bind_rows(data.frame(Year=1992:1998, Size_Limit=MSEgraph::inch2mm(20)),
+                      data.frame(Year=1999:2009, Size_Limit=MSEgraph::inch2mm(24)))
+
+
+GGMOM_season <- add_size_limits_GG(GGMOM_season, GG_Comm_Season, GG_Rec_Season,
+                               Comm_SzLim, RecSzLim)
+
+
+saveRDS(GGMOM_season, 'Build_Package/Objects/Stock_OMs/GG_basecase.mom')
+
+
+# ---- Combine OMs into a Multi-Stock OM ----
+RSMOM_season <- readRDS('Build_Package/Objects/Stock_OMs/RS_basecase.mom')
+GGMOM_season <- readRDS('Build_Package/Objects/Stock_OMs/GG_basecase.mom')
+
+
+MOM <- Combine_OMs(MOMlist=list(RSMOM_season, GGMOM_season), Name='Red Snapper & Gag Grouper MOM')
+
+
+# ---- Define Spatial Structure for Stocks -----
+
+library(MSEtool)
+library(ggplot2)
+library(dplyr)
+
+assign_region <- function(DF, df, region='name') {
+  ch <- chull(df$X, df$Y)
+  coords <- df[c(ch, ch[1]), ] %>% select(X, Y)
+  coords <- usmap::usmap_transform(coords, c('X', 'Y'),
+                            c('x', 'y'))
+
+  tt <- splancs::inpip(DF, coords)
+  DF$Region[tt] <- region
+  DF
 }
-all.fleets <- do.call('rbind', fl_list) %>% unique()  %>% unlist()
-n.fleet.by.stock <- lapply(fl_list, nrow) %>% unlist()
-max.fleet <- n.fleet.by.stock%>% max()
 
-# add dummy fleets to MOM
-for (s in 1:n.moms) {
-  n.fleets <- MOMlist[[s]]@Fleets[[1]] %>% length()
-  if (n.fleets <max.fleet) {
-    # need to add dummy fleet(s)
-    missing.fleets <- all.fleets[!all.fleets %in% (unlist(fl_list[[s]]))]
-    for (fl in seq_along(missing.fleets)) {
-      dummy.fleet <- as.vector(missing.fleets[fl])
-      n.fleets <- MOMlist[[s]]@Fleets[[1]] %>% length()
-      MOMlist[[s]]@Fleets[[1]][[n.fleets+1]] <- new('Fleet')
-      MOMlist[[s]]@Obs[[1]][[n.fleets+1]] <- new('Obs')
-      MOMlist[[s]]@Imps[[1]][[n.fleets+1]] <- new('Imp')
-      n.cpars <- MOMlist[[s]]@cpars[[1]] %>% length()
-      MOMlist[[s]]@cpars[[1]][[n.cpars+1]] <- list()
-
-      # copy fleet, obs, and imp properties and cpars from fleet in other MOM (the first one it finds)
-      for (ss in 1:length(fl_list)) {
-        ind <- which(dummy.fleet == (fl_list[[ss]] %>% unlist()))
-        if (length(ind)>0)
-          break()
-      }
-      MOMlist[[s]]@Fleets[[1]][[n.fleets+1]] <- MOMlist[[ss]]@Fleets[[1]][[ind]]
-      MOMlist[[s]]@Fleets[[1]][[n.fleets+1]]@Name <- dummy.fleet
-      MOMlist[[s]]@cpars[[1]][[n.fleets+1]] <- MOMlist[[ss]]@cpars[[1]][[ind]]
-      MOMlist[[s]]@Obs[[1]][[n.fleets+1]] <- MOMlist[[ss]]@Obs[[1]][[ind]]
-      MOMlist[[s]]@Imps[[1]][[n.fleets+1]] <- MOMlist[[ss]]@Imps[[1]][[ind]]
-
-      MOMlist[[s]]@CatchFrac[[1]] <- cbind(MOMlist[[s]]@CatchFrac[[1]],rep(0, nsim))
-      # set q to 0
-      MOMlist[[s]]@cpars[[1]][[n.fleets+1]]$qs <- rep(0, nsim)
-
-      nms <- names(MOMlist[[s]]@Fleets[[1]])
-      nms[length(nms)] <- missing.fleets[fl]
-      names(MOMlist[[s]]@Fleets[[1]]) <- nms
-
-    }
-  }
-
-}
-
-
-# re-order fleets, cpars, and CatchFrac so names match
-fl_list <- list()
-for (s in 1:n.moms) {
-  n.fleets <- MOMlist[[s]]@Fleets[[1]] %>% length()
-  fleet.names <- names(MOMlist[[s]]@Fleets[[1]])
-  fl_list[[s]] <- data.frame(Fleets=fleet.names)
-}
-
-# re-order to match Stock 1
-for (s in 2:n.moms) {
-  ind <- match(unlist(fl_list[[1]]), unlist(fl_list[[s]]))
-  MOMlist[[s]]@Fleets[[1]] <-  MOMlist[[s]]@Fleets[[1]][ind]
-  MOMlist[[s]]@CatchFrac[[1]] <- MOMlist[[s]]@CatchFrac[[1]][,ind]
-  MOMlist[[s]]@cpars[[1]] <-  MOMlist[[s]]@cpars[[1]][ind]
-  MOMlist[[s]]@Obs[[1]] <-  MOMlist[[s]]@Obs[[1]][ind]
-  MOMlist[[s]]@Imps[[1]] <-  MOMlist[[s]]@Imps[[1]][ind]
+calc_ratio <- function(df) {
+  vals <- df$Relative_B
+  vals/vals[2]
 }
 
 
+areas_df <- readRDS('data_spatial/areas_df.rds')
 
-# final check on fleet names
-for (s in 1:n.moms) {
-  n.fleets <- MOMlist[[s]]@Fleets[[1]] %>% length()
-  fleet.names <- names(MOMlist[[s]]@Fleets[[1]])
-  fl_list[[s]] <- data.frame(Fleets=fleet.names)
-}
-n.fleets.per.stock <- lapply(fl_list, nrow) %>% unlist()
-if (!all(n.fleets.per.stock==max.fleet))
-  stop('Error adding dummy fleets')
+nage <- MOM@Stocks$`Red Snapper`@maxage+1
+nsim <- MOM@nsim
+nareas <- nrow(areas_df)
+Ages <- 0:(nage-1)
 
+### SCDNR Data - Bubley et al 2023
+# Calculate relative biomass in each region
+# doesn't cover entire Florida region
+data_dir <- 'G:/Shared drives/BM shared/1. Projects/Snapper - Grouper SAFMC/Data/spatial'
+RSdata <- readxl::read_excel(file.path(data_dir, 'SCDNR_SpeciesAbundance_Hordyk_02172023.xlsx'), 'SCDNR_RS')
+GGdata <- readxl::read_excel(file.path(data_dir, 'SCDNR_SpeciesAbundance_Hordyk_02172023.xlsx'), 'SCDNR_Gag')
 
-# calculate maximum age - needs to be the same for all stocks
-stocks <- lapply(MOMlist, slot, name='Stocks')
-n.stocks <- length(stocks)
-maxage <- lapply(lapply(stocks, '[[', 1), slot, name='maxage') %>% unlist() %>% max()
-nage <- maxage+1
-# combine stock slots
-MOM@Stocks <- vector('list', n.stocks)
-for (s in 1:n.stocks) {
-  MOM@Stocks[[s]] <- stocks[[s]][[1]]
-  MOM@Stocks[[s]]@maxage <- maxage
-  names(MOM@Stocks)[s] <- stocks[[s]][[1]]@Name
-}
+# Make data frame
+DF <- bind_rows(RSdata, GGdata)%>%
+  filter(is.na(TotalWt)==FALSE) %>%
+  group_by(Species) %>%
+  mutate(Rel_Abundance=TotalWt/SamplingDur) %>%
+  usmap::usmap_transform(., c('Longitude', 'Latitude'),
+                  c('x', 'y'))
 
+# Assign survey to regions
+DF$Region <- ''
 
-# combine fleets, obs, imps, & cpars
-MOM@Fleets <-  vector('list', n.stocks)
-names(MOM@Fleets) <-  names(MOM@Stocks)
-MOM@Obs <- vector('list', n.stocks)
-names(MOM@Obs) <-  names(MOM@Stocks)
-MOM@Imps <- vector('list', n.stocks)
-names(MOM@Imps) <-  names(MOM@Stocks)
-MOM@cpars <-  vector('list', n.stocks)
-names(MOM@cpars) <-  names(MOM@Stocks)
-MOM@CatchFrac <- vector('list', n.stocks)
-names(MOM@CatchFrac) <-  names(MOM@Stocks)
+Regions <- readRDS('Build_Package/Objects/Regions.rds')
 
-for (s in 1:n.moms) {
-  n.fleet <- length(MOMlist[[s]]@Fleets[[1]])
-  MOM@Fleets[[s]] <- vector('list', n.fleet)
-  MOM@cpars[[s]] <- vector('list', n.fleet)
-  for (fl in 1:n.fleet) {
-    MOM@Fleets[[s]][[fl]] <- MOMlist[[s]]@Fleets[[1]][[fl]]
-    MOM@Obs[[s]][[fl]] <- MOMlist[[s]]@Obs[[1]][[fl]]
-    MOM@Imps[[s]][[fl]] <- MOMlist[[s]]@Imps[[1]][[fl]]
-    MOM@cpars[[s]][[fl]] <- MOMlist[[s]]@cpars[[1]][[fl]]
-  }
-  MOM@CatchFrac[[s]] <- MOMlist[[s]]@CatchFrac[[1]]
+NC_SC <- Regions %>% filter(Region=='North and South Carolina')
+GA_CpC <- Regions %>% filter(Region=='Georgia - Cape Canaveral')
+CpC_FL <- Regions %>% filter(Region=='Cape Canaveral - Florida')
 
-  # add fleet names
-  names(MOM@Fleets[[s]]) <- fleet.names
-  names(MOM@Obs[[s]]) <- fleet.names
-  names(MOM@Imps[[s]]) <- fleet.names
-  names(MOM@cpars[[s]]) <- fleet.names
-}
+DF <- assign_region(DF,  NC_SC, 'North and South Carolina')
+DF <- assign_region(DF, GA_CpC, 'Georgia - Cape Canaveral')
+DF <- assign_region(DF, CpC_FL, 'Cape Canaveral - Florida')
+DF <- DF %>% filter(Region!='')
+DF$Region <- factor(DF$Region, ordered = TRUE, levels=unique(DF$Region))
+
+DF_abun <- DF %>% group_by(Species) %>%
+  mutate(TotalAbun=sum(Rel_Abundance)) %>%
+  group_by(Species, Region) %>%
+  mutate(Abun=sum(Rel_Abundance)) %>%
+  mutate(RelB=Abun/TotalAbun) %>%
+  distinct(Species, Region, Relative_B=RelB*100)
+
+DF_abun$Stock <- rep(c('Red Snapper', 'Gag'),each=3)
+
+## Red Snapper Base Case Regional Spatial Structure ----
+
+# SCDNR report (Bubley et al. 2023) used to calculate ratio of biomass in
+# Carolinas relative to Georgia - Cape Canaveral (~1/4 amount in Carolinas)
 
 
-# update all arrays to match n.age and n.years
-get_nyear <- function(MOM) {
-  data.frame(CurrentYr= MOM@Fleets[[1]][[1]]@CurrentYr,
-             NYr=MOM@Fleets[[1]][[1]]@nyears)
-}
+RS_frac_region <- DF_abun %>% filter(Stock=='Red Snapper') %>% calc_ratio(.)
 
-nyear_df <- lapply(MOMlist, get_nyear) %>% do.call('rbind', .)
-nyear_df$Stock <- 1:length(MOMlist)
-if (!all(nyear_df$CurrentYr == nyear_df$CurrentYr[1]))
-  stop('Current Year must be the same for all Stocks/Fleets for this function to work')
+# currently ASSUMING twice as much unfished biomass south of Cape Canaveral
+# compared to Cape Canaveral - Georgia border. Need to update when more information is
+# available
+RS_frac_region <- c(0.25, 1, 2)
 
-
-# update cpars - for missing years and age-classes
-curYr <- nyear_df$CurrentYr[1]
-nyear <- nyear_df$NYr %>% max()
-hist.yrs <- rev(seq(curYr, by=-1, length.out=nyear))
-
-update_cpars <- function(cpars, nyear, nage, proyears) {
-  D <- dim(cpars$Len_age)
-  this.nage <- D[2]
-  this.nyear <- dim(cpars$Find)[2]
-  if (nyear !=this.nyear | nage!=this.nage) {
-    # need to update
-    cpars.dim <- lapply(cpars, dim)
-    for (i in seq_along(cpars.dim)) {
-      if (!is.null(cpars.dim[[i]])) {
-        # update 3D arrays
-        if (length(cpars.dim[[i]])==3) {
-          dummy.age <- nage - cpars.dim[[i]][2]
-          dummy.yr <- nyear - (cpars.dim[[i]][3]-proyears)
-
-          # add ages
-          if(names(cpars.dim[i]) != 'Fdisc_array2') {
-            if (names(cpars.dim[i]) == 'V' | names(cpars.dim[i]) == 'retA') {
-              # use the value from the last age class
-              dummy.val <- cpars[[i]][1,cpars.dim[[i]][2],this.nyear]
-              dummy.val <- array(dummy.val, dim=c(nsim, dummy.age, this.nyear+proyears))
-            } else {
-              # populate with zeros
-              dummy.val <- array(0, dim=c(nsim, dummy.age, this.nyear+proyears))
-            }
-          }
-
-          if(names(cpars.dim[i]) != 'Fdisc_array2') {
-            cpars[[i]] <- abind::abind(cpars[[i]], dummy.val, along=2)
-          }
+frac_region_DF <- data.frame(Region=c("North and South Carolina",
+                                      "Georgia - Cape Canaveral",
+                                      "Cape Canaveral - Florida"),
+                             `Red Snapper`=round(RS_frac_region/sum(RS_frac_region),2))
 
 
-          # add years
-          dummy.val <- replicate(dummy.yr, cpars[[i]][,,1])
-          cpars[[i]] <- abind::abind(dummy.val, cpars[[i]], along=3)
-        }
-        # update 2D matrices
-        if (length(cpars.dim[[i]])==2) {
-          # add years
-          if (names(cpars.dim[i]) == 'Perr_y') {
-            dummy.age <- nage - this.nage
 
-            # first add 1s for additional ages
-            dummy.val <- matrix(1, nrow=nsim, ncol=dummy.age)
-            cpars[[i]] <- cbind(dummy.val, cpars[[i]])
+## Gag Base Case Regional Spatial Structure ----
+GG_frac_region <- DF_abun %>% filter(Stock!='Red Snapper') %>% calc_ratio(.)
 
-            # add additional years
-            add.yrs <- (nyear+proyears+nage-1) - dim(cpars[[i]])[2]
-            new_Perr_y <- array(NA, dim=c(nsim, (nyear+proyears+nage-1)))
+# ASSUME Florida region unfished biomass is 0.5 Georgia - Cape Canaveral region
+GG_frac_region <- c(2.5, 1, 0.5)
 
-            # populate first n_age
-            new_Perr_y[,1:nage] <- cpars[[i]][,1:nage]
+GG_frac_region <- round(GG_frac_region/sum(GG_frac_region),2)
 
-            # add additional initial years
-            new_Perr_y[,(nage+1):(add.yrs+nage)] <- 1
-            #
-            # # add additional initial years
-            # new_Perr_y[,1:add.yrs] <- 1
-            #
-            # # populate first n_age
-            # new_Perr_y[,(add.yrs+1):(add.yrs+nage)] <- cpars[[i]][,1:nage]
-            #
+frac_region_DF$Gag <- GG_frac_region
 
-            # populate rest
-            new_Perr_y[,(add.yrs+nage+1):ncol(new_Perr_y)] <- cpars[[i]][,(nage+1):ncol(cpars[[i]])]
-            cpars[[i]] <- new_Perr_y
+frac_region_DF <- frac_region_DF %>% tidyr::pivot_longer(., cols=2:3, names_to ='Stock', values_to='Frac_Area')
+frac_region_DF$Stock[frac_region_DF$Stock=='Red.Snapper'] <- 'Red Snapper'
+saveRDS(frac_region_DF, 'Build_Package/Objects/BaseCase/Spatial_Regional_Dist.rds')
 
-          } else {
-            if (names(cpars.dim[i]) == 'Find') {
-              val <- 0
-              dummy.yr <- (nyear)-(cpars.dim[[i]][2])
-              dummy.val <- matrix(val, nrow=nsim, ncol=dummy.yr)
-              cpars[[i]] <- abind::abind(dummy.val, cpars[[i]], along=2)
-            } else {
-              val <- 0
-              dummy.yr <- (nyear)-(cpars.dim[[i]][2]-proyears)
-              dummy.val <- matrix(val, nrow=nsim, ncol=dummy.yr)
-              cpars[[i]] <- abind::abind(dummy.val, cpars[[i]], along=2)
-            }
+## Red Snapper Age-Depth Distribution ----
 
-          }
-        }
-      }
-    }
-  }
-  cpars
-}
+# Mitchell et al (2014) - ages < 3 mostly in shallow waters, no difference in distribution for ages > 3
+Age_Frac_NS <- rep(0.5, length(Ages))
+Age_Frac_NS[1:4] <- (0.8^(0:3)) - 0.012
 
-for (s in 1:n.moms) {
-  n.fleet <- length(MOMlist[[s]]@Fleets[[1]])
-  for (fl in 1:n.fleet) {
-    MOM@Fleets[[s]][[fl]]@nyears <- nyear
-    cpars <- MOM@cpars[[s]][[fl]]
-    MOM@cpars[[s]][[fl]] <- update_cpars(cpars, nyear, nage, proyears)
-  }
-}
+df_NS <- data.frame(Age=Ages, Depth='Nearshore', Frac_Depth= Age_Frac_NS)
+df_OS <- data.frame(Age=Ages, Depth='Offshore', Frac_Depth= 1-df_NS$Frac_Depth)
+df_age_RS <- dplyr::bind_rows(df_NS, df_OS)
+df_age_RS$Stock <- 'Red Snapper'
 
-# ---- set TAC for Off-Season fleets to Removals instead of Retained Landings ----
-MOM@cpars$control$TAC <- 'removals'
+saveRDS(df_age_RS, 'Build_Package/Objects/BaseCase/RS_Age_Depth_Dist.rds')
 
-# ---- Set Observation Parameters for OM ----
+## Gag Age-Depth Distribution ----
 
-for (s in 1:n.moms) {
-  n.fleet <- length(MOMlist[[s]]@Fleets[[1]])
-  for (fl in 1:n.fleet) {
+# Fraction of unfished age class in near-shore waters
+# Carruthers et al 2015 - estimated from GOM
+# also Gruss et al
+Age_Frac_NS <- rep(0.015, length(Ages))
 
-    # Set all Obs to Perfect_Info for now
-    MOM@Obs[[s]][[fl]] <- Obs_Model
+Age_Frac_NS[1:10] <- 0.65* (0.7^(0:9))
 
-    # set CAL samples high so can use results in PMs
-    MOM@Obs[[s]][[fl]]@CAL_ESS <- c(10000, 10000)
-    MOM@Obs[[s]][[fl]]@CAL_nsamp <- c(10000, 10000)
-  }
-}
+df_NS <- data.frame(Age=Ages, Depth='Nearshore', Frac_Depth= Age_Frac_NS)
+df_OS <- data.frame(Age=Ages, Depth='Offshore', Frac_Depth= 1-df_NS$Frac_Depth)
+df_age_GG <- dplyr::bind_rows(df_NS, df_OS)
+df_age_GG$Stock <- 'Gag'
+saveRDS(df_age_GG, 'Build_Package/Objects/BaseCase/GG_Age_Depth_Dist.rds')
+
+## Calculate Regional-Depth Unfished Distribution by Age ----
+
+df_age_dist <- dplyr::bind_rows(df_age_RS, df_age_GG)
+Frac_Age_Region <- calc_region_depth_dist(areas_df, df_age_dist, frac_region_DF)
+
+saveRDS(Frac_Age_Region, 'Build_Package/Objects/BaseCase/Frac_Age_Region.rds')
+
+p <- ggplot(Frac_Age_Region,
+            aes(x=Age, y=Frac_Depth_Area, color=Region)) +
+  facet_grid(Stock~Depth) +
+  geom_line() +
+  ylim(0,1) +
+  theme_bw() +
+  labs(y='Proportion')
+
+p
+
+ggsave('img/Spatial/BaseCase_dist.png', p, width=6, height=4)
+
+## - Define Relative Probability of Moving to other Areas ----
+
+# relative probability of moving from row area to column area
+frac_other <- matrix(NA, nrow=nareas, ncol=nareas)
+frac_other[1,] <- c(NA, 1, 1, 1, 0.01, 0.01)
+frac_other[2,] <- c(1, NA, 1, 1, 0.01, 0.01)
+frac_other[3,] <- c(1, 1, NA, 1, 1, 1)
+frac_other[4,] <- c(1, 1, 1, NA, 1, 1)
+frac_other[5,] <- c(0.01, 0.01, 1, 1, NA, 1)
+frac_other[6,] <- c(0.01, 0.01, 1, 1, 1, NA)
+
+saveRDS(frac_other, 'Build_Package/Objects/BaseCase/frac_other.rds')
 
 
+# ---- Update OM with Stock Spatial Structure ----
+
+# assuming 95% prob of staying within an area in a given year for both stocks
+# assuming both stocks have same relative probability of moving
+
+MOM <- add_spatial_to_OM(MOM,
+                         average_prob=list(0.95,0.95),
+                         frac_other=list(frac_other,frac_other),
+                         Frac_Age_Region)
 
 # ---- Save MOM as SAMSE Data Object ----
 OM_01 <- MOM
 
 usethis::use_data(OM_01, overwrite = TRUE)
-
 
 
 
