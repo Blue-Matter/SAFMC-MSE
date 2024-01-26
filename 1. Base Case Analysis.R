@@ -131,6 +131,39 @@ class(Ftarget) <- 'MMP'
 
 
 
+# Status Quo but Reduce Rec Effort 20%
+SQRecEffort20 <- function(x, DataList, ...) {
+
+  stocks <- unique(Fleet_Management$Stock)
+  fleets <- unique(Fleet_Management$Fleet)
+  nstocks <- length(stocks)
+  nfleets <- length(fleets)
+
+  # copy the internal `Fleet_Management` object
+  this_Fleet_Management <- Fleet_Management
+
+  # loop over stocks and fleets
+  for (s in 1:nstocks) {
+    for (f in 1:nfleets) {
+      # calculate mean F from 3 last historical years
+      meanF <- mean(DataList[[s]][[f]]@Misc$FleetPars$Fishing_Mortality[x,68:70])
+      # populate the `F` value in `this_Fleet_Management` object
+      this_Fleet_Management <- this_Fleet_Management %>%
+        dplyr::mutate(F=replace(F, Stock==stocks[s] &Fleet==fleets[f], meanF))
+    }
+  }
+
+  # reduce rec effort by 20%
+  rec_fleets <- fleets[grepl('General Recreational', fleets)]
+  this_Fleet_Management <- this_Fleet_Management %>% mutate(F = ifelse(Fleet%in% rec_fleets, 0.8*F, F))
+
+  # call internal `Fleet_MMP` function with `this_Fleet_Management` object
+  Fleet_MMP(x, DataList, Fleet_Management=this_Fleet_Management)
+}
+# define as class `MMP`
+class(SQRecEffort20) <- 'MMP'
+
+
 
 # ----- Run Projections -----
 
@@ -139,6 +172,8 @@ run_projections <- TRUE
 if (run_projections) {
   # Run Projections with MPs
   MMSE <- ProjectMOM(multiHist, MPs=c('StatusQuo',
+                                      'StatusQuo_MLL',
+                                      'SQRecEffort20',
                                       'Ftarget'),
                      dropHist = FALSE)
 
@@ -155,15 +190,13 @@ if (run_projections) {
 
 
 plot_Fmort(MMSE)
-ggsave('img/MSE/F.png', width=8, height=6)
+ggsave('img/MSE/F.png', width=12, height=6)
 
 plot_Catch(MMSE)
-
-ggsave('img/MSE/Catch.png', width=8, height=6)
+ggsave('img/MSE/Catch.png', width=12, height=6)
 
 plot_SB(MMSE)
-
-ggsave('img/MSE/SB.png', width=8, height=6)
+ggsave('img/MSE/SB.png', width=12, height=6)
 
 
 

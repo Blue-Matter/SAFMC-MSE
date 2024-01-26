@@ -350,9 +350,9 @@ Combine_OMs <- function(MOMlist, Name, truncsd=2) {
 }
 
 
-calc_region_depth_dist <- function(areas_df, df_age_dist, frac_region_DF) {
-  Age_Region <- dplyr::left_join(areas_df, df_age_dist, relationship = "many-to-many")
-  Frac_Age_Region <- dplyr::left_join(Age_Region, frac_region_DF) %>%
+calc_region_depth_dist <- function(df_age_dist, frac_region_DF) {
+
+  Frac_Age_Region <- dplyr::left_join(df_age_dist, frac_region_DF) %>%
     group_by(Age, Stock) %>%
     mutate(Frac_Depth_Area=Frac_Depth*Frac_Area)
   Frac_Age_Region$Region <- factor(Frac_Age_Region$Region, levels(areas_df$Region))

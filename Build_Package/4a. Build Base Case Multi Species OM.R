@@ -182,7 +182,17 @@ Age_Frac_NS[1:4] <- (0.8^(0:3)) - 0.012
 df_NS <- data.frame(Age=Ages, Depth='Nearshore', Frac_Depth= Age_Frac_NS)
 df_OS <- data.frame(Age=Ages, Depth='Offshore', Frac_Depth= 1-df_NS$Frac_Depth)
 df_age_RS <- dplyr::bind_rows(df_NS, df_OS)
+
 df_age_RS$Stock <- 'Red Snapper'
+
+# adjust for density
+df_age_RS <- left_join(areas_df, df_age_RS, relationship = "many-to-many")%>%
+  group_by(Region, Age) %>%
+  mutate(Relative.Size=Relative.Size/sum(Relative.Size),
+         Frac_Depth=Frac_Depth*Relative.Size) %>%
+  mutate(Frac_Depth=Frac_Depth/sum(Frac_Depth))
+
+
 
 saveRDS(df_age_RS, 'Build_Package/Objects/BaseCase/RS_Age_Depth_Dist.rds')
 
@@ -199,14 +209,48 @@ df_NS <- data.frame(Age=Ages, Depth='Nearshore', Frac_Depth= Age_Frac_NS)
 df_OS <- data.frame(Age=Ages, Depth='Offshore', Frac_Depth= 1-df_NS$Frac_Depth)
 df_age_GG <- dplyr::bind_rows(df_NS, df_OS)
 df_age_GG$Stock <- 'Gag'
+
+# adjust for density
+df_age_GG <- left_join(areas_df, df_age_GG, relationship = "many-to-many")%>%
+  group_by(Region, Age) %>%
+  mutate(Relative.Size=Relative.Size/sum(Relative.Size),
+         Frac_Depth=Frac_Depth*Relative.Size) %>%
+  mutate(Frac_Depth=Frac_Depth/sum(Frac_Depth))
+
 saveRDS(df_age_GG, 'Build_Package/Objects/BaseCase/GG_Age_Depth_Dist.rds')
 
 ## Calculate Regional-Depth Unfished Distribution by Age ----
 
 df_age_dist <- dplyr::bind_rows(df_age_RS, df_age_GG)
-Frac_Age_Region <- calc_region_depth_dist(areas_df, df_age_dist, frac_region_DF)
+Frac_Age_Region <- calc_region_depth_dist(df_age_dist, frac_region_DF)
 
 saveRDS(Frac_Age_Region, 'Build_Package/Objects/BaseCase/Frac_Age_Region.rds')
+
+
+p <- ggplot(Frac_Age_Region,
+            aes(x=Age, y=Frac_Area, color=Region)) +
+  facet_grid(Stock~Region) +
+  geom_line() +
+  ylim(0,1) +
+  theme_bw() +
+  labs(y='Proportion') +
+  guides(color='none')
+
+p
+ggsave('img/Spatial/BaseCase_Area_dist.png', p, width=6, height=4)
+
+
+p <- ggplot(Frac_Age_Region,
+            aes(x=Age, y=Frac_Depth, color=Region)) +
+  facet_grid(Stock~Depth) +
+  geom_line() +
+  ylim(0,1) +
+  theme_bw() +
+  labs(y='Proportion')
+
+p
+ggsave('img/Spatial/BaseCase_NS_OF_dist.png', p, width=6, height=4)
+
 
 p <- ggplot(Frac_Age_Region,
             aes(x=Age, y=Frac_Depth_Area, color=Region)) +
@@ -219,6 +263,7 @@ p <- ggplot(Frac_Age_Region,
 p
 
 ggsave('img/Spatial/BaseCase_dist.png', p, width=6, height=4)
+
 
 ## - Define Relative Probability of Moving to other Areas ----
 
