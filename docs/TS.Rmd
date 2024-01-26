@@ -443,19 +443,19 @@ knitr::kable(dat, caption='The relative size (%) of the six areas defined for th
 
 ## Latitudinal Distribution of Unfished Abundance  
 
-Information on the unfished distribution of Red Snapper and Gag is not available. Instead, the assumed unfished distribution was derived from various sources of information, including the CDNR Reef Fish Survey [@bubley2023] and studies reported in the literature.
+Information on the unfished distribution of Red Snapper and Gag is not available. Instead, the assumed unfished distribution was derived from various sources of information, including the South-East Reef Fish Survey (SERFS) [@bubley2023] and studies reported in the literature.
 
 It may also be possible to use other data, such as CPUE information from MRIP and headboat surveys or a deepwater longline survey, to calculate improved estimate of the relative abundance of Red Snapper and Gag Grouper across the three regions.
 
 **Red Snapper**
 
-Data from the SCDNR Reef Fish Survey [@bubley2023] was used to calculate the average relative abundance from 1990 -- 2022 of Red Snapper and Gag in each of the three geographic areas included in the MSE. 
+Data from SERFS [@bubley2023] was used to calculate the average relative abundance from 1990 -- 2022 of Red Snapper and Gag in each of the three geographic areas included in the MSE. 
 
 This analysis reports that the highest abundance of Red Snapper is in the Georgia - Cape Canaveral region, and the abundance in North and South Carolina is about 1/4 of that in the Georgia - Cape Canaveral region. The data from the survey suggests that the relative abundance in the Cape Canaveral - Florida region is about 7% of that in the Georgia - Cape Canaveral region. 
 
-However, the SCDNR survey did not include the entire Florida region included in the SAFMC management area, but stopped at the St. Lucie Inlet, FL. Consequently, the SCDNR survey data may significantly under-estimate the relative average abundance of Red Snapper in the Florida region included in the MSE. 
+However, the SERFS survey did not include the entire Florida region included in the SAFMC management area, but stopped at the St. Lucie Inlet, FL. Consequently, the SERFS data may significantly under-estimate the relative average abundance of Red Snapper in the Florida region included in the MSE. 
 
-The most recent assessment of Red Snapper from the Gulf of Mexico ([SEDAR 52](https://sedarweb.org/documents/sedar-52-gulf-of-mexico-red-snapper-final-stock-assessment-report/)) estimates an unfished biomass in the east of the GoM about 6 times higher than the unfished biomass estimated for Red Snapper in the SAMFC region ([SEDAR 73](https://sedarweb.org/documents/sedar-73-stock-assessment-report-south-atlantic-red-snapper/)). This suggests that the abundance of Red Snapper is considerably higher in the Gulf of Mexico, and indicates a pattern of decreasing abundance of Red Snapper with increasing latitude, a result supported by the SCDNR survey [@bubley2023].
+The most recent assessment of Red Snapper from the Gulf of Mexico ([SEDAR 52](https://sedarweb.org/documents/sedar-52-gulf-of-mexico-red-snapper-final-stock-assessment-report/)) estimates an unfished biomass in the east of the GoM about 6 times higher than the unfished biomass estimated for Red Snapper in the SAMFC region ([SEDAR 73](https://sedarweb.org/documents/sedar-73-stock-assessment-report-south-atlantic-red-snapper/)). This suggests that the abundance of Red Snapper is considerably higher in the Gulf of Mexico, and indicates a pattern of decreasing abundance of Red Snapper with increasing latitude, a result supported by the SERFS survey [@bubley2023].
 
 Based on this information, the Base Case OM currently assumes that the unfished abundance of Red Snapper in the Cape Canaveral - Florida region is twice as high as that in the Georgia - Cape Canaveral region (Table \@ref(tab:BCdist)). 
 
@@ -463,9 +463,9 @@ Alternative operating models can be developed to evaluate the sensitivity of the
 
 **Gag**
 
-The analysis of the SCDNR Reef Fish Survey [@bubley2023] data reveals that the abundance of Gag in the North and South Carolina region is about 2.5 times higher than that in the Georgia - Cape Canaveral region, and the lowest abundance south of Cape Canaveral. This suggests a pattern of increasing abundance of Gag with increasing latitude. This is supported by the study of @gruss2017, who report that Gag are most common in the north-east region of the Gulf of Mexico compared to regions further south. 
+The analysis of the SERFS [@bubley2023] data reveals that the abundance of Gag in the North and South Carolina region is about 2.5 times higher than that in the Georgia - Cape Canaveral region, and the lowest abundance south of Cape Canaveral. This suggests a pattern of increasing abundance of Gag with increasing latitude. This is supported by the study of @gruss2017, who report that Gag are most common in the north-east region of the Gulf of Mexico compared to regions further south. 
 
-Given this information, and the fact that the SCDNR survey likely under-estimates the abundance of Gag in the Cape Canaveral - Florida region, the Base Case OM assumes that the unfished abundance in the  Cape Canaveral - Florida region is half of that in the Georgia - Cape Canaveral region (Table \@ref(tab:BCdist)). 
+Given this information, and the fact that the SERFS survey likely under-estimates the abundance of Gag in the Cape Canaveral - Florida region, the Base Case OM assumes that the unfished abundance in the  Cape Canaveral - Florida region is half of that in the Georgia - Cape Canaveral region (Table \@ref(tab:BCdist)). 
 
 Alternative operating models can be developed to evaluate the sensitivity of the results to this assumption.
 
