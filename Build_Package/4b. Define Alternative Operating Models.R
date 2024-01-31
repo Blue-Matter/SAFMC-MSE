@@ -138,75 +138,198 @@ OM_03 <- add_spatial_to_OM(MOM,
                            Frac_Age_Region)
 
 usethis::use_data(OM_03, overwrite = TRUE)
-
-# ---- OM_04 - Sporadic Failures in Future Recruitment ----
+#
+# # ---- OM_04 - Possible over-estimation of general recreational catch ----
 
 
 ## Red Snapper ----
 
-OM <- OM_01
+bam <- bam2r("RedSnapper")
 
-sim <- 1
-cyear <- OM@Fleets$`Red Snapper`$`Commercial Handline: On-Season`@CurrentYr
-nyears <- OM@Stocks$`Red Snapper`@maxage+OM@Fleets$`Red Snapper`$`Commercial Handline: On-Season`@nyears
+# reduced General recreational Landings and Discards by 40% of the values used in Base Case
+bam$init$obs_L_rGN <- as.character(0.6 * as.numeric(bam$init$obs_L_rGN))
+bam$init$obs_released_rGN <- as.character(0.6 * as.numeric(bam$init$obs_released_rGN))
 
-hstyrs <- rev(seq(cyear, by=-1, length.out=nyears))
-proyrs <- seq(cyear+1, by=1, length.out=OM@proyears)
-yrs <- c(hstyrs, proyrs)
-pe_ind <- (nyears+1):(hist_pe+OM@proyears)
-PE_hist <- OM@cpars$`Red Snapper`$`Commercial Handline: On-Season`$Perr_y[sim,1:nyears]
-PE_proj <- OM@cpars$`Red Snapper`$`Commercial Handline: On-Season`$Perr_y[sim,pe_ind]
+bam <- bam2r("RedSnapper", init=bam$init)
+BAM <- run_bam(bam=bam)
 
+RSMOM <- structure_OM(rdat=standardize_rdat(BAM$rdat),
+                      stock_name='Red Snapper',
+                      nsim=nsim,
+                      pyears,
+                      CAL_bins,
+                      Fleet_Structure=readRDS('Build_Package/Objects/Stock_data/RS_Fleet_Structure.rds'),
+                      seasonal_F_List= readRDS('Build_Package/Objects/Stock_data/RS_seasonalF.rds'))
 
-df <- data.frame(Year=yrs,
-                 PE=c(PE_hist, PE_proj),
-                 Period=c(rep('Historical',nyears), rep('Projection', length(pe_ind))))
+## Gag ----
 
+bam <- bam2r("GagGrouper")
 
+# reduced General recreational Landings and Discards by 40% of the values used in Base Case
+bam$init$obs_L_rGN <- as.character(0.6 * as.numeric(bam$init$obs_L_rGN))
+bam$init$obs_released_rGN <- as.character(0.6 * as.numeric(bam$init$obs_released_rGN))
 
-ggplot(df, aes(x=yrs, y=PE, color=Period)) +
-  geom_line()
+bam <- bam2r("GagGrouper", init=bam$init)
+BAM <- run_bam(bam=bam)
 
-
-
-nfails <- sample(1:5,1)
-
-failyrs <- sort(sample(1:20, nfails))
-PE_proj2 <- PE_proj
-PE_proj2[failyrs] <- PE_proj2[failyrs] *0.5* min(PE_hist)
-
-df$PE_fail <- c(PE_hist, PE_proj2)
-
-df <- df %>% tidyr::pivot_longer(., cols=c('PE', 'PE_fail'))
-ggplot(df, aes(x=Year, y=value, color=Period)) +
-  facet_grid(~name) +
-  geom_line()
+GGMOM <- structure_OM(rdat=standardize_rdat(BAM$rdat),
+                      stock_name='Gag Grouper',
+                      nsim=nsim,
+                      pyears,
+                      CAL_bins,
+                      Fleet_Structure=readRDS('Build_Package/Objects/Stock_data/GG_Fleet_Structure.rds'),
+                      seasonal_F_List= readRDS('Build_Package/Objects/Stock_data/GG_seasonalF.rds'))
 
 
-## Gag Grouper ----
+## Combine Stocks into Multi-Stock OM ----
+MOM <- Combine_OMs(list(RSMOM, GGMOM), Name='Red Snapper & Gag Grouper MOM')
+
+# Add spatial
+frac_other <- readRDS('Build_Package/Objects/BaseCase/frac_other.rds')
+Frac_Age_Region <- readRDS('Build_Package/Objects/BaseCase/Frac_Age_Region.rds')
+
+OM_04 <- add_spatial_to_OM(MOM,
+                           average_prob=list(0.95,0.95),
+                           frac_other=list(frac_other,frac_other),
+                           Frac_Age_Region)
+
+usethis::use_data(OM_04, overwrite = TRUE)
+
+
+# ---- OM_05 - Increased Variability in Recruitment Process Error ----
+OM_05 <- Generate_Future_Rec_Devs(OM_01, sd_multi=c(1.5,1.5))
+
+# compare
+get_proj_PE <- function(OM) {
+  pyears <- OM@proyears
+  tyears <- ncol(OM@cpars[[1]][[1]]$Perr_y)
+  nstock <- length(OM@Stocks)
+  stocks <- names(OM@Stocks)
+  current_yr <- OM@Fleets[[1]][[1]]@CurrentYr
+  df_list <- list()
+  for (i in 1:nstock) {
+    pe <- OM@cpars[[i]][[1]]$Perr_y[,(tyears-pyears+1):tyears]
+    dd <- dim(pe)
+    df <-data.frame(Stock=stocks[i], Sim=1:dd[1], Year=rep(current_yr+(1:dd[2]), each=dd[1]), PE=as.vector(pe))
+    df_list[[i]] <- df
+  }
+  df <- do.call('rbind', df_list)
+
+  pe1<- df %>% filter(Stock=='Red Snapper', Year==2021)
+  pe2<- df %>% filter(Stock=='Red Snapper', Year==2021)
+
+  plot(pe1$PE, pe2$PE)
+
+
+  df$Sim <- factor(df$Sim)
+  df$Stock <- factor(df$Stock, levels=stocks, ordered = TRUE)
+  df
+}
+
+OM_01_PE <- get_proj_PE(OM_01) %>% filter(Sim%in% c(1,6))
+OM_05_PE <- get_proj_PE(OM_05) %>% filter(Sim%in%c(1,6))
+
+OM_01_PE$OM <- 'OM_01'
+OM_05_PE$OM <- 'OM_05'
+
+PE_DF <- rbind(OM_01_PE, OM_05_PE)
+
+ggplot(PE_DF, aes(x=Year, y=PE, group_by(Sim), linetype=Sim)) +
+  facet_grid(Stock~OM, scales='free') +
+  geom_line() +
+  expand_limits(y=0) +
+  guides(linetype='none') +
+  theme_bw() +
+  geom_hline(yintercept = 1, linetype=2, color='darkgrey') +
+  scale_y_continuous(expand = c(0, 0)) +
+  labs(x='Projection Year', y='Recruitment Process Error')
+
+usethis::use_data(OM_05, overwrite = TRUE)
+
+# ---- OM_06 - Increased Rec Effort ----
+# to be done within the MP
+OM_06 <- OM_01
+usethis::use_data(OM_06, overwrite = TRUE)
+
+
+# ---- OM_07 - Lower FL Biomass ----
+
+
+# Relative Unfished biomass in 'Cape Canaveral - Florida' region is half  the Base Case
+
+# base case assumptions
+frac_region_DF <- readRDS('Build_Package/Objects/BaseCase/Spatial_Regional_Dist.rds')
+frac_region_DF$Region <- factor(frac_region_DF$Region, ordered=TRUE, levels=unique(frac_region_DF$Region))
+frac_region_DF$Stock <- factor(frac_region_DF$Stock, ordered=TRUE, levels=unique(frac_region_DF$Stock))
+
+modify_FL_dist <- function(df, FL_multi, ...) {
+  df$Frac_Area[3] <- df$Frac_Area[3] * FL_multi
+  df$Frac_Area <- df$Frac_Area/sum(df$Frac_Area)
+  df
+}
+
+frac_region_DF2 <- frac_region_DF %>%
+  group_by(Stock) %>%
+  group_modify(., modify_FL_dist, FL_multi=0.5)%>%
+  dplyr::relocate(Stock, .after=Region) %>%
+  dplyr::arrange(Region, Stock)
+
+
+df_age_RS <- readRDS('Build_Package/Objects/BaseCase/RS_Age_Depth_Dist.rds')
+df_age_GG <- readRDS('Build_Package/Objects/BaseCase/GG_Age_Depth_Dist.rds')
+df_age_dist <- dplyr::bind_rows(df_age_RS, df_age_GG)
+
+
+Frac_Age_Region <- calc_region_depth_dist(df_age_dist, frac_region_DF2)
+
+frac_other <- readRDS('Build_Package/Objects/BaseCase/frac_other.rds')
+
+OM_07 <- add_spatial_to_OM(OM_01,
+                         average_prob=list(0.95,0.95),
+                         frac_other=list(frac_other,frac_other),
+                         Frac_Age_Region)
+
+usethis::use_data(OM_07, overwrite = TRUE)
+
+# ---- OM_08 - Higher FL Biomass ----
 
 
 
 
 
+# Relative Unfished biomass in 'Cape Canaveral - Florida' region is twice the Base Case
+
+# base case assumptions
+frac_region_DF <- readRDS('Build_Package/Objects/BaseCase/Spatial_Regional_Dist.rds')
+frac_region_DF$Region <- factor(frac_region_DF$Region, ordered=TRUE, levels=unique(frac_region_DF$Region))
+frac_region_DF$Stock <- factor(frac_region_DF$Stock, ordered=TRUE, levels=unique(frac_region_DF$Stock))
+
+frac_region_DF2 <- frac_region_DF %>%
+  group_by(Stock) %>%
+  group_modify(., modify_FL_dist, FL_multi=2)%>%
+  dplyr::relocate(Stock, .after=Region) %>%
+  dplyr::arrange(Region, Stock)
+
+frac_region_DF2 <- frac_region_DF2 %>%
+  group_by(Stock) %>%
+  group_modify(., standardize_areas)%>%
+  dplyr::relocate(Stock, .after=Region) %>%
+  dplyr::arrange(Region, Stock)
 
 
+df_age_RS <- readRDS('Build_Package/Objects/BaseCase/RS_Age_Depth_Dist.rds')
+df_age_GG <- readRDS('Build_Package/Objects/BaseCase/GG_Age_Depth_Dist.rds')
+df_age_dist <- dplyr::bind_rows(df_age_RS, df_age_GG)
 
+Frac_Age_Region <- calc_region_depth_dist(df_age_dist, frac_region_DF2)
 
+frac_other <- readRDS('Build_Package/Objects/BaseCase/frac_other.rds')
 
-# ---- OM_05 - Sporadic Failures in Future Recruitment ----
+OM_08 <- add_spatial_to_OM(OM_01,
+                           average_prob=list(0.95,0.95),
+                           frac_other=list(frac_other,frac_other),
+                           Frac_Age_Region)
 
+usethis::use_data(OM_08, overwrite = TRUE)
 
-# ---- OM_06 - Decline in Growth in Projection Years ----
-
-# ---- OM_07 - Historical Recreational Landings Decreased by 40% ----
-
-
-# ---- OM_08 - Recreational Effort in Projection years increase by 2% per year ----
-
-
-# ---- OM_09 - Lower assumed fraction of unfished biomass in southernmost region ----
-
-
-# ---- OM_10 - Higher assumed fraction of unfished biomass in southernmost region ----
 

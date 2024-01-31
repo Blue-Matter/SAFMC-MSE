@@ -9,7 +9,7 @@
 #'
 #' @return An updated MOM
 #' @export
-Generate_Future_Rec_Devs <- function(MOM, truncsd=2) {
+Generate_Future_Rec_Devs <- function(MOM, truncsd=2, sd_multi=NULL) {
   set.seed(MOM@seed)
   nsim <- MOM@nsim
   pyears <- MOM@proyears
@@ -31,13 +31,27 @@ Generate_Future_Rec_Devs <- function(MOM, truncsd=2) {
   lower <- -truncsd*apply(lhist_devs, 2, sd)
   upper <- truncsd*apply(lhist_devs, 2, sd)
 
+  if(!is.null(sd_multi)) {
+    if (length(sd_multi)!=nstock)
+      stop('sd_multi must be length nstock')
+
+    sd <- sqrt(diag(covvar)) * sd_multi
+    diag(covvar) <- sd^2
+    lower <- -truncsd*sd
+    upper <- truncsd*sd
+  }
+
   rldevs <- tmvtnorm::rtmvnorm(n=nsim*pyears,
                                mean=rep(0, nstock),
                                sigma=covvar,
                                lower=lower,
                                upper=upper)
 
-  rldevs <- array(as.vector(rldevs), dim=c(nsim, pyears, nstock))
+
+
+  rldevs <- array(as.vector(rldevs), dim=c(pyears, nsim, nstock)) %>%
+    aperm(., c(2,1,3))
+
 
   acrldevs <- rldevs
   # add auto-correlation
@@ -48,7 +62,6 @@ Generate_Future_Rec_Devs <- function(MOM, truncsd=2) {
       acrldevs[,y,i] <- ac *acrldevs[,y-1,i] + acrldevs[,y,i]*sqrt(1-ac^2)
     }
   }
-
 
   # update OM
   for (i in 1:nstock) {
