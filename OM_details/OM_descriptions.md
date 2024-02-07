@@ -34,7 +34,9 @@ Productivity changes in the projection years through an increase in recruitment 
 
 The historical fishery reconstruction is the same as the Base Case OM, but the variability in recruitment is increased in the projection years by a factor of 1.5. 
 
-![alt text](../img/OM_Construction/OM_05/RecDevs.png)
+<img src="../img/OM_Construction/OM_05/RecDevs.png" alt="recruitment deviations" style="width:600px;"/>
+
+
 *A comparison of the recruitment deviations for two simulations (black and dashed lines) for the Base Case (OM_01) and OM_05 where there is increased variability in recruitment in the projection years*
 
 ## OM_06: Increased Rec Effort
