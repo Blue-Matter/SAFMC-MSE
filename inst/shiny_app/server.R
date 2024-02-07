@@ -40,7 +40,7 @@ OM_ReconstructServer <- function(id='reconstruct', number) {
                    column(10,
                           tabsetPanel(
                             tabPanel('Spawning Biomass',
-                                     #plotOutput(ns('SSBhist'), height='800px')
+                                     plotOutput(ns('SSBhist'), height='800px')
                             ),
                             tabPanel('Catches')
                           )
