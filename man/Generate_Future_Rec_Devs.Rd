@@ -4,7 +4,7 @@
 \alias{Generate_Future_Rec_Devs}
 \title{Update Recruitment Deviations in the projection years}
 \usage{
-Generate_Future_Rec_Devs(MOM, truncsd = 2)
+Generate_Future_Rec_Devs(MOM, truncsd = 2, sd_multi = NULL)
 }
 \arguments{
 \item{MOM}{An MOM object with cpars populated}

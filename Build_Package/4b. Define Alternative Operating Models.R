@@ -244,6 +244,8 @@ ggplot(PE_DF, aes(x=Year, y=PE, group_by(Sim), linetype=Sim)) +
   scale_y_continuous(expand = c(0, 0)) +
   labs(x='Projection Year', y='Recruitment Process Error')
 
+ggsave(filename='img/OM_Construction/OM_05/RecDevs.png')
+
 usethis::use_data(OM_05, overwrite = TRUE)
 
 # ---- OM_06 - Increased Rec Effort ----
@@ -263,16 +265,28 @@ frac_region_DF$Region <- factor(frac_region_DF$Region, ordered=TRUE, levels=uniq
 frac_region_DF$Stock <- factor(frac_region_DF$Stock, ordered=TRUE, levels=unique(frac_region_DF$Stock))
 
 modify_FL_dist <- function(df, FL_multi, ...) {
+  df$Frac_Area <- df$Frac_Area/sum(df$Frac_Area)
   df$Frac_Area[3] <- df$Frac_Area[3] * FL_multi
   df$Frac_Area <- df$Frac_Area/sum(df$Frac_Area)
   df
 }
+
+stop('function incorrect. Need to finalize specifications of these OMs')
 
 frac_region_DF2 <- frac_region_DF %>%
   group_by(Stock) %>%
   group_modify(., modify_FL_dist, FL_multi=0.5)%>%
   dplyr::relocate(Stock, .after=Region) %>%
   dplyr::arrange(Region, Stock)
+
+
+
+
+df <- frac_region_DF %>% filter(Stock=='Red Snapper')
+df$Frac_Area[3]/df$Frac_Area[2]
+df$Frac_Area <- df$Frac_Area/sum(df$Frac_Area)
+df$Frac_Area[3] <- df$Frac_Area[3] * FL_multi
+df$Frac_Area[1:2] <- df$Frac_Area[1:2] *(1+FL_multi)
 
 
 df_age_RS <- readRDS('Build_Package/Objects/BaseCase/RS_Age_Depth_Dist.rds')

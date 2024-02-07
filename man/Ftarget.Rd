@@ -2,9 +2,12 @@
 % Please edit documentation in R/MMPs.R
 \name{Ftarget}
 \alias{Ftarget}
+\alias{Ftarget_IncRecEff}
 \title{Example fixed F MP that sets the F for each stock to the MFMT}
 \usage{
 Ftarget(x, DataList, ...)
+
+Ftarget_IncRecEff(x, DataList, incE = list(`General Recreational` = 0.02), ...)
 }
 \arguments{
 \item{x}{Simulation number}
@@ -19,3 +22,8 @@ A list of \code{Rec} objects
 \description{
 Example fixed F MP that sets the F for each stock to the MFMT
 }
+\section{Functions}{
+\itemize{
+\item \code{Ftarget_IncRecEff()}: Ftarget with General Recreational Effort increasing by 2\% per year
+
+}}

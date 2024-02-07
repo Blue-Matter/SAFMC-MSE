@@ -2,9 +2,39 @@
 % Please edit documentation in R/MMPs.R
 \name{StatusQuo}
 \alias{StatusQuo}
+\alias{StatusQuo_IncRecEff}
+\alias{StatusQuo_MLL}
+\alias{StatusQuo_MLL_IncRecEff}
+\alias{SQRecEffort20}
+\alias{SQRecEffort20_IncRecEff}
 \title{Example fixed F MP that sets F for each fleet to the mean from the last 3 historical years}
 \usage{
 StatusQuo(x, DataList, ...)
+
+StatusQuo_IncRecEff(
+  x,
+  DataList,
+  incE = list(`General Recreational` = 0.02),
+  ...
+)
+
+StatusQuo_MLL(x, DataList, ...)
+
+StatusQuo_MLL_IncRecEff(
+  x,
+  DataList,
+  incE = list(`General Recreational` = 0.02),
+  ...
+)
+
+SQRecEffort20(x, DataList, ...)
+
+SQRecEffort20_IncRecEff(
+  x,
+  DataList,
+  incE = list(`General Recreational` = 0.02),
+  ...
+)
 }
 \arguments{
 \item{x}{Simulation number}
@@ -19,3 +49,16 @@ A list of \code{Rec} objects
 \description{
 Example fixed F MP that sets F for each fleet to the mean from the last 3 historical years
 }
+\section{Functions}{
+\itemize{
+\item \code{StatusQuo_IncRecEff()}: Status Quo MP with General Recreational Effort increasing by 2\% per year
+
+\item \code{StatusQuo_MLL()}: tatusQuo with Minimum Legal Length for both stocks (20 inch for Red Snapper and 25 inch for Gag)
+
+\item \code{StatusQuo_MLL_IncRecEff()}: StatusQuo_MLL with General Recreational Effort increasing by 2\% per year
+
+\item \code{SQRecEffort20()}: StatusQuo with Effort for General Recreational Fleet reduce by 20\% for both stocks
+
+\item \code{SQRecEffort20_IncRecEff()}: SQRecEffort20 with General Recreational Effort increasing by 2\% per year
+
+}}

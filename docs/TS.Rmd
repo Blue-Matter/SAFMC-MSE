@@ -567,50 +567,13 @@ OMdat <- read.csv('../OM_details/OM_descriptions.csv')
 Currently `r nrow(OMdat)` operating models (including the Base Case) have been developed. Table \@ref(tab:omdesc) provides a summary of the operating models. The sub-sections below describe more details for each of the additional operating models. 
 
 ```{r omdesc, include=TRUE} 
-
+OMdat <- OMdat %>% dplyr::rename(., 'Key Uncertainty'=Key.Uncertainty)
 knitr::kable(OMdat, caption='Summary of the operating models developed for the MSE.')
 ```
 
-The additional operating models are in development. More information will be added here once they are complete.
+```{r, child="../OM_details/OM_descriptions.md", eval=TRUE}
 
-<!-- ## Natural Mortality: OM_02 & OM_03 -->
-
-<!-- The sensitivity tests in the Red Snapper and Gag assessments revealed that the results were most sensitive to the assumed values for the age-specific natural mortality (*M*).  -->
-
-<!-- Two operating models were developed to span the lower and upper bounds of *M* considered in the sensitivity tests of the two assessments.  -->
-
-<!-- In `OM_02`, the Lorenzen curve describing M-at-age was scaled to the lower values from the sensitivity tests: M = 0.07 and M = 0.10 for Red Snapper and Gag respectively. -->
-
-<!-- In `OM_03`, the Lorenzen curve describing M-at-age was scaled to the higher values from the sensitivity tests: M = 0.15 and M = 0.25 for Red Snapper and Gag respectively. -->
-
-<!-- The *M* for adult Red Snapper and Gag in the Base Case OM is 0.11 and 0.17 respectively. -->
-
-<!-- ## Changes in Future Productivity: OM_04, OM_05, and OM_06  -->
-
-<!-- Three operating models were developed to consider changes in productivity in the future, such as those caused by changes to climate and oceanographic conditions in the future, or by increased coastal development. -->
-
-<!-- In `OM_04` a cyclic recruitment pattern is superimposed over the log-normally distributed recruitment process error included in the Base Case OM. -->
-
-<!-- In `OM_05` recruitment is randomly reduced to very low levels in some years, to represent an unexpected recruitment failure caused by loss of nursery habitat or adverse climate conditions. The declines in recruitment are correlated across the stocks in the MSE. -->
-
-<!-- In `OM_06` the mean length-at-age, weight-at-age, and corresponding maturity-at-age schedules are modified to represent a gradual decline in growth over the projection years.  -->
-
-<!-- ## Uncertainties in Data: OM_07 -->
-
-<!-- `OM_07` considers uncertainty in the relative landings of the commercial and for-hire vessels relative to the recreational fleet. There is some evidence to suggest that the recreational catch has been over-estimated. This uncertainty is considered by re-running the assessment models with the recreational landings reduced by 40%.  -->
-
-<!-- ## Uncertainties in Future Fleet Dynamics: OM_08 -->
-
-<!-- `OM_08` considers  an average increase of 2% per year in fishing effort for the recreational fleet in the projection years, due to either technology creep or existing latent effort.  -->
-
-<!-- ## Uncertainties in Spatial Dynamics: OM_9 & OM_10 -->
-
-<!-- `OM_09` and `OM_10` consider alternative scenarios for the assumed proportion of the unfished stock that is in the Cape Canaveral -- Florida region of the MSE.  -->
-
-<!-- `OM_09` assumes a lower value for the assumed fraction in the southernmost region. -->
-
-<!-- `OM_10` assumes a higher value for the assumed fraction in the southernmost region. -->
-
+```
 
 # Management Procedures
 
