@@ -119,6 +119,7 @@ SQRecEffort20 <- function(x, DataList, ...) {
   this_Fleet_Management <- calc_status_quo(x, DataList)
 
   # reduce rec effort by 20%
+  fleets <- unique(Fleet_Management$Fleet)
   rec_fleets <- fleets[grepl('General Recreational', fleets)]
   this_Fleet_Management <- this_Fleet_Management %>% mutate(F = ifelse(Fleet%in% rec_fleets, 0.8*F, F))
 

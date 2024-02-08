@@ -11,6 +11,7 @@ MSE_info <- readRDS('Data/MSE_info.rda')
 
 OM_names <- names(MSE_info)
 hist_OMs <- OM_names[1:4]
+hist_OMs <- hist_OMs[!is.na(hist_OMs)]
 ref_points <- names(MSE_info$OM_01$Ref_Points)
 
 SB_ref_points <- ref_points[ref_points%in%c('SBtarg', 'MSST')]

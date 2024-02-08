@@ -48,9 +48,9 @@ OM_ReconstructUI <- function(id) {
   ns <- NS(id)
   tagList(
     fluidPage(
-      h4('Compare the Historical Fishery Dynamics for 2 Operating Models'),
-      OM_ReconstructTabUI('reconstruct1') #,
-      # OM_ReconstructTabUI('reconstruct2')
+      h3('Compare the Historical Fishery Dynamics for 2 Operating Models'),
+      OM_ReconstructTabUI('reconstruct1'),
+      OM_ReconstructTabUI('reconstruct2')
 
     )
 
