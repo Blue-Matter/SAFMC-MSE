@@ -3,13 +3,17 @@
 \name{StatusQuo}
 \alias{StatusQuo}
 \alias{StatusQuo_IncRecEff}
-\alias{StatusQuo_MLL}
-\alias{StatusQuo_MLL_IncRecEff}
-\alias{SQRecEffort20}
-\alias{SQRecEffort20_IncRecEff}
+\alias{RecEff20}
+\alias{RecEff20_IncRecEff}
+\alias{RecEff40}
+\alias{RecEff40_IncRecEff}
+\alias{MLL20_25}
+\alias{MLL20_25_IncRecEff}
+\alias{MLL25_25}
+\alias{MLL25_25_IncRecEff}
 \title{Example fixed F MP that sets F for each fleet to the mean from the last 3 historical years}
 \usage{
-StatusQuo(x, DataList, ...)
+StatusQuo(x, DataList, incE = list(), MLL = list(), Eff_multi = list(), ...)
 
 StatusQuo_IncRecEff(
   x,
@@ -18,21 +22,71 @@ StatusQuo_IncRecEff(
   ...
 )
 
-StatusQuo_MLL(x, DataList, ...)
-
-StatusQuo_MLL_IncRecEff(
+RecEff20(
   x,
   DataList,
-  incE = list(`General Recreational` = 0.02),
+  incE = list(),
+  MLL = list(),
+  Eff_multi = list(`General Recreational` = 0.8),
   ...
 )
 
-SQRecEffort20(x, DataList, ...)
-
-SQRecEffort20_IncRecEff(
+RecEff20_IncRecEff(
   x,
   DataList,
   incE = list(`General Recreational` = 0.02),
+  MLL = list(),
+  Eff_multi = list(`General Recreational` = 0.8),
+  ...
+)
+
+RecEff40(
+  x,
+  DataList,
+  incE = list(),
+  MLL = list(),
+  Eff_multi = list(`General Recreational` = 0.6),
+  ...
+)
+
+RecEff40_IncRecEff(
+  x,
+  DataList,
+  incE = list(`General Recreational` = 0.02),
+  MLL = list(),
+  Eff_multi = list(`General Recreational` = 0.6),
+  ...
+)
+
+MLL20_25(
+  x,
+  DataList,
+  incE = list(),
+  MLL = list(`Red Snapper` = 20, `Gag Grouper` = 25),
+  ...
+)
+
+MLL20_25_IncRecEff(
+  x,
+  DataList,
+  incE = list(`General Recreational` = 0.02),
+  MLL = list(`Red Snapper` = 20, `Gag Grouper` = 25),
+  ...
+)
+
+MLL25_25(
+  x,
+  DataList,
+  incE = list(),
+  MLL = list(`Red Snapper` = 25, `Gag Grouper` = 25),
+  ...
+)
+
+MLL25_25_IncRecEff(
+  x,
+  DataList,
+  incE = list(`General Recreational` = 0.02),
+  MLL = list(`Red Snapper` = 25, `Gag Grouper` = 25),
   ...
 )
 }
@@ -53,12 +107,20 @@ Example fixed F MP that sets F for each fleet to the mean from the last 3 histor
 \itemize{
 \item \code{StatusQuo_IncRecEff()}: Status Quo MP with General Recreational Effort increasing by 2\% per year
 
-\item \code{StatusQuo_MLL()}: tatusQuo with Minimum Legal Length for both stocks (20 inch for Red Snapper and 25 inch for Gag)
+\item \code{RecEff20()}: StatusQuo with Effort for General Recreational Fleet reduce by 20\% for both stocks
 
-\item \code{StatusQuo_MLL_IncRecEff()}: StatusQuo_MLL with General Recreational Effort increasing by 2\% per year
+\item \code{RecEff20_IncRecEff()}: RecEff20 with General Recreational Effort increasing by 2\% per year
 
-\item \code{SQRecEffort20()}: StatusQuo with Effort for General Recreational Fleet reduce by 20\% for both stocks
+\item \code{RecEff40()}: StatusQuo with Effort for General Recreational Fleet reduce by 40\% for both stocks
 
-\item \code{SQRecEffort20_IncRecEff()}: SQRecEffort20 with General Recreational Effort increasing by 2\% per year
+\item \code{RecEff40_IncRecEff()}: RecEff40 with General Recreational Effort increasing by 2\% per year
+
+\item \code{MLL20_25()}: StatusQuo with Minimum Legal Length for both stocks (20 inch for Red Snapper and 25 inch for Gag)
+
+\item \code{MLL20_25_IncRecEff()}: MLL20_25 with General Recreational Effort increasing by 2\% per year
+
+\item \code{MLL25_25()}: StatusQuo with Minimum Legal Length for both stocks (25 inch for Red Snapper and 25 inch for Gag)
+
+\item \code{MLL25_25_IncRecEff()}: MLL25_25 with General Recreational Effort increasing by 2\% per year
 
 }}

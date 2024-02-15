@@ -3,52 +3,96 @@
 library(shiny)
 library(SAMSE)
 library(shinyWidgets)
+library(bslib)
+library(shinydashboard)
+library(shinydashboardPlus)
 
 OMdat <- read.csv('../../OM_details/OM_descriptions.csv')
 OMdat <- OMdat %>% dplyr::rename(., 'Key Uncertainty'=Key.Uncertainty)
 
 MSE_info <- readRDS('Data/MSE_info.rda')
 
-OM_names <- names(MSE_info)
-hist_OMs <- OM_names[1:4]
-hist_OMs <- hist_OMs[!is.na(hist_OMs)]
+OM_numbers <- names(MSE_info)
+OM_names <- OMdat$Name[1:length(OM_numbers)]
+
+MPs <- unique(MSE_info[[1]]$Projection$MP)
+MPs <- MPs[!is.na(MPs)]
+
 ref_points <- names(MSE_info$OM_01$Ref_Points)
 
 SB_ref_points <- ref_points[ref_points%in%c('SBtarg', 'MSST')]
-### Plotting Functions ####
 
-plot_SB_hist <- function(SSBhist, Ref_Points, inc_ref_point=TRUE, rel_to=NA) {
+stocks <- unique(MSE_info[[1]]$Historical$Stock)
 
-  ref_point <- Ref_Points %>%
-    tidyr::pivot_longer(., cols=1:4, names_to = 'Reference Point') %>%
-    filter(`Reference Point` %in% c("SBtarg", 'MSST'))
-
-  SSBhist <- left_join(SSBhist, Ref_Points, by = join_by(Stock)) %>%
-    tidyr::pivot_longer(., cols=c('F', 'SPR', 'SBtarg', 'MSST'),
-                        names_to = 'Reference Point') %>%
-    filter(`Reference Point` %in% c("SBtarg", 'MSST'))
+# plot_choices_hist <- c('Spawning Biomass', 'Catch', 'Fishing Mortality')
+plot_choices_hist <- c('Spawning Biomass', 'Fishing Mortality')
+plot_choices_proj <- c('Spawning Biomass',  'Catch','Fishing Mortality')
 
 
-  if (!is.na(rel_to)) {
-    SSBhist <- SSBhist %>% group_by(Stock) %>% mutate(Value=Value/value[`Reference Point`==rel_to],
-                                                      value=value/value[`Reference Point`==rel_to])
+# plot code
+
+DF1  = MSE_info$OM_01$Historical %>% filter(Variable %in% c('Spawning Biomass'),
+                                            Stock=='Red Snapper',
+                                            Sim==1)
+DF2  = MSE_info$OM_01$Projection %>% filter(Variable %in% c('Apical Fishing Mortality'),
+                                             Stock=='Red Snapper',
+                                            MP==MPs[1])
+
+
+DF2 %>% filter(Year==2020) %>% filter(Sim==1)
+
+
+
+309271/680556.
+
+hist_plot <- function(DF, byfleet=FALSE, ymax=NULL) {
+
+  PLOTDF <<- DF
+
+  DF <- PLOTDF
+
+  var <- unique(DF$Variable)
+
+  if ('Discards' %in% var)
+    var <- 'Discards'
+
+  ylab <- switch(var,
+                 `Apical Fishing Mortality`='Fishing Mortality',
+                 `Discards` = 'Landings/Discards',
+                 "Spawning Biomass"="Spawning Production")
+
+
+
+  p <- ggplot(DF, aes(x=Year, y=Value, color=Variable))
+
+  if (!byfleet & var!='Discards') {
+    p <- p + geom_hline(aes(yintercept=value, linetype=`Reference Point`))
   }
 
-  p <- ggplot(SSBhist, aes(x=Year, y=Value)) +
-    facet_wrap(~Stock, scale='free', ncol=1) +
-    geom_line() +
-    expand_limits(y=0) +
+  p <- p +
+    geom_line(linewidth=1.5) +
     theme_bw() +
-    labs(y=unique(SSBhist$Variable)) +
+    expand_limits(y=0)
+
+  if (!is.null(ymax)) {
+    p <- p +  expand_limits(y=c(0, ymax))
+  }
+
+  p <- p + labs(y=ylab) +
     theme(axis.text=element_text(size=14),
           axis.title=element_text(size=16,face="bold"),
           strip.text = element_text(size=16,face="bold"),
           legend.position="bottom")
 
-
-  if (inc_ref_point) {
-    p <- p + geom_hline(aes(yintercept=value, linetype=`Reference Point`))
+  if (ylab !='Landings/Discards (1000 lb)') {
+    p <- p + guides(color='none')
   }
+  if(byfleet)
+    p <- p + facet_wrap(~Fleet, scales="free_y")
 
-  p
+  p +geom_vline(xintercept = 2019, linetype=2, color='darkgray')
 }
+
+
+
+

@@ -7,6 +7,75 @@
 #' @return A ggplot object
 #' @export
 #'
+plot_SB_hist <- function(SSBhist, Ref_Points, inc_ref_point=TRUE, rel_to=NA, ymax=list()) {
+
+  ref_point <- Ref_Points %>%
+    tidyr::pivot_longer(., cols=1:4, names_to = 'Reference Point') %>%
+    filter(`Reference Point` %in% c("SBtarg", 'MSST'))
+
+  SSBhist <- left_join(SSBhist, Ref_Points, by = join_by(Stock)) %>%
+    tidyr::pivot_longer(., cols=c('F', 'SPR', 'SBtarg', 'MSST'),
+                        names_to = 'Reference Point') %>%
+    filter(`Reference Point` %in% c("SBtarg", 'MSST'))
+
+
+  if (!is.na(rel_to)) {
+    SSBhist <- SSBhist %>% group_by(Stock) %>% mutate(Value=Value/value[`Reference Point`==rel_to],
+                                                      value=value/value[`Reference Point`==rel_to])
+  }
+
+
+  p <- ggplot(SSBhist) +
+    facet_wrap(~Stock, scale='free', ncol=1) +
+    geom_line( aes(x=Year, y=Value)) +
+    expand_limits(y=0) +
+    theme_bw() +
+    labs(y=unique(SSBhist$Variable)) +
+    theme(axis.text=element_text(size=14),
+          axis.title=element_text(size=16,face="bold"),
+          strip.text = element_text(size=16,face="bold"),
+          legend.position="bottom")
+
+  if (length(ymax)>0) {
+    dummy <- data.frame(x=rep(range(SSBhist$Year),2),
+                        Stock =rep(unique(SSBhist$Stock), each=2),
+                        y=c(0, ymax[[1]], 0, ymax[[2]]))
+    p <- p + geom_blank(data=dummy, aes(x=x, y=y))
+  }
+
+
+  if (inc_ref_point) {
+    p <- p + geom_hline(aes(yintercept=value, linetype=`Reference Point`))
+  }
+
+  p
+}
+
+
+plot_Catch_Discards_hist <- function(DF) {
+  df <- dplyr::bind_rows(DF$Landings, DF$Discards)
+
+
+
+  df$Fleet <- factor(df$Fleet, levels=unique(df$Fleet), ordered = TRUE)
+  df$Value <- df$Value / 1000
+  ggplot(df, aes(x=Year, y=Value, color=Variable)) +
+    facet_grid(Fleet~Stock, scales='free') +
+    geom_line() +
+    scale_color_manual(values=c('blue', 'orange')) +
+    theme_bw() +
+    labs(x='Year', y='Landings/Discards (t)',
+         color='')
+}
+
+
+#' Plot Landings and Discards
+#'
+#' @param multiHist
+#'
+#' @return A ggplot object
+#' @export
+#'
 plot_Catch_Discards <- function(multiHist) {
   fleets <- names(multiHist[[1]])
   hist.years <- MSEgraph::get_Years(multiHist) %>% filter(Period=='Historical')

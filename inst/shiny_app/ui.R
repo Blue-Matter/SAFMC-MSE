@@ -16,128 +16,76 @@ HomeUI <- function(id) {
       column(3)
   )
   )
-
-
-
-}
-
-OM_SummaryUI <- function(id='om_summary') {
-  ns <- NS(id)
-  tagList(
-    fluidPage(
-    tabsetPanel(
-      tabPanel('OM Summary',
-               fluidRow(
-                 tableOutput(ns('OMtable'))
-               )
-               ),
-      tabPanel('OM Details',
-               fluidRow(
-               includeMarkdown("../../OM_details/OM_descriptions.md")
-               )
-
-    )
-  ))
-  )
 }
 
 
 
-
-OM_ReconstructUI <- function(id) {
-  ns <- NS(id)
-  tagList(
-    fluidPage(
-      h3('Compare the Historical Fishery Dynamics for 2 Operating Models'),
-      OM_ReconstructTabUI('reconstruct1'),
-      OM_ReconstructTabUI('reconstruct2')
-
-    )
-
-  )
-}
-
-OM_ReconstructTabUI <- function(id) {
-  ns <- NS(id)
-  tagList(
-    uiOutput(ns('reconstructplot'))
-    )
-}
+# ui <- navbarPage(
+#   'SAFMC Snapper Grouper MSE',
+#   tabPanel("Home",
+#            HomeUI()),
+#   tabPanel("OM Summary",
+#            OM_SummaryUI()
+#            ),
+#   tabPanel('OM Reconstruction', OM_ReconstructUI('reconstruct')),
+#   tabPanel('Projection Plots')
+#   )
+#
 
 
-
-mychoices <- c(
-  "pick me A",
-  "pick me - a very long name here",
-  "no pick me - B",
-  "another one that is long"
+header <- shinydashboardPlus::dashboardHeader(title = 'SAFMC MSE',
+                                              leftUi = tagList(
+                                                dropdownButton(
+                                                  width=900,
+                                                  label = "OM Details",
+                                                  status = "primary",
+                                                  circle = FALSE,
+                                                  uiOutput('om_summary')
+                                                )
+                                              )
 )
 
 
-ui <- navbarPage(
-  'SAFMC Snapper Grouper MSE',
-  tabPanel("Home",
-           HomeUI()),
-  tabPanel("OM Summary",
-           OM_SummaryUI()
-           ),
-  tabPanel('OM Reconstruction', OM_ReconstructUI('reconstruct')),
-  tabPanel('Projection Plots'),
-  tabPanel('Trade-Off Plots'),
+sidebar <- dashboardSidebar(
+  collapsed = FALSE,
+  sidebarMenu(id='NonTech',
+              menuItem("Home", tabName = "home", icon = icon("house")),
+              menuItem("OM Reconstruction", tabName = "reconstruction", icon = icon("chart-line")),
+              menuItem("OM Projection", tabName = "projection", icon = icon("chart-simple"))
+
+  )
+)
 
 
-    tabPanel(
-      "Data",
-      sidebarPanel(
-        width = 3,
-        p(strong("Classes")),
-        actionButton(
-          inputId = "selectall", label = "Select/Deselect all",
-          style = "padding:12px; font-size:80%"
-        ),
-        br(), br(),
-        checkboxGroupButtons(
-          inputId = "classes",
-          choices = mychoices,
-          selected = mychoices,
-          direction = "vertical",
-          width = "100%",
-          size = "xs",
-          checkIcon = list(
-            yes = icon("ok",
-                       lib = "glyphicon"
-            )
-          )
-        )
-      ),
-      mainPanel(
-        width = 6,
-        tabsetPanel(
-          type = "tabs",
-          tabPanel("Scatter",
-                   id = "panel1",
-                   plotOutput(outputId = "scatter")
-          ),
-          tabPanel("PCA", id = "panel2")
-        )
-      ),
-      sidebarPanel(
-        width = 3,
-        p(strong("Controls")),
-        p("Transparency"),
-        sliderInput("trans", NULL,
-                    min = 0, max = 1, value = .5
-        ),
-        actionButton("resetButton", "Zoom/reset plot",
-                     style = "padding:6px; font-size:80%"
-        ),
-        actionButton("clear", "Clear selection",
-                     style = "padding:6px; font-size:80%"
-        ),
-        actionButton("resetColours", "Reset colours",
-                     style = "padding:6px; font-size:80%"
-        )
-      )
+
+body <- dashboardBody(
+  tags$head(tags$style(HTML('
+      .content-wrapper {
+        background-color: #fff;
+      }
+      '))),
+  tabItems(
+    tabItem(tabName = "home",
+            HomeUI('home')
+
+    ),
+    tabItem(tabName='reconstruction',
+            OM_ReconstructUI('reconstruct')
+            ),
+    tabItem(tabName='projection',
+            OM_ProjectUI('project')
     )
   )
+)
+
+dashboardPage(
+
+  header=header,
+  sidebar=sidebar,
+  body=body,
+  title='SAFMC'
+  # dashboardFooter(left = paste0("Slick version:", packageVersion('Slick')),
+  #                 right = tags$a(href='https://harveststrategies.org/',
+  #                                target="_blank", paste0("harveststrategies.org ", format(Sys.Date(), "%Y"))))
+)
 

@@ -1,98 +1,73 @@
 
-OM_SummaryServer <- function(id='om_summary') {
-
-  moduleServer(id, function(input, output, session) {
-    output$OMtable <- renderTable(OMdat)
-  })
-
-}
-
-OM_ReconstructServer <- function(id='reconstruct', number) {
-  ns <- NS(id)
-  moduleServer(id, function(input, output, session) {
-
-    OM_name <- reactiveVal('OM_1')
-    if (number>1) {
-      OM_name <- reactiveVal('OM_2')
-    }
-
-    observeEvent(input$reconstruct_OM, {
-      OM_name(input$reconstruct_OM)
-    })
-
-    output$OM_name <- renderUI({
-      name <- OM_name()
-      ind <- match(name, hist_OMs)
-      tagList(
-        h4( paste(OM_name(),  OMdat$Name[ind], sep=": "))
-      )
-    })
-
-    output$reconstructplot <- renderUI({
-      out <- list()
-
-      out[[1]] <- tagList(
-        column(2,
-               selectInput(ns('reconstruct_OM'), paste('Select OM', number), choices=hist_OMs, selected=hist_OMs[number]),
-               selectInput(ns('rel_to'), 'Relative to Reference Point', choices=c('None', SB_ref_points))
-        )
-      )
-      out[[2]] <- tagList(
-        column(10,
-               tabsetPanel(
-                 tabPanel('Spawning Biomass',
-                          plotOutput(ns('SSBhist'), height='800px')
-                 ),
-                 tabPanel('Catches')
-               )
-        )
-      )
-
-      if (number==2) {
-        temp <- out
-        temp[[1]] <- out[[2]]
-        temp[[2]] <- out[[1]]
-        out <- temp
-      }
-
-      tagList(
-        column(6,
-               uiOutput(ns('OM_name')),
-               fluidRow(
-                 out
-               ),
-        )
-      )
-    })
-
-    output$SSBhist <- renderPlot({
-      SSBhist <- MSE_info[[input$reconstruct_OM]]$Historical$SSB
-      Ref_Points <- MSE_info[[input$reconstruct_OM]]$Ref_Points
-      rel_to <- input$rel_to
-      if(rel_to=='None') {
-        rel_to <- NA
-      }
-
-      plot_SB_hist(SSBhist, Ref_Points, rel_to=rel_to)
-    })
-
-
-  })
-}
-
 
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
 
-  object <- reactiveValues(reconstruct_OM1=NULL,
-                           reconstruct_OM2=NULL)
+  output$OM_details <- DT::renderDataTable({
+    DT::datatable(OMdat, options=list(dom = 't',
+                                      ordering=FALSE,
+                                      pageLength=100),
+                  rownames = FALSE)
+  })
+
+  output$om_summary <- renderUI({
+    tagList(
+      DT::dataTableOutput('OM_details')
+    )
+  })
+
+
+  reconstruct_OM1 <- reactiveValues(selected_OM=OM_names[1],
+                                    selected_stock=stocks[1],
+                                    selected_choice='Spawning Biomass',
+                                    rel_to='None',
+                                    by_fleet=FALSE,
+                                    df=data.frame(),
+                                    maxY=Inf)
+
+  reconstruct_OM2 <- reactiveValues(selected_OM=OM_names[2],
+                                    selected_stock=stocks[1],
+                                    selected_choice='Spawning Biomass',
+                                    rel_to='None',
+                                    by_fleet=FALSE,
+                                    maxY=Inf)
+
+  proj_OM1 <- reactiveValues(selected_OM=OM_names[1],
+                             selected_stock=stocks[1],
+                             selected_choice='Spawning Biomass',
+                             selected_MP=MPs[1],
+                             rel_to='None',
+                             by_fleet=FALSE,
+                             df=data.frame(),
+                             maxY=Inf)
+
+  proj_OM2 <- reactiveValues(selected_OM=OM_names[2],
+                             selected_stock=stocks[1],
+                             selected_choice='Spawning Biomass',
+                             selected_MP=MPs[1],
+                             rel_to='None',
+                             by_fleet=FALSE,
+                             maxY=Inf)
 
   OM_SummaryServer('om_summary')
-  OM_ReconstructServer('reconstruct1', 1)
-  OM_ReconstructServer('reconstruct2', 2)
 
 
+  OM_Select_Server('Select_Hist_OM1', 1, reconstruct_OM1)
+  OM_Select_Server('Select_Hist_OM2', 2, reconstruct_OM2)
+
+  Calc_Max_Y('calcmaxy', reconstruct_OM1, reconstruct_OM2)
+
+  OM_Plot_Server('Plot_Hist_OM1', reconstruct_OM1)
+  OM_Plot_Server('Plot_Hist_OM2', reconstruct_OM2)
+
+  OM_Select_Server('Select_Proj_OM1', 1, proj_OM1, incMP=TRUE)
+  OM_Select_Server('Select_Proj_OM2', 2, proj_OM2, incMP=TRUE)
+
+  Calc_Max_Y_Proj('calcmaxy_proj', proj_OM1, proj_OM2)
+
+  OM_Plot_Server('Plot_Proj_OM1', proj_OM1)
+  OM_Plot_Server('Plot_Proj_OM2', proj_OM2)
 
 }
 

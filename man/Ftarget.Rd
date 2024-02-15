@@ -5,9 +5,9 @@
 \alias{Ftarget_IncRecEff}
 \title{Example fixed F MP that sets the F for each stock to the MFMT}
 \usage{
-Ftarget(x, DataList, ...)
+Ftarget(x, DataList, incE = list(), MLL = list(), ...)
 
-Ftarget_IncRecEff(x, DataList, incE = list(`General Recreational` = 0.02), ...)
+Ftarget_IncRecEff(x, DataList, ...)
 }
 \arguments{
 \item{x}{Simulation number}

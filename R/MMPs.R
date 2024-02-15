@@ -36,6 +36,30 @@ calc_status_quo <- function(x, DataList, incE=list()) {
   this_Fleet_Management
 }
 
+add_size_limits <- function(Fleet_Management, MLL=list()) {
+  if (length(MLL)<1) return(Fleet_Management)
+  for (i in seq_along(MLL)) {
+    stock <- names(MLL)[i]
+    mll <- inch2mm(MLL[[i]])
+    Fleet_Management <- Fleet_Management %>%
+      dplyr::mutate(MLL=replace(MLL, Stock==stock, mll))
+
+  }
+  Fleet_Management
+}
+
+Effort_multiplier <- function(Fleet_Management, Eff_multi=list()) {
+  if (length(Eff_multi)<1)
+    return(Fleet_Management)
+  for (i in seq_along(Eff_multi)) {
+    fleet <- names(Eff_multi)[i]
+    multi <- Eff_multi[[i]]
+    Fleet_Management <- Fleet_Management %>% mutate(F = ifelse(Fleets%in% fleet, multi*F, F))
+  }
+  Fleet_Management
+}
+
+
 #' Example fixed F MP that sets F for each fleet to the mean from the last 3 historical years
 #'
 #' @param x Simulation number
@@ -45,106 +69,67 @@ calc_status_quo <- function(x, DataList, incE=list()) {
 #' @return A list of `Rec` objects
 #' @export
 #'
-StatusQuo <- function(x, DataList, ...) {
-
-  this_Fleet_Management <- calc_status_quo(x, DataList)
-  # call internal `Fleet_MMP` function with `this_Fleet_Management` object
+StatusQuo <- function(x, DataList, incE=list(), MLL=list(), Eff_multi=list(), ...) {
+  this_Fleet_Management <- calc_status_quo(x, DataList, incE)
+  this_Fleet_Management <- add_size_limits(this_Fleet_Management, MLL=MLL)
+  this_Fleet_Management <- Effort_multiplier(this_Fleet_Management, Eff_multi)
   Fleet_MMP(x, DataList, Fleet_Management=this_Fleet_Management)
 }
 # define as class `MMP`
 class(StatusQuo) <- 'MMP'
 
 
-
 #' @describeIn StatusQuo Status Quo MP with General Recreational Effort increasing by 2% per year
 #' @export
 StatusQuo_IncRecEff <- function(x, DataList, incE=list('General Recreational'=0.02), ...) {
-
-  this_Fleet_Management <- calc_status_quo(x, DataList, incE=incE)
-  # call internal `Fleet_MMP` function with `this_Fleet_Management` object
-  Fleet_MMP(x, DataList, Fleet_Management=this_Fleet_Management)
+  StatusQuo(x, DataList, incE=incE)
 }
 # define as class `MMP`
 class(StatusQuo_IncRecEff) <- 'MMP'
 
 
-#' @describeIn StatusQuo tatusQuo with Minimum Legal Length for both stocks (20 inch for Red Snapper and 25 inch for Gag)
-#' @export
-StatusQuo_MLL <- function(x, DataList, ...) {
-
-  this_Fleet_Management <- calc_status_quo(x, DataList)
-
-  # Set MLL
-  MLL_RS <- inch2mm(20) # 20 inch MLL
-  this_Fleet_Management <- this_Fleet_Management %>%
-    dplyr::mutate(MLL=replace(MLL, Stock=='Red Snapper', MLL_RS))
-
-  MLL_GG <- inch2mm(25) # 25 inch MLL
-  this_Fleet_Management <- this_Fleet_Management %>%
-    dplyr::mutate(MLL=replace(MLL, Stock=='Gag Grouper', MLL_GG))
-
-  # call internal `Fleet_MMP` function with `this_Fleet_Management` object
-  Fleet_MMP(x, DataList, this_Fleet_Management)
-}
-# define as class `MMP`
-class(StatusQuo_MLL) <- 'MMP'
-
-
-#' @describeIn StatusQuo StatusQuo_MLL with General Recreational Effort increasing by 2% per year
-#' @export
-StatusQuo_MLL_IncRecEff <- function(x, DataList, incE=list('General Recreational'=0.02), ...) {
-
-  this_Fleet_Management <- calc_status_quo(x, DataList, incE)
-
-  # Set MLL
-  MLL_RS <- inch2mm(20) # 20 inch MLL
-  this_Fleet_Management <- this_Fleet_Management %>%
-    dplyr::mutate(MLL=replace(MLL, Stock=='Red Snapper', MLL_RS))
-
-  MLL_GG <- inch2mm(25) # 25 inch MLL
-  this_Fleet_Management <- this_Fleet_Management %>%
-    dplyr::mutate(MLL=replace(MLL, Stock=='Gag Grouper', MLL_GG))
-
-  # call internal `Fleet_MMP` function with `this_Fleet_Management` object
-  Fleet_MMP(x, DataList, this_Fleet_Management)
-}
-# define as class `MMP`
-class(StatusQuo_MLL_IncRecEff) <- 'MMP'
-
-
 #' @describeIn StatusQuo StatusQuo with Effort for General Recreational Fleet reduce by 20% for both stocks
 #' @export
-SQRecEffort20 <- function(x, DataList, ...) {
-
-  this_Fleet_Management <- calc_status_quo(x, DataList)
-
-  # reduce rec effort by 20%
-  fleets <- unique(Fleet_Management$Fleet)
-  rec_fleets <- fleets[grepl('General Recreational', fleets)]
-  this_Fleet_Management <- this_Fleet_Management %>% mutate(F = ifelse(Fleet%in% rec_fleets, 0.8*F, F))
-
-  # call internal `Fleet_MMP` function with `this_Fleet_Management` object
-  Fleet_MMP(x, DataList, Fleet_Management=this_Fleet_Management)
+RecEff20 <- function(x, DataList, incE=list(), MLL=list(), Eff_multi=list('General Recreational'=0.8), ...) {
+  StatusQuo(x, DataList, incE=incE, MLL, Eff_multi)
 }
 # define as class `MMP`
-class(SQRecEffort20) <- 'MMP'
+class(RecEff20) <- 'MMP'
 
-#' @describeIn StatusQuo SQRecEffort20 with General Recreational Effort increasing by 2% per year
+
+#' @describeIn StatusQuo RecEff20 with General Recreational Effort increasing by 2% per year
 #' @export
-SQRecEffort20_IncRecEff <- function(x, DataList, incE=list('General Recreational'=0.02), ...) {
+RecEff20_IncRecEff <- function(x, DataList,
+                                    incE=list('General Recreational'=0.02),
+                                    MLL=list(),
+                                    Eff_multi=list('General Recreational'=0.8), ...) {
 
-  this_Fleet_Management <- calc_status_quo(x, DataList, incE)
-
-  # reduce rec effort by 20%
-  fleets <- unique(Fleet_Management$Fleet)
-  rec_fleets <- fleets[grepl('General Recreational', fleets)]
-  this_Fleet_Management <- this_Fleet_Management %>% mutate(F = ifelse(Fleet%in% rec_fleets, 0.8*F, F))
-
-  # call internal `Fleet_MMP` function with `this_Fleet_Management` object
-  Fleet_MMP(x, DataList, Fleet_Management=this_Fleet_Management)
+  StatusQuo(x, DataList, incE=incE, MLL, Eff_multi)
 }
 # define as class `MMP`
-class(SQRecEffort20_IncRecEff) <- 'MMP'
+class(RecEff20_IncRecEff) <- 'MMP'
+
+#' @describeIn StatusQuo StatusQuo with Effort for General Recreational Fleet reduce by 40% for both stocks
+#' @export
+RecEff40 <- function(x, DataList,
+                     incE=list(),
+                     MLL=list(),
+                     Eff_multi=list('General Recreational'=0.6), ...) {
+  StatusQuo(x, DataList, incE=incE, MLL, Eff_multi)
+}
+class(RecEff40) <- 'MMP'
+
+#' @describeIn StatusQuo RecEff40 with General Recreational Effort increasing by 2% per year
+#' @export
+RecEff40_IncRecEff <- function(x, DataList,
+                     incE=list('General Recreational'=0.02),
+                     MLL=list(),
+                     Eff_multi=list('General Recreational'=0.6), ...) {
+  StatusQuo(x, DataList, incE=incE, MLL, Eff_multi)
+}
+class(RecEff40_IncRecEff) <- 'MMP'
+
+
 
 #' Example fixed F MP that sets the F for each stock to the MFMT
 #'
@@ -155,7 +140,7 @@ class(SQRecEffort20_IncRecEff) <- 'MMP'
 #' @return A list of `Rec` objects
 #' @export
 #'
-Ftarget <- function(x, DataList, ...) {
+Ftarget <- function(x, DataList, incE=list(), MLL=list(), ...) {
 
   this_Fleet_Management <- calc_status_quo(x, DataList)
 
@@ -169,16 +154,16 @@ Ftarget <- function(x, DataList, ...) {
   this_Fleet_Management <- left_join(this_Fleet_Management, MFMT, by='Stock')
   this_Fleet_Management <- this_Fleet_Management %>% mutate(F=MFMT*Frat)
 
-
   # call internal `Fleet_MMP` function with `this_Fleet_Management` object
   Fleet_MMP(x, DataList, this_Fleet_Management)
 }
 # define as class `MMP`
 class(Ftarget) <- 'MMP'
 
+
 #' @describeIn Ftarget Ftarget with General Recreational Effort increasing by 2% per year
 #' @export
-Ftarget_IncRecEff <- function(x, DataList, incE=list('General Recreational'=0.02), ...) {
+Ftarget_IncRecEff <- function(x, DataList, ...) {
 
   this_Fleet_Management <- calc_status_quo(x, DataList)
 
@@ -212,6 +197,53 @@ Ftarget_IncRecEff <- function(x, DataList, incE=list('General Recreational'=0.02
 }
 # define as class `MMP`
 class(Ftarget_IncRecEff) <- 'MMP'
+
+
+
+#' @describeIn StatusQuo StatusQuo with Minimum Legal Length for both stocks (20 inch for Red Snapper and 25 inch for Gag)
+#' @export
+MLL20_25 <- function(x, DataList, incE=list(), MLL=list(`Red Snapper`=20, `Gag Grouper`=25), ...) {
+
+  StatusQuo(x, DataList, MLL=MLL, ...)
+}
+# define as class `MMP`
+class(MLL20_25) <- 'MMP'
+
+
+#' @describeIn StatusQuo MLL20_25 with General Recreational Effort increasing by 2% per year
+#' @export
+MLL20_25_IncRecEff <- function(x, DataList,
+                                    incE=list('General Recreational'=0.02),
+                                    MLL=list(`Red Snapper`=20, `Gag Grouper`=25),
+                                    ...) {
+  StatusQuo(x, DataList, incE=incE, MLL=MLL, ...)
+}
+# define as class `MMP`
+class(MLL20_25_IncRecEff) <- 'MMP'
+
+#' @describeIn StatusQuo StatusQuo with Minimum Legal Length for both stocks (25 inch for Red Snapper and 25 inch for Gag)
+#' @export
+MLL25_25 <- function(x, DataList, incE=list(), MLL=list(`Red Snapper`=25, `Gag Grouper`=25), ...) {
+
+  StatusQuo(x, DataList, MLL=MLL, ...)
+}
+# define as class `MMP`
+class(MLL25_25) <- 'MMP'
+
+
+#' @describeIn StatusQuo MLL25_25 with General Recreational Effort increasing by 2% per year
+#' @export
+MLL25_25_IncRecEff <- function(x, DataList,
+                               incE=list('General Recreational'=0.02),
+                               MLL=list(`Red Snapper`=25, `Gag Grouper`=25),
+                               ...) {
+  StatusQuo(x, DataList, incE=incE, MLL=MLL, ...)
+}
+# define as class `MMP`
+class(MLL25_25_IncRecEff) <- 'MMP'
+
+
+
 
 
 #' Example fixed catch MP (removals)

@@ -8,6 +8,7 @@ library(bamExtras)
 
 # reduce M at max age to 0.07 instead of 0.107
 bam <- bam2r("RedSnapper")
+
 init <- bam$init
 init$set_M_constant[1] <- '0.07'
 set_M <- init$set_M
@@ -21,6 +22,161 @@ bam <- bam2r("RedSnapper", init=init)
 
 BAM <- run_bam(bam=bam)
 
+
+
+get_vals <- function(rdat, type='ob', OM='Base Case') {
+
+  tt <- grepl(type, names(rdat$t.series))
+  obs_lands <- rdat$t.series[tt][grepl('^L.', names(rdat$t.series)[tt])]
+  obs_lands$Year <- as.numeric(rownames(obs_lands))
+  obs_lands <- obs_lands %>% tidyr::pivot_longer(., cols=1:3)
+  obs_lands$name[grepl('.cHL.',obs_lands$name)] <- 'cHL'
+  obs_lands$name[grepl('.rHB.',obs_lands$name)] <- 'rHB'
+  obs_lands$name[grepl('.rGN.',obs_lands$name)] <- 'rGN'
+  if (type=='ob') {
+    obs_lands$var <- 'Observed'
+  }
+  if (type=='pr') {
+    obs_lands$var <- 'Predicted'
+  }
+  obs_lands$OM <- OM
+  obs_lands
+}
+
+BC_obs <- get_vals(rdat=bamExtras::rdat_RedSnapper)
+BC_pred <- get_vals(rdat=bamExtras::rdat_RedSnapper, 'pr')
+BC <- bind_rows(BC_obs, BC_pred)
+
+lowerM_obs <- get_vals(BAM$rdat, OM='LowerM')
+lowerM_pred <- get_vals(BAM$rdat, 'pr', OM='LowerM')
+lowerM <- bind_rows(lowerM_obs, lowerM_pred)
+
+df <- bind_rows(BC, lowerM)
+
+ggplot(df, aes(x=Year, y=value, color=var)) +
+  facet_grid(name~OM) +
+  geom_line()
+
+
+df <- bind_rows(BC, lowerM) %>% group_by(Year,OM, var) %>% summarise(value=sum(value, na.rm=TRUE))
+
+ggplot(df, aes(x=Year, y=value, color=var)) +
+  facet_grid(~OM) +
+  geom_line()
+
+
+
+mom <- BAM2MOM(bamExtras::rdat_RedSnapper, nsim=2)
+MOM1 <- SimulateMOM(mom)
+
+
+mom2 <- SAMSE::OM_01
+mom2@nsim <- 2
+mom2@cpars$`Red Snapper`$`Commercial Handline: On-Season`$mov <- NULL
+mom2@cpars$`Gag Grouper`$`Commercial Handline: On-Season`$mov <- NULL
+MOM2 <- SimulateMOM(mom2)
+
+mom3 <- SAMSE::OM_02
+mom3@nsim <- 2
+MOM3 <- SimulateMOM(mom3)
+
+
+BC <- BC %>% filter(Year<2020)
+
+tt <- BC %>% filter(var=='Observed') %>% group_by(Year) %>% summarise(value=sum(value))
+plot(tt$Year, tt$value, type='l')
+
+tt <- BC %>% filter(var=='Predicted') %>% group_by(Year) %>% summarise(value=sum(value))
+lines(tt$Year, tt$value, col='green')
+
+cHL <- rowSums(MOM1$`SEDAR 41 Assessment Red Snapper`$cHL@TSdata$Landings[1,,])
+rHB <- rowSums(MOM1$`SEDAR 41 Assessment Red Snapper`$rHB@TSdata$Landings[1,,])
+rGN <- rowSums(MOM1$`SEDAR 41 Assessment Red Snapper`$rGN@TSdata$Landings[1,,])
+
+l <- cHL + rHB + rGN
+
+plot(tt$Year, l/1000, col='blue')
+
+land1 <- rowSums(MOM2$`Red Snapper`$`Commercial Handline: On-Season`@TSdata$Landings[1,,])
+land2 <- rowSums(MOM2$`Red Snapper`$`Recreational Headboat: On-Season`@TSdata$Landings[1,,])
+land3 <- rowSums(MOM2$`Red Snapper`$`General Recreational: On-Season`@TSdata$Landings[1,,])
+
+landOM1 <- openMSE::kg2_1000lb(land1+land2+land3)
+plot(tt$Year, landOM1, col='red', ylim=c(0, 7000), type='l')
+
+
+get_Fs <- function(MOM) {
+  Fs <- rep(0, 70)
+  nfleet<- length(MOM$`Red Snapper`)
+  for (i in 1:nfleet) {
+    Fs <- Fs + apply(MOM$`Red Snapper`[[i]]@AtAge$F.Mortality[1,,,1], 2, max)
+  }
+  Fs
+}
+
+
+plot(get_Fs(MOM2), ylim=c(0, 1.3))
+lines(rdat_RedSnapper$t.series$F.full, col='red')
+
+plot(get_Fs(MOM3), col='blue', ylim=c(0, 1.3))
+lines(BAM$rdat$t.series$F.full, col='green')
+
+
+get_removals <- function(MOM, OM='Base Case') {
+
+  removals <- rep(0, 70)
+  nfleet<- length(MOM$`Red Snapper`)
+  dflist <- list()
+  for (i in 1:nfleet) {
+
+    nm <- names(MOM$`Red Snapper`)[i]
+    if (nm =='Commercial Dive') next()
+    nms <- strsplit(nm, ':')
+    Fleet <- trimws(nms[[1]][1])
+    Season <- trimws(nms[[1]][2])
+    dflist[[i]] <- data.frame(Fleet=Fleet,
+                              Season=Season,
+                              Year=1:70,
+               Removals=rowSums(MOM$`Red Snapper`[[i]]@TSdata$Removals[1,,])
+    )
+  }
+  df <- do.call('rbind', dflist)
+  df$OM <- OM
+  df <- df %>% filter(Fleet!='Commercial Dive')
+  df
+}
+
+
+mom1 <- get_removals(MOM2)
+mom2 <- get_removals(MOM3, 'lowerM')
+
+df <- bind_rows(mom1, mom2)
+
+ggplot(df %>% filter(Season=='On-Season'), aes(x=Year, y=Removals)) +
+  facet_grid(Fleet~OM, scales='free') +
+  geom_line()
+
+ggplot(df %>% filter(Season=='Off-Season'), aes(x=Year, y=Removals)) +
+  facet_grid(Fleet~OM, scales='free') +
+  geom_line()
+
+ggplot(df %>% group_by(Year, OM, Fleet) %>% summarize(Removals=sum(Removals)), aes(x=Year, y=Removals)) +
+  facet_grid(Fleet~OM, scales='free') +
+  geom_line()
+
+
+plot(BAM$rdat$F.age[,20])
+lines(Fs)
+
+
+land1 <- rowSums(MOM3$`Red Snapper`$`Commercial Handline: On-Season`@TSdata$Landings[1,,])
+land2 <- rowSums(MOM3$`Red Snapper`$`Recreational Headboat: On-Season`@TSdata$Landings[1,,])
+land3 <- rowSums(MOM3$`Red Snapper`$`General Recreational: On-Season`@TSdata$Landings[1,,])
+
+landOM2 <- openMSE::kg2_1000lb(land1+land2+land3)
+lines(tt$Year, landOM2, col='orange')
+
+landOM2/landOM1
 
 
 RSMOM <- structure_OM(rdat=standardize_rdat(BAM$rdat),

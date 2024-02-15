@@ -1,9 +1,9 @@
-OM,Name,Uncertainty,Description
-1,Base Case,,Base Case Operating Model
-2,Lower M,Important assessment sensitivity test ,Re-run assessments with M-at-age reduced to the lower values considered in the assessment
-3,Higher M,Important assessment sensitivity test ,Re-run assessments with M-at-age reduced to the higher values considered in the assessment
-4,Reduced Rec Landings,Possible over-estimation of recreational catch,Re-run assessments with Recreational landings decreased by 40%
-5,Increased PE,Future productivity changes due to climate,Base Case with increased variability in recruitment process error in the projections
-6,Increased Rec Effort,Future recreation capacity (latent effort or tech creep),Base Case with Recreational effort is increased by 2% per year
-7,Lower FL Biomass,Assumed fraction of stocks in southernmost region,Base Case with lower fraction of unfished biomass in southern FL
-8,Higher FL Biomass,Assumed fraction of stocks in southernmost region,Base Case with lower fraction of unfished biomass in southern FL
+Name,Class,Description
+StatusQuo,Fixed Effort,Fishing Effort for each fleet is fixed to mean from the last 3 historical years
+RecEff20,Fixed Effort,"Status Quo, but General Recreational Effort is reduced by 20% for all projection years"
+RecEff40,Fixed Effort,"Status Quo, but General Recreational Effort is reduced by 40% for all projection years"
+Ftarget,Fixed Effort,"Effort for all fleets is adjusted, independently by species, by a fixed proportion so that F = Ftarget."
+MLL20_25,Size Regulation,"StatusQuo Fixed Effort, with a 20 and 25 "" MLL for RS and GG respectively"
+MLL25_25,Size Regulation,"StatusQuo Fixed Effort, with a 25 and 25 "" MLL for RS and GG respectively"
+,Discard Mortality,
+,Spatial Closure,
