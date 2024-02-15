@@ -51,11 +51,16 @@ get_Proj_DF <- function(id='get_Proj_DF', proj_OM) {
                         if (!proj_OM$by_fleet) {
                           df <- df %>% ungroup() %>% group_by(Year, Stock, MP, Sim, Variable) %>%
                             summarise(Value=sum(Value), .groups='drop')
-                          df <- df %>% ungroup() %>% group_by(Year, Stock, Variable, MP) %>%
-                            summarise(Value=median(Value))
+                          df <- df %>% ungroup() %>% group_by(Year, Stock, Variable, MP)  %>%
+                            summarise(Lower=quantile(Value,0.25),
+                                      Upper=quantile(Value,0.75),
+                                      Value=median(Value))
+
                         } else {
                           df <- df %>% ungroup() %>% group_by(Year, Stock, Variable, MP, Fleet) %>%
-                            summarise(Value=median(Value))
+                            summarise(Lower=quantile(Value,0.25),
+                                      Upper=quantile(Value,0.75),
+                                      Value=median(Value))
                         }
 
 
@@ -89,6 +94,8 @@ get_Proj_DF <- function(id='get_Proj_DF', proj_OM) {
 
                         if  (proj_OM$selected_choice=='Catch') {
                           df$Value <- openMSE::kg2_1000lb(df$Value)
+                          df$Lower <- openMSE::kg2_1000lb(df$Lower)
+                          df$Upper <- openMSE::kg2_1000lb(df$Upper)
                         }
 
                         proj_OM$df <- df

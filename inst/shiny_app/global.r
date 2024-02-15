@@ -7,7 +7,7 @@ library(bslib)
 library(shinydashboard)
 library(shinydashboardPlus)
 
-OMdat <- read.csv('../../OM_details/OM_descriptions.csv')
+OMdat <- read.csv('Data/OM_descriptions.csv')
 OMdat <- OMdat %>% dplyr::rename(., 'Key Uncertainty'=Key.Uncertainty)
 
 MSE_info <- readRDS('Data/MSE_info.rda')
@@ -31,27 +31,13 @@ plot_choices_proj <- c('Spawning Biomass',  'Catch','Fishing Mortality')
 
 # plot code
 
-DF1  = MSE_info$OM_01$Historical %>% filter(Variable %in% c('Spawning Biomass'),
-                                            Stock=='Red Snapper',
-                                            Sim==1)
-DF2  = MSE_info$OM_01$Projection %>% filter(Variable %in% c('Apical Fishing Mortality'),
-                                             Stock=='Red Snapper',
-                                            MP==MPs[1])
-
-
-DF2 %>% filter(Year==2020) %>% filter(Sim==1)
-
-
-
-309271/680556.
 
 hist_plot <- function(DF, byfleet=FALSE, ymax=NULL) {
 
-  PLOTDF <<- DF
-
-  DF <- PLOTDF
-
   var <- unique(DF$Variable)
+  DF$Variable <- as.character(DF$Variable)
+
+  OUT <<- DF
 
   if ('Discards' %in% var)
     var <- 'Discards'
@@ -69,6 +55,10 @@ hist_plot <- function(DF, byfleet=FALSE, ymax=NULL) {
     p <- p + geom_hline(aes(yintercept=value, linetype=`Reference Point`))
   }
 
+  if (!is.null(DF[["Upper"]])) {
+    p <- p + geom_ribbon(aes(ymin=Lower, ymax=Upper), fill='lightgray', alpha=0.4)
+  }
+
   p <- p +
     geom_line(linewidth=1.5) +
     theme_bw() +
@@ -84,7 +74,7 @@ hist_plot <- function(DF, byfleet=FALSE, ymax=NULL) {
           strip.text = element_text(size=16,face="bold"),
           legend.position="bottom")
 
-  if (ylab !='Landings/Discards (1000 lb)') {
+  if (ylab !='Landings/Discards') {
     p <- p + guides(color='none')
   }
   if(byfleet)

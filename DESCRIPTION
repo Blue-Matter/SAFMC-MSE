@@ -15,7 +15,13 @@ Depends:
     ggplot2,
     MSEtool (>= 3.7.1),
     openMSE (>= 1.1.0),
-    bamExtras
+    bamExtras,
+    shiny,
+    SAMSE,
+    shinyWidgets,
+    bslib,
+    shinydashboard,
+    shinydashboardPlus
 Imports:
     lubridate,
     forcats
@@ -24,3 +30,6 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr    
 LazyData: true
+
+
+

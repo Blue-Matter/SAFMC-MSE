@@ -10,8 +10,7 @@ HomeUI <- function(id) {
              img(src="img/logo.png"),
              h3('Welcome to the SAFMC Snapper-Grouper MSE App'),
              p('This App is designed to view the results of the Snapper-Grouper fishery Management Strategy Evaluation (MSE).'),
-             p('Select from the above tabs to ...'),
-             h4(HTML(paste('These results are for', strong('demonstration'), 'purposes only')))
+             h4(HTML(paste('The current results are for', strong('demonstration'), 'purposes only')))
       ),
       column(3)
   )
@@ -19,18 +18,6 @@ HomeUI <- function(id) {
 }
 
 
-
-# ui <- navbarPage(
-#   'SAFMC Snapper Grouper MSE',
-#   tabPanel("Home",
-#            HomeUI()),
-#   tabPanel("OM Summary",
-#            OM_SummaryUI()
-#            ),
-#   tabPanel('OM Reconstruction', OM_ReconstructUI('reconstruct')),
-#   tabPanel('Projection Plots')
-#   )
-#
 
 
 header <- shinydashboardPlus::dashboardHeader(title = 'SAFMC MSE',
@@ -78,14 +65,12 @@ body <- dashboardBody(
   )
 )
 
-dashboardPage(
+shinydashboardPlus::dashboardPage(
 
   header=header,
   sidebar=sidebar,
   body=body,
-  title='SAFMC'
-  # dashboardFooter(left = paste0("Slick version:", packageVersion('Slick')),
-  #                 right = tags$a(href='https://harveststrategies.org/',
-  #                                target="_blank", paste0("harveststrategies.org ", format(Sys.Date(), "%Y"))))
+  title='SAFMC',
+  footer= shinydashboardPlus::dashboardFooter(left = paste(packageVersion('SAMSE'), collapse=''))
 )
 
