@@ -21,6 +21,9 @@ RUN R -e "install.packages(c('shiny', 'rmarkdown', 'remotes'), repos='https://cl
 # bamExtras
 RUN R -e "remotes::install_github('nikolaifish/bamExtras')"
 
+# openMSE
+RUN R -e "remotes::install_github('blue-matter/openMSE', 'dev')"
+
 # install R package from shiny_live branch
 RUN R -e "remotes::install_github(c('blue-matter/SAFMC-MSE'), 'shiny_live', dependencies=TRUE)"
 
