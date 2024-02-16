@@ -99,6 +99,7 @@ get_Proj_DF <- function(id='get_Proj_DF', proj_OM) {
                         }
 
                         proj_OM$df <- df
+                        proj_OM$title <- paste('Stock:', proj_OM$selected_stock, 'OM:', proj_OM$selected_OM, 'MP:', proj_OM$selected_MP)
                       })
   })
 }
@@ -124,7 +125,9 @@ Calc_Max_Y_Proj <- function(id='calcmaxy', proj_OM1, proj_OM2) {
                         if (proj_OM1$selected_stock ==proj_OM2$selected_stock &
                             proj_OM1$selected_choice ==proj_OM2$selected_choice &
                             proj_OM1$rel_to ==proj_OM2$rel_to &
-                            proj_OM1$by_fleet ==proj_OM2$by_fleet
+                            proj_OM1$by_fleet ==proj_OM2$by_fleet &
+                            proj_OM1$free_y ==proj_OM2$free_y &
+                            !proj_OM1$free_y & !proj_OM2$free_y
                         ) {
 
                           df <- bind_rows(proj_OM1$df, proj_OM2$df)

@@ -39,6 +39,10 @@ OM_Select_Server <- function(id='OM_select', number, OM_selections, incMP=FALSE)
       OM_selections$by_fleet <- isolate(input$by_fleet)
     })
 
+    observeEvent(input$free_y, {
+      OM_selections$free_y <- isolate(input$free_y)
+    })
+
     output$ref_options <- renderUI({
       if (input$selected_choice == 'Spawning Biomass') {
         options <- c('None', c('SBtarg', 'MSST'))
@@ -70,6 +74,16 @@ OM_Select_Server <- function(id='OM_select', number, OM_selections, incMP=FALSE)
 
       }
     })
+
+
+    output$show_free_y <- renderUI({
+      if (OM_selections$by_fleet==TRUE & OM_selections$selected_choice !="Spawning Biomass")
+      checkboxInput(ns('free_y'), 'Individual y-axes?')
+    })
+
+
+
+
     output$select_OM <- renderUI({
 
       tagList(
@@ -83,8 +97,9 @@ OM_Select_Server <- function(id='OM_select', number, OM_selections, incMP=FALSE)
                         uiOutput(ns('ref_options'))
                                 ),
                conditionalPanel(condition = paste0('input[\'', ns('selected_choice'), "\'] != \'Spawning Biomass\'"),
-                                checkboxInput(ns('by_fleet'), 'By Fleet?')
-               )
+                                checkboxInput(ns('by_fleet'), 'By Fleet?')),
+               uiOutput(ns('show_free_y'))
+
                )
       )
     })
@@ -110,7 +125,8 @@ Calc_Max_Y <- function(id='calcmaxy', reconstruct_OM1, reconstruct_OM2) {
                         if (reconstruct_OM1$selected_stock ==reconstruct_OM2$selected_stock &
                                   reconstruct_OM1$selected_choice ==reconstruct_OM2$selected_choice &
                                   reconstruct_OM1$rel_to ==reconstruct_OM2$rel_to &
-                                  reconstruct_OM1$by_fleet ==reconstruct_OM2$by_fleet
+                                  reconstruct_OM1$by_fleet ==reconstruct_OM2$by_fleet &
+                            !reconstruct_OM1$free_y & !reconstruct_OM2$free_y
                               ) {
 
                           df <- bind_rows(reconstruct_OM1$df, reconstruct_OM2$df)
@@ -194,6 +210,8 @@ get_Hist_DF <- function(id='get_Hist_DF', reconstruct_OM) {
                           df$Value <- openMSE::kg2_1000lb(df$Value)
                         }
                         reconstruct_OM$df <- df
+                        reconstruct_OM$title <- paste('Stock:', reconstruct_OM$selected_stock, 'OM:', reconstruct_OM$selected_OM)
+
     })
   })
 }
@@ -216,7 +234,8 @@ OM_Plot_Server <- function(id='OM_select', reconstruct_OM)  {
     })
 
     output$plot_output <- renderPlot({
-      hist_plot(reconstruct_OM$df,reconstruct_OM$by_fleet, reconstruct_OM$maxY)
+      hist_plot(reconstruct_OM$df,reconstruct_OM$by_fleet, reconstruct_OM$maxY, reconstruct_OM$free_y,
+                reconstruct_OM$title)
     })
   })
 

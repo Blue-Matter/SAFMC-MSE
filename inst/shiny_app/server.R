@@ -17,21 +17,40 @@ server <- function(input, output) {
     )
   })
 
+  output$MP_details <- DT::renderDataTable({
+    DT::datatable(MPdat, options=list(dom = 't',
+                                      ordering=FALSE,
+                                      pageLength=100),
+                  rownames = FALSE)
+  })
+
+  output$mp_summary <- renderUI({
+    tagList(
+      DT::dataTableOutput('MP_details')
+    )
+  })
+
+
+
 
   reconstruct_OM1 <- reactiveValues(selected_OM=OM_names[1],
                                     selected_stock=stocks[1],
                                     selected_choice='Spawning Biomass',
                                     rel_to='None',
                                     by_fleet=FALSE,
+                                    free_y=FALSE,
                                     df=data.frame(),
-                                    maxY=Inf)
+                                    maxY=Inf,
+                                    title='')
 
   reconstruct_OM2 <- reactiveValues(selected_OM=OM_names[2],
                                     selected_stock=stocks[1],
                                     selected_choice='Spawning Biomass',
                                     rel_to='None',
                                     by_fleet=FALSE,
-                                    maxY=Inf)
+                                    free_y=FALSE,
+                                    maxY=Inf,
+                                    title='')
 
   proj_OM1 <- reactiveValues(selected_OM=OM_names[1],
                              selected_stock=stocks[1],
@@ -39,8 +58,10 @@ server <- function(input, output) {
                              selected_MP=MPs[1],
                              rel_to='None',
                              by_fleet=FALSE,
+                             free_y=FALSE,
                              df=data.frame(),
-                             maxY=Inf)
+                             maxY=Inf,
+                             title='')
 
   proj_OM2 <- reactiveValues(selected_OM=OM_names[2],
                              selected_stock=stocks[1],
@@ -48,9 +69,10 @@ server <- function(input, output) {
                              selected_MP=MPs[1],
                              rel_to='None',
                              by_fleet=FALSE,
-                             maxY=Inf)
+                             free_y=FALSE,
+                             maxY=Inf,
+                             title='')
 
-  OM_SummaryServer('om_summary')
 
 
   OM_Select_Server('Select_Hist_OM1', 1, reconstruct_OM1)
