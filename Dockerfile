@@ -19,7 +19,7 @@ zlib1g-dev
 RUN R -e "install.packages(c('shiny', 'rmarkdown', 'remotes'), repos='https://cloud.r-project.org/')"
 
 # bamExtras
-RUN R -e "remotes::install_github(nikolaifish/bamExtras)"
+RUN R -e "remotes::install_github('nikolaifish/bamExtras')"
 
 # install R package from shiny_live branch
 RUN R -e "remotes::install_github(c('blue-matter/SAMSE'), 'shiny_live', dependencies=TRUE)"
