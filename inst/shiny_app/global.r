@@ -7,6 +7,7 @@ library(shinydashboard)
 library(shinydashboardPlus)
 library(dplyr)
 library(DT)
+library(ggplot2)
 
 OMdat <- read.csv('Data/OM_descriptions.csv')
 OMdat <- OMdat %>% dplyr::rename(., 'Key Uncertainty'=Key.Uncertainty)
