@@ -6,6 +6,7 @@ library(bslib)
 library(shinydashboard)
 library(shinydashboardPlus)
 library(dplyr)
+library(DT)
 
 OMdat <- read.csv('Data/OM_descriptions.csv')
 OMdat <- OMdat %>% dplyr::rename(., 'Key Uncertainty'=Key.Uncertainty)

@@ -12,6 +12,7 @@ RoxygenNote: 7.3.1
 Depends: 
     R (>= 3.5.0),
     dplyr,
+    DT,
     ggplot2,
     MSEtool (>= 3.7.1),
     openMSE (>= 1.1.0),
