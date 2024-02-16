@@ -22,7 +22,7 @@ RUN R -e "install.packages(c('shiny', 'rmarkdown', 'remotes'), repos='https://cl
 RUN R -e "remotes::install_github('nikolaifish/bamExtras')"
 
 # install R package from shiny_live branch
-RUN R -e "remotes::install_github(c('blue-matter/SAMSE'), 'shiny_live', dependencies=TRUE)"
+RUN R -e "remotes::install_github(c('blue-matter/SAFMC-MSE'), 'shiny_live', dependencies=TRUE)"
 
 # instruct Docker to expose port 3838 to the outside world
 # (otherwise it will not be possible to connect to the Shiny application)
