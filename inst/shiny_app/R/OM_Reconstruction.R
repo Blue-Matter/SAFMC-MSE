@@ -44,6 +44,7 @@ OM_Select_Server <- function(id='OM_select', number, OM_selections, incMP=FALSE)
     })
 
     output$ref_options <- renderUI({
+      if ( OM_selections$by_fleet) return(NULL)
       if (input$selected_choice == 'Spawning Biomass') {
         options <- c('None', c('SBtarg', 'MSST'))
       } else if (input$selected_choice == 'Fishing Mortality') {
@@ -51,6 +52,7 @@ OM_Select_Server <- function(id='OM_select', number, OM_selections, incMP=FALSE)
       } else {
         options <- 'None'
       }
+
       tagList(
         selectInput(ns('rel_to'), 'Relative to Reference Point', choices=options)
       )
@@ -92,13 +94,13 @@ OM_Select_Server <- function(id='OM_select', number, OM_selections, incMP=FALSE)
                selectInput(ns('selected_OM'), paste('Select OM', number), choices=OM_names, selected=OM2),
                uiOutput(ns('mp_select')),
                selectInput(ns('selected_choice'), 'Plot Variable', choices=get_plot_choices),
-
-               conditionalPanel(condition = paste0('input[\'', ns('selected_choice'), "\'] != \'Catch\'"),
-                        uiOutput(ns('ref_options'))
-                                ),
                conditionalPanel(condition = paste0('input[\'', ns('selected_choice'), "\'] != \'Spawning Biomass\'"),
                                 checkboxInput(ns('by_fleet'), 'By Fleet?')),
-               uiOutput(ns('show_free_y'))
+               uiOutput(ns('show_free_y')),
+               conditionalPanel(condition = paste0('input[\'', ns('selected_choice'), "\'] != \'Catch\'"),
+                        uiOutput(ns('ref_options'))
+                                )
+
 
                )
       )
