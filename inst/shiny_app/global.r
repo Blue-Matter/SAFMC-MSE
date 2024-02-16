@@ -1,11 +1,12 @@
 # OMdat <- read.csv('OM_details/OM_descriptions.csv')
 
 library(shiny)
-library(SAMSE)
 library(shinyWidgets)
 library(bslib)
 library(shinydashboard)
 library(shinydashboardPlus)
+library(dplyr)
+library(DT)
 
 OMdat <- read.csv('Data/OM_descriptions.csv')
 OMdat <- OMdat %>% dplyr::rename(., 'Key Uncertainty'=Key.Uncertainty)
@@ -28,7 +29,6 @@ stocks <- unique(MSE_info[[1]]$Historical$Stock)
 plot_choices_hist <- c('Spawning Biomass', 'Fishing Mortality')
 plot_choices_proj <- c('Spawning Biomass',  'Catch','Fishing Mortality')
 
-
 # plot code
 
 
@@ -36,8 +36,6 @@ hist_plot <- function(DF, byfleet=FALSE, ymax=NULL) {
 
   var <- unique(DF$Variable)
   DF$Variable <- as.character(DF$Variable)
-
-  OUT <<- DF
 
   if ('Discards' %in% var)
     var <- 'Discards'
