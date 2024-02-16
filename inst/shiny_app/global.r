@@ -12,6 +12,9 @@ library(ggplot2)
 OMdat <- read.csv('Data/OM_descriptions.csv')
 OMdat <- OMdat %>% dplyr::rename(., 'Key Uncertainty'=Key.Uncertainty)
 
+MPdat <- read.csv('Data/MP_descriptions.csv')
+
+
 MSE_info <- readRDS('Data/MSE_info.rda')
 
 OM_numbers <- names(MSE_info)
@@ -33,7 +36,7 @@ plot_choices_proj <- c('Spawning Biomass',  'Catch','Fishing Mortality')
 # plot code
 
 
-hist_plot <- function(DF, byfleet=FALSE, ymax=NULL) {
+hist_plot <- function(DF, byfleet=FALSE, ymax=NULL, free_y=FALSE, title='') {
 
   var <- unique(DF$Variable)
   DF$Variable <- as.character(DF$Variable)
@@ -67,17 +70,27 @@ hist_plot <- function(DF, byfleet=FALSE, ymax=NULL) {
     p <- p +  expand_limits(y=c(0, ymax))
   }
 
-  p <- p + labs(y=ylab) +
+  p <- p + labs(y=ylab, title=title) +
     theme(axis.text=element_text(size=14),
           axis.title=element_text(size=16,face="bold"),
+          title=element_text(size=18),
           strip.text = element_text(size=16,face="bold"),
           legend.position="bottom")
 
   if (ylab !='Landings/Discards') {
     p <- p + guides(color='none')
   }
-  if(byfleet)
-    p <- p + facet_wrap(~Fleet, scales="free_y")
+  if (ylab !=  "Spawning Production") {
+    if(byfleet) {
+      if (free_y) {
+        p <- p + facet_wrap(~Fleet, scales="free_y", ncol=2)
+      } else {
+        p <- p + facet_wrap(~Fleet, ncol=2)
+      }
+    }
+  }
+
+
 
   p +geom_vline(xintercept = 2019, linetype=2, color='darkgray')
 }

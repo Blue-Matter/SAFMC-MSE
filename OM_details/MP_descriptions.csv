@@ -5,5 +5,3 @@ RecEff40,Fixed Effort,"Status Quo, but General Recreational Effort is reduced by
 Ftarget,Fixed Effort,"Effort for all fleets is adjusted, independently by species, by a fixed proportion so that F = Ftarget."
 MLL20_25,Size Regulation,"StatusQuo Fixed Effort, with a 20 and 25 "" MLL for RS and GG respectively"
 MLL25_25,Size Regulation,"StatusQuo Fixed Effort, with a 25 and 25 "" MLL for RS and GG respectively"
-,Discard Mortality,
-,Spatial Closure,

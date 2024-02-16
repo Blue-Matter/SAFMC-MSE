@@ -28,6 +28,13 @@ header <- shinydashboardPlus::dashboardHeader(title = 'SAFMC MSE',
                                                   status = "primary",
                                                   circle = FALSE,
                                                   uiOutput('om_summary')
+                                                ),
+                                                dropdownButton(
+                                                  width=900,
+                                                  label = "MP Details",
+                                                  status = "primary",
+                                                  circle = FALSE,
+                                                  uiOutput('mp_summary')
                                                 )
                                               )
 )
