@@ -89,6 +89,8 @@ get_Proj_DF <- function(id='get_Proj_DF', proj_OM) {
                         # Scale to Reference Points
                         if ( proj_OM$rel_to!='None' & proj_OM$selected_choice!='Catch') {
                           df <- df %>%  mutate(Value=Value/value[`Reference Point`== proj_OM$rel_to],
+                                               Upper=Upper/value[`Reference Point`== proj_OM$rel_to],
+                                               Lower=Lower/value[`Reference Point`== proj_OM$rel_to],
                                                value=value/value[`Reference Point`== proj_OM$rel_to])
                         }
 
