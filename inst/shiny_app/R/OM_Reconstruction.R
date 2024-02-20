@@ -23,6 +23,7 @@ OM_Select_Server <- function(id='OM_select', number, OM_selections, incMP=FALSE)
 
     observeEvent(input$selected_choice, {
       OM_selections$selected_choice <- isolate(input$selected_choice)
+      OM_selections$rel_to <- 'None'
     })
 
     if (incMP) {
@@ -39,6 +40,7 @@ OM_Select_Server <- function(id='OM_select', number, OM_selections, incMP=FALSE)
       OM_selections$by_fleet <- isolate(input$by_fleet)
       OM_selections$rel_to <- 'None'
     })
+
 
     observeEvent(input$free_y, {
       OM_selections$free_y <- isolate(input$free_y)
