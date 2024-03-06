@@ -73,7 +73,7 @@ hist_plot <- function(DF, byfleet=FALSE, ymax=NULL, free_y=FALSE, title='') {
   p <- p + labs(y=ylab, title=title) +
     theme(axis.text=element_text(size=14),
           axis.title=element_text(size=16,face="bold"),
-          title=element_text(size=18),
+          title=element_text(size=14),
           strip.text = element_text(size=16,face="bold"),
           legend.position="bottom")
 
