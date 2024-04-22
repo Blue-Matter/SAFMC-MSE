@@ -92,7 +92,7 @@ OM_Select_Server <- function(id='OM_select', number, OM_selections, incMP=FALSE)
     output$select_OM <- renderUI({
 
       tagList(
-        column(2,
+        column(3,
                selectInput(ns('selected_stock'), paste('Select Stock', number), choices=stocks),
                selectInput(ns('selected_OM'), paste('Select OM', number), choices=OM_names, selected=OM2),
                uiOutput(ns('mp_select')),
@@ -231,8 +231,8 @@ OM_Plot_Server <- function(id='OM_select', reconstruct_OM)  {
 
     output$reconstructplot <- renderUI({
       tagList(
-        column(10,
-               plotOutput(ns('plot_output'), height='800px')
+        column(9,
+               plotOutput(ns('plot_output'), height='400px')
         )
 
       )
