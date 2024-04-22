@@ -1,2 +1,45 @@
-# SAFMC-MSE
-Repository for the SAFMC MSE Process
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# SAMSE
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+![](man/figures/logo.png)
+
+The [South Atlantic Fishery Management Council](https://safmc.net/)
+(SAFMC) is working with [Blue Matter Science
+Ltd.](https://www.bluematterscience.com/) to conduct a [Management
+Strategy Evaluation
+(MSE)](https://harveststrategies.org/management-strategy-evaluation-2/)
+to describe the expected outcomes of different management approaches for
+the Snapper-Grouper Fishery.
+
+## MSE Technical Group Members
+
+| Name              | Email                          | Role                          |
+|:------------------|:-------------------------------|:------------------------------|
+| Adrian Hordyk     | <adrian@bluematterscience.com> | Lead MSE Analyst              |
+| Quang Huynh       | <quang@bluematterscience.com>  | Supporting MSE Analyst        |
+| Tom Carruthers    | <tom@bluematterscience.com>    | Supporting MSE Analyst        |
+| Chip Collier      | <chip.collier@safmc.net>       | SAFMC Lead                    |
+| Cassidy Peterson  | <cassidy.peterson@noaa.gov>    | MSE Specialist                |
+| Erik Williams     | <erik.williams@noaa.gov>       | Stock Assessment Specialist   |
+| Christina Wiegand | <christina.wiegand@safmc.net>  | Social Scientist              |
+| Scott Crosson     | <scott.crosson@noaa.gov>       | Economist                     |
+| Mike Larkin       | <michael.larkin@noaa.gov>      | Data Analyst                  |
+| Kai Lorenzen      | <klorenzen@ufl.edu>            | Meeting Moderator/Facilitator |
+| Mike Schmidtke    | <mike.schmidtke@safmc.net>     | SAFMC Fishery Scientist       |
+| Judd Curtis       | <judd.curtis@safmc.net>        | SAFMC Fishery Scientist       |
+| Allie Iberle      | <allie.iberle@safmc.net>       | SAFMC Fishery Scientist       |
+
+## Installation
+
+You can install the development version of SAMSE from
+[GitHub](https://github.com/) with:
+
+``` r
+# install.packages("remotes")
+remotes::install_github("Blue-Matter/SAFMC-MSE")
+```
