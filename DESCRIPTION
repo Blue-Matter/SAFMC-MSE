@@ -1,6 +1,6 @@
 Package: SAMSE
 Title: South Atlantic Management Strategy Evaluation
-Version: 0.0.0.9003
+Version: 0.0.0.9004
 Authors@R: 
     person("Adrian", "Hordyk", , "adrian@bluematterscience.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-5620-3446"))
