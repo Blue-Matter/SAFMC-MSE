@@ -171,66 +171,32 @@ discard_mortality <- dplyr::bind_rows(discard_mortality_RS,
 
 # ---- Aggregate Fleets ----
 
-rdat <- bamExtras::rdat_RedSnapper |>
+RS_rdat <- bamExtras::rdat_RedSnapper |>
   bamExtras::standardize_rdat()
 
-Compare_Biomass(RS_OM, rdat)
+RS_OM_small <- RS_OM
+RS_OM_small@nsim <- 2
+Hist_RS <- SimulateMOM(RS_OM_small)
 
-RS_OM_agg <- Aggregate_Fleets(RS_OM, fleet_df, discard_mortality)
+Compare_Biomass(Hist_RS, RS_rdat)
 
+Compare_Landings(Hist_RS, RS_rdat)
 
-Compare_Biomass(RS_OM_agg, rdat)
-
-################################################################################
-# Discard M is not calcualted correctly.
-################################################################################
-
-## Compare Fs in final year
-
-MOM_temp <- MOM
-MOM_temp@nsim <- 2
-Hist <- SimulateMOM(MOM_temp, parallel = FALSE, silent=TRUE)
+rowSums(Hist_RS$`Red Snapper`[[1]]@TSdata$Landings[1,,]) |> openMSE::kg2_1000lb()
+rowSums(Hist_RS$`Red Snapper`[[2]]@TSdata$Landings[1,,]) |> openMSE::kg2_1000lb()
+rowSums(Hist_RS$`Red Snapper`[[3]]@TSdata$Landings[1,,]) |> openMSE::kg2_1000lb()
 
 
-MOM2 <- Aggregate_Fleets(MOM, fleet_df, discard_mortality)
-MOM2@nsim <- 2
-Hist2 <- SimulateMOM(MOM2, parallel = FALSE, silent=TRUE)
+rdat <- bamExtras::rdat_GagGrouper |>
+  bamExtras::standardize_rdat()
 
-nyears <- MOM@Fleets$`Red Snapper`$cHL@nyears
-nage <- MOM@Stocks[[1]]@maxage + 1
-F_orig <- matrix(0, nage, nyears)
-nf <- length(Hist[[1]])
-for (f in 1:nf) {
-  F_orig <- F_orig + Hist[[1]][[f]]@AtAge$F.Mortality[1,,,1]
-}
-
-F_agg <- matrix(0, nage, nyears)
-nf <- length(Hist2[[1]])
-for (f in 1:nf) {
+Compare_Biomass(GG_OM, rdat)
 
 
-  F_agg <- F_agg + Hist2[[1]][[f]]@AtAge$F.Mortality[1,,,1]
-}
+rdat <- bamExtras::rdat_BlackSeaBass|>
+  bamExtras::standardize_rdat()
 
-for (i in 1:70) {
-  plot(F_orig[,i], type='l')
-  lines(F_agg[,i], col='blue')
-  readline(paste(i, 'enter'))
-}
-
-# need to fix the total Fs #
-MOM2@cpars[[1]][[f]]$retA[1,,1]
-MOM2@cpars[[1]][[f]]$V[1,,1]
-
-
-F_orig[,i]/F_agg[,i]
-
-
-
-
-
-
-
+Compare_Biomass(BSB_OM, rdat)
 
 
 

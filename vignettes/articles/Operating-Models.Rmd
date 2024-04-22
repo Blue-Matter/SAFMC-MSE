@@ -9,10 +9,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(SAMSE)
-```
-
 
 ## Prerequistes
 
@@ -23,6 +19,7 @@ pak::pkg_install('nikolaifish/bamExtras')
 pak::pkg_install('blue-matter/MSEtool')
 
 ```
+
 
 ```{r}
 packageVersion('bamExtras')

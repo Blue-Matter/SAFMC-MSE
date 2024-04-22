@@ -14,9 +14,6 @@ Depends:
     dplyr,
     DT,
     ggplot2,
-    MSEtool (>= 3.7.1),
-    openMSE (>= 1.1.0),
-    bamExtras,
     shiny,
     shinyWidgets,
     bslib,
@@ -25,6 +22,10 @@ Depends:
 Imports:
     lubridate,
     forcats
+Remotes:    
+    blue-matter/MSEtool,
+    blue-matter/openMSE,
+    nikolaifish/bamExtras
 Suggests: 
     knitr,
     rmarkdown
