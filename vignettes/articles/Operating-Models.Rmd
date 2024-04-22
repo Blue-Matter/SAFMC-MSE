@@ -1,5 +1,9 @@
 ---
 title: "Operating Models"
+output: 
+  html_document:
+    number_sections: yes
+    toc: yes
 ---
 
 ```{r, include = FALSE}
@@ -14,7 +18,13 @@ library(bamExtras)
 library(openMSE)
 ```
 
+# Introduction
+
+This article describes the process to create operating models (OMs) for the Snapper-Grouper MSE.
+
 ## Prerequistes
+
+The latest versions of `MSEtool` and `bamExtras` need to be installed from GitHub:
 
 ```{r, eval=FALSE, echo=TRUE}
 install.packages('pak')
@@ -30,4 +40,32 @@ packageVersion('bamExtras')
 packageVersion('MSEtool')
 ```
 
+## OM Specifications
 
+```{r}
+# MSE Parameters
+nsim <- 50 # number of simulations
+proyears <- 20 # number of projection years
+
+# CAL bins (mm) - need to be the same for all stocks
+bin_width <- 50
+CAL_bins <- seq(from=0, to=1500, by=bin_width)
+CAL_mids <- seq(0.5*bin_width, by=bin_width, length.out=length((CAL_bins)-1))
+
+# Observation Model
+# currently perfect obs as data aren't being used in the MPs
+# can be changed later
+
+Obs_Model <- Perfect_Info
+
+```
+
+# Import SEDAR Assessments and Create OMs 
+
+## Red Snapper
+RS_rdat <- bamExtras::rdat_RedSnapper |>
+bamExtras::standardize_rdat() 
+
+RS_OM <- BAM2MOM(RS_rdat, stock_name='Red Snapper')
+  
+  
