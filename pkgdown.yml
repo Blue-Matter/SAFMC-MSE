@@ -1,0 +1,10 @@
+pandoc: 3.1.11
+pkgdown: 2.0.9
+pkgdown_sha: ~
+articles:
+  Operating-Models: Operating-Models.html
+last_built: 2024-04-22T22:42Z
+urls:
+  reference: https://blue-matter.github.io/SAFMC-MSE/reference
+  article: https://blue-matter.github.io/SAFMC-MSE/articles
+
