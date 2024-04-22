@@ -30,6 +30,4 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr    
 LazyData: true
-
-
-
+URL: https://blue-matter.github.io/SAFMC-MSE/

@@ -1,0 +1,32 @@
+---
+title: "Operating Models"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SAMSE)
+```
+
+
+## Prerequistes
+
+```{r, eval=FALSE, echo=TRUE}
+install.packages('pak')
+
+pak::pkg_install('nikolaifish/bamExtras')
+pak::pkg_install('blue-matter/MSEtool')
+
+```
+
+```{r}
+packageVersion('bamExtras')
+packageVersion('MSEtool')
+```
+
+
