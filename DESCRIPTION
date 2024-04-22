@@ -18,7 +18,10 @@ Depends:
     shinyWidgets,
     bslib,
     shinydashboard,
-    shinydashboardPlus
+    shinydashboardPlus,
+    MSEtool,
+    openMSE,
+    bamExtras
 Imports:
     lubridate,
     forcats
