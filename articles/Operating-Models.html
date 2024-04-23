@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="SAMSE">
-<title>Operating Models • SAMSE</title>
+<title>Creating Operating Models from BAM Output • SAMSE</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Operating Models">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Creating Operating Models from BAM Output">
 <meta property="og:description" content="SAMSE">
 <meta property="og:image" content="https://blue-matter.github.io/SAFMC-MSE/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -48,7 +48,7 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/Operating-Models.html">Operating Models</a>
+    <a class="dropdown-item" href="../articles/Operating-Models.html">Creating Operating Models from BAM Output</a>
   </div>
 </li>
       </ul>
@@ -68,7 +68,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Operating Models</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Creating Operating Models from BAM Output</h1>
             
       
       
@@ -78,13 +78,13 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">bamExtras</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://openmse.com/" class="external-link">openMSE</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://blue-matter.github.io/SAFMC-MSE/">SAMSE</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>This article describes the process to create operating models (OMs)
-for the Snapper-Grouper MSE.</p>
+<p>This article describes the process to import assessments conducted
+with Beaufort Assessment Model (BAM) and create multi-fleet operating
+models (OMs) in the <code>openMSE</code> framework.</p>
 <div class="section level3">
 <h3 id="prerequistes">Prerequistes<a class="anchor" aria-label="anchor" href="#prerequistes"></a>
 </h3>
@@ -95,42 +95,259 @@ for the Snapper-Grouper MSE.</p>
 <span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pkg_install.html" class="external-link">pkg_install</a></span><span class="op">(</span><span class="st">'nikolaifish/bamExtras'</span><span class="op">)</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pkg_install.html" class="external-link">pkg_install</a></span><span class="op">(</span><span class="st">'blue-matter/MSEtool'</span><span class="op">)</span></span></code></pre></div>
+<p>These are the package versions used to create this article:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">'bamExtras'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] '0.0.1'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">'MSEtool'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] '3.7.9999'</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="om-specifications">OM Specifications<a class="anchor" aria-label="anchor" href="#om-specifications"></a>
-</h3>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># MSE Parameters</span></span>
-<span><span class="va">nsim</span> <span class="op">&lt;-</span> <span class="fl">50</span> <span class="co"># number of simulations</span></span>
-<span><span class="va">proyears</span> <span class="op">&lt;-</span> <span class="fl">20</span> <span class="co"># number of projection years</span></span>
-<span></span>
-<span><span class="co"># CAL bins (mm) - need to be the same for all stocks</span></span>
-<span><span class="va">bin_width</span> <span class="op">&lt;-</span> <span class="fl">50</span></span>
-<span><span class="va">CAL_bins</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>from<span class="op">=</span><span class="fl">0</span>, to<span class="op">=</span><span class="fl">1500</span>, by<span class="op">=</span><span class="va">bin_width</span><span class="op">)</span></span>
-<span><span class="va">CAL_mids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.5</span><span class="op">*</span><span class="va">bin_width</span>, by<span class="op">=</span><span class="va">bin_width</span>, length.out<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="op">(</span><span class="va">CAL_bins</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Observation Model</span></span>
-<span><span class="co"># currently perfect obs as data aren't being used in the MPs</span></span>
-<span><span class="co"># can be changed later</span></span>
-<span></span>
-<span><span class="va">Obs_Model</span> <span class="op">&lt;-</span> <span class="va">Perfect_Info</span></span></code></pre></div>
-</div>
 </div>
 <div class="section level2">
-<h2 id="import-sedar-assessments-and-create-oms">Import SEDAR Assessments and Create OMs<a class="anchor" aria-label="anchor" href="#import-sedar-assessments-and-create-oms"></a>
+<h2 id="om-specifications">OM Specifications<a class="anchor" aria-label="anchor" href="#om-specifications"></a>
 </h2>
-<div class="section level3">
-<h3 id="red-snapper">Red Snapper<a class="anchor" aria-label="anchor" href="#red-snapper"></a>
-</h3>
-<p>RS_rdat &lt;- bamExtras::rdat_RedSnapper |&gt;
-bamExtras::standardize_rdat()</p>
-<p>RS_OM &lt;- BAM2MOM(RS_rdat, stock_name=‘Red Snapper’)</p>
+<p>The number of simulations (<code>nsim</code>) and number of
+projection years (<code>proyears</code>) need to be specified for an OM.
+Here we are setting them as global variables so that each OM we create
+has the same number of stochastic simulations and projection years:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">nsim</span> <span class="op">&lt;-</span> <span class="fl">50</span> <span class="co"># number of simulations</span></span>
+<span><span class="va">proyears</span> <span class="op">&lt;-</span> <span class="fl">20</span> <span class="co"># number of projection years</span></span></code></pre></div>
+<p>An OM also requires the specification of an Observation Model. The
+Observation Model is used to simulate fishery data to be used be
+management procedures in the projection phase of the closed-loop
+simulation testing.</p>
+<p>We are using <code>Perfect_Info</code> as the fishery data are not
+currently used within the management options (only static management
+options are currently being explored). This can be changed later if
+dynamic management options that respond to the observed fishery data are
+added to the analysis.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Obs_Model</span> <span class="op">&lt;-</span> <span class="va">Perfect_Info</span></span></code></pre></div>
 </div>
+<div class="section level2">
+<h2 id="case-study-stocks">Case Study Stocks<a class="anchor" aria-label="anchor" href="#case-study-stocks"></a>
+</h2>
+<p>The current analysis is focused on the Red Snapper and the Gag
+Grouper stocks. The MSE framework is flexible, and more stocks can be
+added to the analysis.</p>
+<p>Here we demonstrate creating OMs for the two case study stocks, and a
+third stock the Black Seabass.</p>
+<p>The most recent BAM assessments are used:</p>
+<ol style="list-style-type: decimal">
+<li>Red Snapper <a href="https://sedarweb.org/documents/sedar-73-stock-assessment-report-south-atlantic-red-snapper/" class="external-link">SEDAR
+73</a>
+</li>
+<li>Gag Grouper <a href="https://sedarweb.org/documents/sedar-71-stock-assessment-report-south-atlantic-gag/" class="external-link">SEDAR
+71</a>
+</li>
+<li>Black Seabass <a href="https://sedarweb.org/documents/sedar-76-stock-assessment-report-south-atlantic-black-sea-bass/" class="external-link">SEDAR
+76</a>
+</li>
+</ol>
+</div>
+<div class="section level2">
+<h2 id="import-sedar-assessments">Import SEDAR Assessments<a class="anchor" aria-label="anchor" href="#import-sedar-assessments"></a>
+</h2>
+<p>The BAM assessments are imported from the <code>bamExtras</code>
+package:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">RS_rdat</span> <span class="op">&lt;-</span> <span class="fu">bamExtras</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/bamExtras/man/rdat_RedSnapper.html" class="external-link">rdat_RedSnapper</a></span> <span class="op">|&gt;</span> <span class="fu">bamExtras</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bamExtras/man/standardize_rdat.html" class="external-link">standardize_rdat</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">GG_rdat</span> <span class="op">&lt;-</span> <span class="fu">bamExtras</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/bamExtras/man/rdat_GagGrouper.html" class="external-link">rdat_GagGrouper</a></span> <span class="op">|&gt;</span> <span class="fu">bamExtras</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bamExtras/man/standardize_rdat.html" class="external-link">standardize_rdat</a></span><span class="op">(</span><span class="op">)</span> </span>
+<span><span class="va">BS_rdat</span> <span class="op">&lt;-</span> <span class="fu">bamExtras</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/bamExtras/man/rdat_BlackSeaBass.html" class="external-link">rdat_BlackSeaBass</a></span> <span class="op">|&gt;</span> <span class="fu">bamExtras</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bamExtras/man/standardize_rdat.html" class="external-link">standardize_rdat</a></span><span class="op">(</span><span class="op">)</span> </span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="create-oms">Create OMs<a class="anchor" aria-label="anchor" href="#create-oms"></a>
+</h2>
+<p>The <code>BAM2MOM</code> function is used to create the
+<code>openMSE</code> operating model objects:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">RS_OM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MSEtool/man/BAM2MOM.html" class="external-link">BAM2MOM</a></span><span class="op">(</span><span class="va">RS_rdat</span>, stock_name<span class="op">=</span><span class="st">'Red Snapper'</span><span class="op">)</span></span>
+<span><span class="va">GG_OM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MSEtool/man/BAM2MOM.html" class="external-link">BAM2MOM</a></span><span class="op">(</span><span class="va">GG_rdat</span>, stock_name<span class="op">=</span><span class="st">'Gag Grouper'</span><span class="op">)</span></span>
+<span><span class="va">BS_OM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MSEtool/man/BAM2MOM.html" class="external-link">BAM2MOM</a></span><span class="op">(</span><span class="va">BS_rdat</span>, stock_name<span class="op">=</span><span class="st">'Black Seabass'</span><span class="op">)</span></span></code></pre></div>
+<p>These OMs can now be used within the <code>openMSE</code> framework.
+However, before doing so, it is important to understand the fleet
+structure within each OM.</p>
+</div>
+<div class="section level2">
+<h2 id="define-fleet-structure">Define Fleet Structure<a class="anchor" aria-label="anchor" href="#define-fleet-structure"></a>
+</h2>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">fleet_names_df</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Stock<span class="op">=</span><span class="st">'Red Snapper'</span>, Fleets<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">RS_OM</span><span class="op">@</span><span class="va">Fleets</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Stock<span class="op">=</span><span class="st">'Gag Grouper'</span>, Fleets<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">GG_OM</span><span class="op">@</span><span class="va">Fleets</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Stock<span class="op">=</span><span class="st">'Black Seabass'</span>, Fleets<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">BS_OM</span><span class="op">@</span><span class="va">Fleets</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fleet_names_df</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Stock</span><span class="op">==</span><span class="st">'Red Snapper'</span><span class="op">)</span></span>
+<span><span class="co">#&gt;         Stock Fleets</span></span>
+<span><span class="co">#&gt; 1 Red Snapper    cHL</span></span>
+<span><span class="co">#&gt; 2 Red Snapper    rHB</span></span>
+<span><span class="co">#&gt; 3 Red Snapper    rGN</span></span>
+<span><span class="co">#&gt; 4 Red Snapper  cHL.D</span></span>
+<span><span class="co">#&gt; 5 Red Snapper  rHB.D</span></span>
+<span><span class="co">#&gt; 6 Red Snapper  rGN.D</span></span>
+<span><span class="va">fleet_names_df</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Stock</span><span class="op">==</span><span class="st">'Gag Grouper'</span><span class="op">)</span></span>
+<span><span class="co">#&gt;         Stock Fleets</span></span>
+<span><span class="co">#&gt; 1 Gag Grouper    cHL</span></span>
+<span><span class="co">#&gt; 2 Gag Grouper    cDV</span></span>
+<span><span class="co">#&gt; 3 Gag Grouper    rHB</span></span>
+<span><span class="co">#&gt; 4 Gag Grouper    rGN</span></span>
+<span><span class="co">#&gt; 5 Gag Grouper  cHL.D</span></span>
+<span><span class="co">#&gt; 6 Gag Grouper  rHB.D</span></span>
+<span><span class="co">#&gt; 7 Gag Grouper  rGN.D</span></span>
+<span><span class="va">fleet_names_df</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Stock</span><span class="op">==</span><span class="st">'Black Seabass'</span><span class="op">)</span></span>
+<span><span class="co">#&gt;           Stock Fleets</span></span>
+<span><span class="co">#&gt; 1 Black Seabass    cHL</span></span>
+<span><span class="co">#&gt; 2 Black Seabass    cPT</span></span>
+<span><span class="co">#&gt; 3 Black Seabass    rHB</span></span>
+<span><span class="co">#&gt; 4 Black Seabass    rGN</span></span>
+<span><span class="co">#&gt; 5 Black Seabass  cGN.D</span></span>
+<span><span class="co">#&gt; 6 Black Seabass  rHB.D</span></span>
+<span><span class="co">#&gt; 7 Black Seabass  rGN.D</span></span></code></pre></div>
+<p>In order to combine these single stock OMs together, each OM must
+have the same fleet structure for all stocks in the OM, even if those
+fleets are not actively fishing on a particular stock.</p>
+<p>The stocks have some fleets in common (e.g., Commercial hook and line
+(cHL)) and some unique fleets (e.g., Gag Grouper Commercial dive (cDV)).
+The landings and discards are also modeled as separate fleets in the BAM
+models (indicated by ‘.D’).</p>
+<p>The landing and discard components for each fleet will be combined
+into a single fleet with a selectivity and retention curve.</p>
+<p>The Black Seabass stock has two commercial fleets (cHL and cPT), but
+the discards are reported for two fleets combined (cGN.D). To deal with
+this, the cHL and cPT landing fleets will first be combined together,
+before the discards are added for the combined fleet.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fleet_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Code<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">fleet_names_df</span><span class="op">$</span><span class="va">Fleets</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fleet_df</span><span class="op">$</span><span class="va">Name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Commercial Line'</span>,</span>
+<span>                   <span class="st">'Recreational Headboat'</span>,</span>
+<span>                   <span class="st">'General Recreational'</span>,</span>
+<span>                   <span class="st">'Commercial Line - Discard'</span>,</span>
+<span>                   <span class="st">'Recreational Headboat - Discard'</span>,</span>
+<span>                   <span class="st">'General Recreational - Discard'</span>,</span>
+<span>                   <span class="st">'Commercial Dive'</span>,</span>
+<span>                   <span class="st">'Commercial Pot'</span>,</span>
+<span>                   <span class="st">'Commercial General - Discard'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fleet_df</span><span class="op">$</span><span class="va">Mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">fleet_df</span><span class="op">$</span><span class="va">Type</span> <span class="op">&lt;-</span> <span class="st">'Landing'</span></span>
+<span><span class="va">fleet_df</span><span class="op">$</span><span class="va">Type</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'\\.D'</span>, <span class="va">fleet_df</span><span class="op">$</span><span class="va">Code</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">'Discard'</span></span>
+<span><span class="va">fleet_df</span></span>
+<span><span class="co">#&gt;    Code                            Name Mapping    Type</span></span>
+<span><span class="co">#&gt; 1   cHL                 Commercial Line       1 Landing</span></span>
+<span><span class="co">#&gt; 2   rHB           Recreational Headboat       2 Landing</span></span>
+<span><span class="co">#&gt; 3   rGN            General Recreational       3 Landing</span></span>
+<span><span class="co">#&gt; 4 cHL.D       Commercial Line - Discard       1 Discard</span></span>
+<span><span class="co">#&gt; 5 rHB.D Recreational Headboat - Discard       2 Discard</span></span>
+<span><span class="co">#&gt; 6 rGN.D  General Recreational - Discard       3 Discard</span></span>
+<span><span class="co">#&gt; 7   cDV                 Commercial Dive       4 Landing</span></span>
+<span><span class="co">#&gt; 8   cPT                  Commercial Pot       1 Landing</span></span>
+<span><span class="co">#&gt; 9 cGN.D    Commercial General - Discard       1 Discard</span></span></code></pre></div>
+<p>The <code>Mapping</code> variable describes how the fleets will be
+combined together. The end result will be a fleet structure with four
+fleets for each stock:</p>
+<ol style="list-style-type: decimal">
+<li>Commercial Line</li>
+<li>Recreational Headboat</li>
+<li>General Recreational</li>
+<li>Commercial Dive</li>
+</ol>
+</div>
+<div class="section level2">
+<h2 id="define-discard-mortality">Define Discard Mortality<a class="anchor" aria-label="anchor" href="#define-discard-mortality"></a>
+</h2>
+<p>The discard mortality needs to be added to the OMs so that the
+historical effort can be adjusted to account for the fish that were
+caught and released alive, and so that the discard mortality can be
+modified in the projections.</p>
+<p>The discard mortality for Red Snapper is reported in Table 6 of <a href="https://sedarweb.org/documents/sedar-73-stock-assessment-report-south-atlantic-red-snapper/" class="external-link">SEDAR
+73</a>. The<code>Year</code> variable indicates the first year the
+discard mortality changes:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">discard_mortality_RS</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Stock<span class="op">=</span><span class="st">'Red Snapper'</span>,</span>
+<span>             Code<span class="op">=</span><span class="st">'cHL'</span>,</span>
+<span>             Year<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>, <span class="fl">2007</span>, <span class="fl">2017</span><span class="op">)</span>,</span>
+<span>             Prob_Dead<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.48</span>, <span class="fl">0.38</span>, <span class="fl">0.36</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Stock<span class="op">=</span><span class="st">'Red Snapper'</span>,</span>
+<span>             Code<span class="op">=</span><span class="st">'rHB'</span>,</span>
+<span>             Year<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>, <span class="fl">2011</span>, <span class="fl">2018</span><span class="op">)</span>,</span>
+<span>             Prob_Dead<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.37</span>, <span class="fl">0.26</span>, <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Stock<span class="op">=</span><span class="st">'Red Snapper'</span>,</span>
+<span>             Code<span class="op">=</span><span class="st">'rGN'</span>,</span>
+<span>             Year<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>, <span class="fl">2011</span>, <span class="fl">2018</span><span class="op">)</span>,</span>
+<span>             Prob_Dead<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.37</span>, <span class="fl">0.28</span>, <span class="fl">0.26</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The discard mortality for Gag Grouper is reported in <a href="https://sedarweb.org/documents/sedar-71-stock-assessment-report-south-atlantic-gag/" class="external-link">SEDAR
+71</a>, with a fixed discard mortality of 0.4 for the commerical fleet,
+and 0.25 for the recreational fleets for all years:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">discard_mortality_GG</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Stock<span class="op">=</span><span class="st">'Gag Grouper'</span>,</span>
+<span>             Code<span class="op">=</span><span class="st">'cHL'</span>,</span>
+<span>             Year<span class="op">=</span><span class="fl">1900</span>,</span>
+<span>             Prob_Dead<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Stock<span class="op">=</span><span class="st">'Gag Grouper'</span>,</span>
+<span>             Code<span class="op">=</span><span class="st">'rHB'</span>,</span>
+<span>             Year<span class="op">=</span><span class="fl">1900</span>,</span>
+<span>             Prob_Dead<span class="op">=</span><span class="fl">0.25</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Stock<span class="op">=</span><span class="st">'Gag Grouper'</span>,</span>
+<span>             Code<span class="op">=</span><span class="st">'rGN'</span>,</span>
+<span>             Year<span class="op">=</span><span class="fl">1900</span>,</span>
+<span>             Prob_Dead<span class="op">=</span><span class="fl">0.25</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The discard mortality for Black Seabass is reported in Section 2.2.1
+in <a href="https://sedarweb.org/documents/sedar-76-stock-assessment-report-south-atlantic-black-sea-bass/" class="external-link">SEDAR
+76</a>. Here the average discard mortality is calculated for the
+combined commercial line and pot fleets:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">discard_mortality_BS</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Stock<span class="op">=</span><span class="st">'Black Sea Bass'</span>,</span>
+<span>             Code<span class="op">=</span><span class="st">'cHL'</span>,</span>
+<span>             Year<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>, <span class="fl">2007</span><span class="op">)</span>,</span>
+<span>             Prob_Dead<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fl">0.14</span>,<span class="fl">0.19</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fl">0.14</span>, <span class="fl">0.068</span><span class="op">)</span><span class="op">)</span></span>
+<span>             <span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Stock<span class="op">=</span><span class="st">'Black Sea Bass'</span>,</span>
+<span>             Code<span class="op">=</span><span class="st">'rHB'</span>,</span>
+<span>             Year<span class="op">=</span><span class="fl">1900</span>,</span>
+<span>             Prob_Dead<span class="op">=</span><span class="fl">0.152</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Stock<span class="op">=</span><span class="st">'Black Sea Bass'</span>,</span>
+<span>             Code<span class="op">=</span><span class="st">'rGN'</span>,</span>
+<span>             Year<span class="op">=</span><span class="fl">1900</span>,</span>
+<span>             Prob_Dead<span class="op">=</span><span class="fl">0.137</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The stock-specific discard mortality dataframes are combined
+together:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">discard_mortality</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">discard_mortality_RS</span>,</span>
+<span>                                      <span class="va">discard_mortality_GG</span>,</span>
+<span>                                      <span class="va">discard_mortality_BS</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="aggregate-fleets">Aggregate Fleets<a class="anchor" aria-label="anchor" href="#aggregate-fleets"></a>
+</h2>
+<p>Next, the <code>Aggregate_Fleets</code> function is used to aggregate
+the fleets together according to the mapping defined in
+<code>fleet_df</code> and the discard mortality are added from
+<code>discard_mortality</code>.</p>
+<p>The <code>Aggregate_Fleets</code> function does five things:</p>
+<ol style="list-style-type: decimal">
+<li>Combine any landing fleets that are mapped together in
+<code>fleet_df</code> (here only applies to Black Seabass)</li>
+<li>Add the discard mortality to each fleet</li>
+<li>Combine the discard fleets with the landing fleets to produce a
+single fleet with selectivity and retention curves</li>
+<li>Add dummy fleets (F=0 for all years) for OMs that are missing some
+fleets</li>
+<li>Order the fleets for all OMs</li>
+</ol>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">RS_OM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Aggregate_Fleets.html">Aggregate_Fleets</a></span><span class="op">(</span><span class="va">RS_OM</span>, <span class="va">fleet_df</span>, <span class="va">discard_mortality</span><span class="op">)</span></span>
+<span><span class="va">GG_OM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Aggregate_Fleets.html">Aggregate_Fleets</a></span><span class="op">(</span><span class="va">GG_OM</span>, <span class="va">fleet_df</span>, <span class="va">discard_mortality</span><span class="op">)</span></span>
+<span><span class="va">BS_OM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Aggregate_Fleets.html">Aggregate_Fleets</a></span><span class="op">(</span><span class="va">BS_OM</span>, <span class="va">fleet_df</span>, <span class="va">discard_mortality</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
