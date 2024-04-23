@@ -1,7 +1,5 @@
 convert_units <- function(bam_units, value) {
-  if (bam_units == '1000 lb')
-    value <- openMSE::kg2_1000lb(value)
-  if (bam_units == '1000 lb whole')
+  if (grepl('1000 lb', bam_units))
     value <- openMSE::kg2_1000lb(value)
   value
 }
@@ -19,6 +17,13 @@ run_simulations <- function(Hist) {
 }
 
 
+#' Compare the biomass trends from BAM and openMSE
+#'
+#' @param Hist An object of class `multiHist`
+#' @param rdat A list object from bamExtras
+#'
+#' @return a ggplot object
+#' @export
 Compare_Biomass <- function(Hist, rdat) {
   Hist <- run_simulations(Hist)
 
@@ -42,7 +47,14 @@ Compare_Biomass <- function(Hist, rdat) {
 
 }
 
-Compare_F <- function(MOM, rdat) {
+#' Compare the F trends from BAM and openMSE
+#'
+#' @param Hist An object of class `multiHist`
+#' @param rdat A list object from bamExtras
+#'
+#' @return a ggplot object
+#' @export
+Compare_F <- function(Hist, rdat) {
   Hist <- run_simulations(Hist)
 
   Current_Yr <- Hist[[1]][[1]]@OMPars$CurrentYr[1]
@@ -50,11 +62,12 @@ Compare_F <- function(MOM, rdat) {
   nage <- dim(Hist[[1]][[1]]@AtAge$Number)[2]
   hist_years <- rev(seq(Current_Yr, by=-1, length.out=nyears))
 
-  om <- rep(0, nyears)
+  om <- matrix(0, nage, nyears)
   nfleet <- length(Hist[[1]])
   for (fl in 1:nfleet) {
-    om <- om + Hist[[1]][[fl]]@TSdata$Find[1,]
+    om <- om + Hist[[1]][[fl]]@AtAge$F.Mortality[1,,,1]
   }
+  om <- apply(om, 2, max, na.rm=TRUE)
 
   bam <- data.frame(Year=hist_years, value=rdat$t.series$F.full[1:nyears], Model='BAM')
   om <- data.frame(Year=hist_years, value=om, Model='OM')
@@ -70,23 +83,31 @@ Compare_F <- function(MOM, rdat) {
 
 get_Landings <- function(rdat) {
   tt <- grepl('klb', names(rdat$LD.pr.tseries))
-  val <- apply(rdat$LD.pr.tseries[tt][grepl('^L.', names(rdat$LD.pr.tseries)[tt])], 1, sum)
+  val <- apply(rdat$LD.pr.tseries[tt][grepl('^L.', names(rdat$LD.pr.tseries)[tt])], 1, sum, na.rm=TRUE)
   as.numeric(val)
 }
 
 get_Discards <- function(rdat) {
-  tt <- grepl('pr', names(rdat$t.series))
-  val <- apply(rdat$t.series[tt][grepl('^D.', names(rdat$t.series)[tt])], 1, sum)
+  tt <- grepl('klb', names(rdat$LD.pr.tseries))
+  val <- apply(rdat$LD.pr.tseries[tt][grepl('^D.', names(rdat$LD.pr.tseries)[tt])], 1, sum, na.rm=TRUE)
   as.numeric(val)
 }
 
 get_Removals <- function(rdat) {
   landings <- get_Landings(rdat)
-  discards <- get_Landings(rdat)
+  discards <- get_Discards(rdat)
   landings + discards
 }
 
-Compare_Landings <- function(Hist, rdat) {
+#' Compare the landings & discards from BAM and openMSE
+#'
+#' @param Hist An object of class `multiHist`
+#' @param rdat A list object from bamExtras
+#'
+#' @return a ggplot object
+#' @export
+#'
+Compare_Catch <- function(Hist, rdat, divide=FALSE) {
   Hist <- run_simulations(Hist)
 
   Current_Yr <- Hist[[1]][[1]]@OMPars$CurrentYr[1]
@@ -95,23 +116,43 @@ Compare_Landings <- function(Hist, rdat) {
   hist_years <- rev(seq(Current_Yr, by=-1, length.out=nyears))
 
   bam_units <- rdat$info$units.landings
-  om <- rep(0, nyears)
+  om_landings <- rep(0, nyears)
+  om_discards <- rep(0, nyears)
   nfleet <- length(Hist[[1]])
   for (fl in 1:nfleet) {
-    om <- om + rowSums(Hist[[1]][[fl]]@TSdata$Landings[1,,])
+    om_landings <- om_landings + rowSums(Hist[[1]][[fl]]@TSdata$Landings[1,,])
+    om_discards <- om_discards + rowSums(Hist[[1]][[fl]]@TSdata$Discards[1,,])
   }
 
-  om <- convert_units(bam_units, om)
+  om_landings <- convert_units(bam_units, om_landings)
+  om_discards <- convert_units(bam_units, om_discards)
 
-  bam <- get_Landings(rdat)[1:nyears]
-  bam <- data.frame(Year=hist_years, value=bam, Model='BAM')
-  om <- data.frame(Year=hist_years, value=om, Model='OM')
+  if (divide) {
+    om_landings <- om_landings/1000
+    om_discards <- om_discards/1000
+  }
+
+  bam_landings <- get_Landings(rdat)[1:nyears]
+  bam_discards <- get_Discards(rdat)[1:nyears]
+
+  bam <- dplyr::bind_rows(
+    data.frame(Year=hist_years, value=bam_landings, type='Landings', Model='BAM'),
+    data.frame(Year=hist_years, value=bam_discards, type='Discards', Model='BAM')
+  )
+
+  om <-  dplyr::bind_rows(
+    data.frame(Year=hist_years, value=om_landings, type='Landings', Model='OM'),
+    data.frame(Year=hist_years, value=om_discards, type='Discards', Model='OM')
+  )
+
   df <- dplyr::bind_rows(bam, om)
+  df$type <- factor(df$type, ordered=TRUE, levels=c('Landings', 'Discards'))
 
   ggplot2::ggplot(df, ggplot2::aes(x=Year, y=value, color=Model, linetype=Model)) +
+    ggplot2::facet_wrap(~type) +
     ggplot2::geom_line() +
     ggplot2::expand_limits(y=0) +
-    ggplot2::labs(y='Total Landings') +
+    ggplot2::labs(y=bam_units) +
     ggplot2::theme_bw()
 }
 
@@ -241,11 +282,9 @@ Combine_Discard_Fleets <- function(MOM, fleet_df) {
       apicalF <- replicate(nage, MOM@cpars[[1]][[l.fleet]]$Find[1,]) |> t()
       F_Land_at_Age <- apicalF * MOM@cpars[[1]][[l.fleet]]$V[1,,1:nyears]
       F_land <- apply(F_Land_at_Age, 2, max)
-      F_land/Find
 
       retA <- F_Land_at_Age/F_Dead_at_age_total
       retA[!is.finite(retA)] <- 1E-6
-      retA <- retA/matrix(apply(retA, 2, max), nage, nyears, byrow = TRUE)
       projretA <- replicate(proyears, retA[,nyears])
       retA <- abind::abind(retA, projretA, along=2)
       retA <- replicate(nsim, retA) |> aperm(c(3,1,2))
@@ -334,7 +373,7 @@ Add_Discard_Mortality <- function(MOM, discard_mortality) {
   fleet_names <- names(MOM@Fleets[[1]])
   disc_fleets <- unique(discard_mortality_stock$Code)
   chk <- disc_fleets %in% fleet_names
-  if (!any(chk))
+  if (any(!chk))
     stop('discard_mortality$Code does not match MOM fleet names')
 
   for (fl in seq_along(disc_fleets)) {
@@ -344,28 +383,35 @@ Add_Discard_Mortality <- function(MOM, discard_mortality) {
     # discard mortality probability by year
     disc_m_df <- discard_mortality_stock |> dplyr::filter(Code==disc_fleet)
 
-    disc_m_DF <- data.frame(Year=years, DiscM=disc_m_df$DiscM[1])
+    disc_m_DF <- data.frame(Year=years, Prob_Dead=disc_m_df$Prob_Dead[1])
     for (i in 2:nrow(disc_m_df)) {
-      disc_m_DF <- disc_m_DF |> dplyr::mutate(DiscM=ifelse(Year>=disc_m_df$Year[i], disc_m_df$DiscM[i], DiscM))
+      disc_m_DF <- disc_m_DF |> dplyr::mutate(Prob_Dead=ifelse(Year>=disc_m_df$Year[i],
+                                                               disc_m_df$Prob_Dead[i], Prob_Dead))
     }
 
     # extend for projections
-    discM <- c(disc_m_DF$DiscM,rep(disc_m_DF$DiscM[length(disc_m_DF$DiscM)],proyears))
+    Prob_Dead <- c(disc_m_DF$Prob_Dead,rep(disc_m_DF$Prob_Dead[length(disc_m_DF$Prob_Dead)],proyears))
     # make discard-M-at-age array
-    discM <- replicate(nsim, discM)
-    discM <- replicate(nage, discM)
-    discM <- aperm(discM, c(2,3,1))
-    MOM@cpars[[1]][[disc_fleet_ind]]$Fdisc_array1 <- discM
+    Prob_Dead <- replicate(nsim, Prob_Dead)
+    Prob_Dead <- replicate(nage, Prob_Dead)
+    Prob_Dead <- aperm(Prob_Dead, c(2,3,1))
+    MOM@cpars[[1]][[disc_fleet_ind]]$Fdisc_array1 <- Prob_Dead
 
     # inflate hist F
     Find <- MOM@cpars[[1]][[disc_fleet_ind]]$Find[1,]
-    Find <- Find/disc_m_DF$DiscM
+    Find <- Find/disc_m_DF$Prob_Dead
     MOM@cpars[[1]][[disc_fleet_ind]]$Find<- replicate(nsim,Find) |> t()
   }
   MOM
 }
 
-
+#' Compare the F trends from BAM and openMSE
+#'
+#' @param MOM An object of class `MOM`
+#' @param fleet_df A dataframe. See 'Operating Models' article
+#' @param discard_mortality A dataframe. See 'Operating Models' article
+#' @return An updated MOM
+#' @export
 Aggregate_Fleets <- function(MOM, fleet_df, discard_mortality) {
 
   fleet_names <- names(MOM@Fleets[[1]])
@@ -374,13 +420,11 @@ Aggregate_Fleets <- function(MOM, fleet_df, discard_mortality) {
   nage <- MOM@Stocks[[1]]@maxage + 1
   nsim <- MOM@nsim
 
-  MOM1 <- Add_Discard_Mortality(MOM, discard_mortality)
+  MOM1 <- Combine_Landing_Fleets(MOM, fleet_df)
 
-  MOM2 <- Combine_Landing_Fleets(MOM1, fleet_df)
+  MOM2 <- Add_Discard_Mortality(MOM1, discard_mortality)
 
   MOM3 <- Combine_Discard_Fleets(MOM2, fleet_df)
-
-  MOM3@cpars$`Red Snapper`$rGN$Find[1,]
 
   MOM4 <- Add_Dummy_Fleets(MOM3, fleet_df)
 

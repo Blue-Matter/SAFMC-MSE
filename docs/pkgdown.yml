@@ -3,7 +3,7 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   Operating-Models: Operating-Models.html
-last_built: 2024-04-22T22:08Z
+last_built: 2024-04-23T19:44Z
 urls:
   reference: https://blue-matter.github.io/SAFMC-MSE/reference
   article: https://blue-matter.github.io/SAFMC-MSE/articles

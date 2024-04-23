@@ -10,11 +10,9 @@
 
 The [South Atlantic Fishery Management Council](https://safmc.net/)
 (SAFMC) is working with [Blue Matter Science
-Ltd.](https://www.bluematterscience.com/) to conduct a [Management
-Strategy Evaluation
-(MSE)](https://harveststrategies.org/management-strategy-evaluation-2/)
-to describe the expected outcomes of different management approaches for
-the Snapper-Grouper Fishery.
+Ltd.](https://www.bluematterscience.com/) to conduct a Management
+Strategy Evaluation (MSE) to describe the expected outcomes of different
+management approaches for the Snapper-Grouper Fishery.
 
 ## MSE Technical Group Members
 

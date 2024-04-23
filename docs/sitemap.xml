@@ -25,6 +25,9 @@
     <loc>https://blue-matter.github.io/SAFMC-MSE/reference/AddSeasonal_RS.html</loc>
   </url>
   <url>
+    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Aggregate_Fleets.html</loc>
+  </url>
+  <url>
     <loc>https://blue-matter.github.io/SAFMC-MSE/reference/BAM2MOM.html</loc>
   </url>
   <url>
@@ -47,6 +50,15 @@
   </url>
   <url>
     <loc>https://blue-matter.github.io/SAFMC-MSE/reference/combineFleets.html</loc>
+  </url>
+  <url>
+    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Compare_Biomass.html</loc>
+  </url>
+  <url>
+    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Compare_Catch.html</loc>
+  </url>
+  <url>
+    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Compare_F.html</loc>
   </url>
   <url>
     <loc>https://blue-matter.github.io/SAFMC-MSE/reference/fixedC_mean3.html</loc>

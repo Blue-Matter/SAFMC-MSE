@@ -7,8 +7,8 @@
 
 library(bamExtras)
 library(MSEtool)
+library(SAMSE)
 
-source('Build_Package/functions.R')
 
 # 1. Set OM Specifications
 #
@@ -36,24 +36,18 @@ Obs_Model <- Perfect_Info
 
 # ----- Import SEDAR Assessments and Create OMs ----
 
-## ---- Red Snapper ----
+RS_rdat <- bamExtras::rdat_RedSnapper |>
+  bamExtras::standardize_rdat()
 
-RS_OM <- bamExtras::rdat_RedSnapper |>
-  bamExtras::standardize_rdat() |>
-  BAM2MOM(stock_name='Red Snapper')
+GG_rdat <- bamExtras::rdat_GagGrouper |>
+  bamExtras::standardize_rdat()
 
-## ---- Gag Grouper ----
+BSB_rdat <- bamExtras::rdat_BlackSeaBass |>
+  bamExtras::standardize_rdat()
 
-GG_OM <- bamExtras::rdat_GagGrouper |>
-  bamExtras::standardize_rdat() |>
-  BAM2MOM(stock_name='Gag Grouper')
-
-
-## ---- Black Sea Bass ----
-
-BSB_OM <- bamExtras::rdat_BlackSeaBass |>
-  bamExtras::standardize_rdat() |>
-  BAM2MOM(stock_name='Black Sea Bass')
+RS_OM <- BAM2MOM(RS_rdat, stock_name='Red Snapper')
+GG_OM <- BAM2MOM(GG_rdat, stock_name='Gag Grouper')
+BSB_OM <- BAM2MOM(BSB_rdat, stock_name='Black Sea Bass')
 
 
 # ---- Define Fleet Structure ----
@@ -87,40 +81,24 @@ fleet_df$Type[grepl('\\.D', fleet_df$Code)] <- 'Discard'
 # need to inflate effort to account for fish that were caught and discarded alive
 
 # SEDAR 73 Table 6
-names(RS_OM@Fleets[[1]])
-
-rdat <- bamExtras::rdat_RedSnapper |>
-  bamExtras::standardize_rdat()
-
-ind <- which(grepl('D.mort', names(rdat$parms)))
-rdat$parms[ind]
-
 discard_mortality_RS <- dplyr::bind_rows(
   data.frame(Stock='Red Snapper',
              Code='cHL',
-             Year=c(1900, 2007, 2017),
+             Year=c(1900, 2008, 2017),
              DiscM=c(0.48, 0.38, 0.36)),
   data.frame(Stock='Red Snapper',
              Code='rHB',
-             Year=c(1900, 2011, 2018),
+             Year=c(1900, 2012, 2018),
              DiscM=c(0.37, 0.26, 0.25)),
   data.frame(Stock='Red Snapper',
              Code='rGN',
-             Year=c(1900, 2011, 2018),
+             Year=c(1900, 2012, 2018),
              DiscM=c(0.37, 0.28, 0.26))
 )
 
 # SEDAR 71
 # Commercial = 0.4
 # Rec & Headboats = 0.25
-names(GG_OM@Fleets[[1]])
-
-rdat <- bamExtras::rdat_GagGrouper |>
-  bamExtras::standardize_rdat()
-
-ind <- which(grepl('D.mort', names(rdat$parms)))
-rdat$parms[ind]
-
 discard_mortality_GG <- dplyr::bind_rows(
   data.frame(Stock='Gag Grouper',
              Code='cHL',
@@ -137,22 +115,17 @@ discard_mortality_GG <- dplyr::bind_rows(
 )
 
 # SEDAR 76 - Section 2.2.1
-names(BSB_OM@Fleets[[1]])
-rdat <- bamExtras::rdat_BlackSeaBass |>
-  bamExtras::standardize_rdat()
-
-ind <- which(grepl('Dmort', names(rdat$parms)))
-rdat$parms[ind]
+# data.frame(Stock='Black Sea Bass',
+#            Code='cPT',
+#            Year=c(1900,2007),
+#            DiscM=c(0.14, 0.068)),
 
 discard_mortality_BSB <- dplyr::bind_rows(
   data.frame(Stock='Black Sea Bass',
              Code='cHL',
-             Year=1900,
-             DiscM=0.19),
-  data.frame(Stock='Black Sea Bass',
-             Code='cPT',
-             Year=c(1900,2007),
-             DiscM=c(0.14, 0.068)),
+             Year=c(1900, 2007),
+             DiscM=c(mean(0.14,0.19), mean(0.14, 0.068))
+             ),
   data.frame(Stock='Black Sea Bass',
              Code='rHB',
              Year=1900,
@@ -168,149 +141,29 @@ discard_mortality <- dplyr::bind_rows(discard_mortality_RS,
                                       discard_mortality_BSB)
 
 
-
 # ---- Aggregate Fleets ----
 
-RS_rdat <- bamExtras::rdat_RedSnapper |>
-  bamExtras::standardize_rdat()
+RS_OM <- Aggregate_Fleets(RS_OM, fleet_df, discard_mortality)
+RS_Hist <- SAMSE:::run_simulations(RS_OM)
 
-RS_OM_small <- RS_OM
-RS_OM_small@nsim <- 2
-Hist_RS <- SimulateMOM(RS_OM_small)
+Compare_Biomass(RS_Hist, RS_rdat)
+Compare_Catch(RS_Hist, RS_rdat)
+Compare_F(RS_Hist, RS_rdat)
 
-Compare_Biomass(Hist_RS, RS_rdat)
+GG_OM <- Aggregate_Fleets(GG_OM, fleet_df, discard_mortality)
+GG_Hist <- SAMSE:::run_simulations(GG_OM)
 
-Compare_Landings(Hist_RS, RS_rdat)
-
-rowSums(Hist_RS$`Red Snapper`[[1]]@TSdata$Landings[1,,]) |> openMSE::kg2_1000lb()
-rowSums(Hist_RS$`Red Snapper`[[2]]@TSdata$Landings[1,,]) |> openMSE::kg2_1000lb()
-rowSums(Hist_RS$`Red Snapper`[[3]]@TSdata$Landings[1,,]) |> openMSE::kg2_1000lb()
-
-
-rdat <- bamExtras::rdat_GagGrouper |>
-  bamExtras::standardize_rdat()
-
-Compare_Biomass(GG_OM, rdat)
-
-
-rdat <- bamExtras::rdat_BlackSeaBass|>
-  bamExtras::standardize_rdat()
-
-Compare_Biomass(BSB_OM, rdat)
+Compare_Biomass(GG_Hist, GG_rdat)
+Compare_F(GG_Hist, GG_rdat)
+Compare_Catch(GG_Hist, GG_rdat)
 
 
 
-MOM2 <- Aggregate_Fleets(MOM, fleet_df)
-MOM2@nsim <- 2
-Hist2 <- SimulateMOM(MOM2, parallel = FALSE, silent=TRUE)
-Compare_Biomass(Hist2, rdat)
+BSB_OM <- Aggregate_Fleets(BSB_OM, fleet_df, discard_mortality)
+BSB_Hist <- SAMSE:::run_simulations(BSB_OM)
 
+Compare_Biomass(BSB_Hist, BSB_rdat)
+Compare_F(BSB_Hist, BSB_rdat)
+Compare_Catch(BSB_Hist, BSB_rdat, TRUE)
 
-GG_OM_agg <- Aggregate_Fleets(GG_OM, fleet_df)
-BSB_OM_agg <- Aggregate_Fleets(BSB_OM, fleet_df)
-
-
-
-Hist <- RS_OM
-rdat <- bamExtras::rdat_RedSnapper |>
-  bamExtras::standardize_rdat()
-
-Hist <- GG_OM
-rdat <- bamExtras::rdat_GagGrouper |>
-  bamExtras::standardize_rdat()
-
-Hist <- BSB_OM
-rdat <- bamExtras::rdat_BlackSeaBass |>
-  bamExtras::standardize_rdat()
-
-Compare_BAM <- function(Hist, rdat) {
-  Hist <- run_simulations(Hist)
-
-  Compare_N(Hist, rdat)
-  Compare_Biomass(Hist, rdat)
-  Compare_F(Hist, rdat)
-  Compare_Landings(Hist, rdat)
-
-
-
-}
-
-###### TESTING #########
-
-# Red Snapper
-
-## Before Aggregation
-
-# Biomass
-
-
-
-## After Aggregation
-# Biomass
-
-# Removals
-
-######### DEBUG ###########
-rdat <- bamExtras::rdat_RedSnapper |>
-  bamExtras::standardize_rdat()
-
-MOM <- BAM2MOM(rdat, stock_name='Red Snapper')
-
-MOM_temp <- MOM
-MOM_temp@nsim <- 2
-Hist <- SimulateMOM(MOM_temp, parallel = FALSE, silent=TRUE)
-
-Compare_Biomass(Hist, rdat)
-
-
-MOM2 <- Aggregate_Fleets(MOM, fleet_df, discard_mortality)
-MOM2@nsim <- 2
-Hist2 <- SimulateMOM(MOM2, parallel = FALSE, silent=TRUE)
-Compare_Biomass(Hist2, rdat)
-
-
-
-nyears <- MOM@Fleets$`Red Snapper`$cHL@nyears
-nage <- MOM@Stocks[[1]]@maxage + 1
-F_orig <- matrix(0, nage, nyears)
-nf <- length(Hist[[1]])
-for (f in 1:nf) {
-  F_orig <- F_orig + Hist[[1]][[f]]@AtAge$F.Mortality[1,,,1]
-}
-
-F_agg <- matrix(0, nage, nyears)
-nf <- length(Hist2[[1]])
-for (f in 1:nf) {
-  F_agg <- F_agg + Hist2[[1]][[f]]@AtAge$F.Mortality[1,,,1]
-}
-
-for (i in 1:70) {
-  plot(F_orig[,i], type='l')
-  lines(F_agg[,i], col='blue')
-  readline(paste(i, 'enter'))
-}
-
-
-
-
-
-Hist[[1]][[1]]@TSdata$Find[1,]
-
-
-MOM@cpars$`Red Snapper`[[1]]$V |> range()
-MOM@cpars$`Red Snapper`[[2]]$V |> range()
-MOM@cpars$`Red Snapper`[[3]]$V |> range()
-MOM@cpars$`Red Snapper`[[4]]$V |> range()
-
-
-
-
-
-print_vrange <- function(MOM) {
-  nfleet <- length(MOM@cpars[[1]])
-  for (fl in 1:nfleet) {
-    print(fl)
-    print(MOM@cpars[[1]][[fl]]$V |> range())
-  }
-}
 

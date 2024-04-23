@@ -1,9 +1,5 @@
 ---
-title: "Operating Models"
-output: 
-  html_document:
-    number_sections: yes
-    toc: yes
+title: "Creating Operating Models from BAM Output"
 ---
 
 ```{r, include = FALSE}
@@ -14,13 +10,13 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, message=FALSE, warning=FALSE}
-library(bamExtras)
-library(openMSE)
+library(SAMSE)
 ```
 
 # Introduction
 
-This article describes the process to create operating models (OMs) for the Snapper-Grouper MSE.
+This article describes the process to import assessments conducted with Beaufort Assessment Model (BAM) and create multi-fleet operating models (OMs) in the `openMSE` framework.
+
 
 ## Prerequistes
 
@@ -34,38 +30,211 @@ pak::pkg_install('blue-matter/MSEtool')
 
 ```
 
-
+These are the package versions used to create this article:
 ```{r}
 packageVersion('bamExtras')
 packageVersion('MSEtool')
 ```
 
-## OM Specifications
+# OM Specifications
+
+The number of simulations (`nsim`) and number of projection years (`proyears`) need to be specified for an OM. Here we are setting them as global variables so that each OM we create has the same number of stochastic simulations and projection years:
 
 ```{r}
-# MSE Parameters
 nsim <- 50 # number of simulations
 proyears <- 20 # number of projection years
+```
 
-# CAL bins (mm) - need to be the same for all stocks
-bin_width <- 50
-CAL_bins <- seq(from=0, to=1500, by=bin_width)
-CAL_mids <- seq(0.5*bin_width, by=bin_width, length.out=length((CAL_bins)-1))
+An OM also requires the specification of an Observation Model. The Observation Model is used to simulate fishery data to be used be management procedures in the projection phase of the closed-loop simulation testing. 
 
-# Observation Model
-# currently perfect obs as data aren't being used in the MPs
-# can be changed later
+We are using `Perfect_Info` as the fishery data are not currently used within the management options (only static management options are currently being explored). This can be changed later if dynamic management options that respond to the observed fishery data are added to the analysis. 
 
+```{r}
 Obs_Model <- Perfect_Info
+```
+
+# Case Study Stocks
+
+The current analysis is focused on the Red Snapper and the Gag Grouper stocks. The MSE framework is flexible, and more stocks can be added to the analysis.
+
+Here we demonstrate creating OMs for the two case study stocks, and a third stock the Black Seabass.
+
+The most recent BAM assessments are used:
+
+1. Red Snapper [SEDAR 73](https://sedarweb.org/documents/sedar-73-stock-assessment-report-south-atlantic-red-snapper/)
+1. Gag Grouper [SEDAR 71](https://sedarweb.org/documents/sedar-71-stock-assessment-report-south-atlantic-gag/)
+1. Black Seabass [SEDAR 76](https://sedarweb.org/documents/sedar-76-stock-assessment-report-south-atlantic-black-sea-bass/)
+
+
+# Import SEDAR Assessments
+
+The BAM assessments are imported from the `bamExtras` package:
+
+```{r}
+RS_rdat <- bamExtras::rdat_RedSnapper |> bamExtras::standardize_rdat()
+GG_rdat <- bamExtras::rdat_GagGrouper |> bamExtras::standardize_rdat() 
+BS_rdat <- bamExtras::rdat_BlackSeaBass |> bamExtras::standardize_rdat() 
+```
+
+# Create OMs
+
+The `BAM2MOM` function is used to create the `openMSE` operating model objects:
+
+```{r message=FALSE, warning=FALSE}
+RS_OM <- BAM2MOM(RS_rdat, stock_name='Red Snapper')
+GG_OM <- BAM2MOM(GG_rdat, stock_name='Gag Grouper')
+BS_OM <- BAM2MOM(BS_rdat, stock_name='Black Seabass')
+```
+
+These OMs can now be used within the `openMSE` framework. However, before doing so, it is important to understand the fleet structure within each OM.
+
+# Define Fleet Structure
+
+```{r}
+
+fleet_names_df <- dplyr::bind_rows(
+  data.frame(Stock='Red Snapper', Fleets=names(RS_OM@Fleets[[1]])),
+  data.frame(Stock='Gag Grouper', Fleets=names(GG_OM@Fleets[[1]])),
+  data.frame(Stock='Black Seabass', Fleets=names(BS_OM@Fleets[[1]]))
+)
+
+fleet_names_df |> dplyr::filter(Stock=='Red Snapper')
+fleet_names_df |> dplyr::filter(Stock=='Gag Grouper')
+fleet_names_df |> dplyr::filter(Stock=='Black Seabass')
 
 ```
 
-# Import SEDAR Assessments and Create OMs 
+In order to combine these single stock OMs together,  each OM must have the same fleet structure for all 
+stocks in the OM, even if those fleets are not actively fishing on a particular stock.
 
-## Red Snapper
-RS_rdat <- bamExtras::rdat_RedSnapper |>
-bamExtras::standardize_rdat() 
+The stocks have some fleets in common (e.g., Commercial hook and line (cHL)) and some unique fleets (e.g., Gag Grouper Commercial dive (cDV)). The landings and discards are also modeled as separate fleets in the BAM models (indicated by '.D').
 
-RS_OM <- BAM2MOM(RS_rdat, stock_name='Red Snapper')
-  
-  
+The landing and discard components for each fleet will be combined into a single fleet with a selectivity and retention curve. 
+
+The Black Seabass stock has two commercial fleets (cHL and cPT), but the discards are reported for two fleets combined (cGN.D). To deal with this, the cHL and cPT landing fleets will first be combined together, before the discards are added for the combined fleet. 
+
+```{r}
+fleet_df <- data.frame(Code=unique(fleet_names_df$Fleets))
+
+fleet_df$Name <- c('Commercial Line',
+                   'Recreational Headboat',
+                   'General Recreational',
+                   'Commercial Line - Discard',
+                   'Recreational Headboat - Discard',
+                   'General Recreational - Discard',
+                   'Commercial Dive',
+                   'Commercial Pot',
+                   'Commercial General - Discard')
+
+fleet_df$Mapping <- c(1,2,3,1,2,3,4,1,1)
+fleet_df$Type <- 'Landing'
+fleet_df$Type[grepl('\\.D', fleet_df$Code)] <- 'Discard'
+fleet_df
+```
+
+The `Mapping` variable describes how the fleets will be combined together. The end result will be a fleet structure with four fleets for each stock:
+
+1. Commercial Line
+2. Recreational Headboat
+3. General Recreational
+4. Commercial Dive
+
+# Define Discard Mortality 
+
+The discard mortality needs to be added to the OMs so that the historical effort can be adjusted to account for the fish that were caught and released alive, and so that the discard mortality can be modified in the projections.
+
+
+
+
+The discard mortality for Red Snapper is reported in Table 6 of [SEDAR 73](https://sedarweb.org/documents/sedar-73-stock-assessment-report-south-atlantic-red-snapper/). The`Year` variable indicates the first year the discard mortality changes:
+
+```{r}
+discard_mortality_RS <- dplyr::bind_rows(
+  data.frame(Stock='Red Snapper',
+             Code='cHL',
+             Year=c(1900, 2007, 2017),
+             Prob_Dead=c(0.48, 0.38, 0.36)),
+  data.frame(Stock='Red Snapper',
+             Code='rHB',
+             Year=c(1900, 2011, 2018),
+             Prob_Dead=c(0.37, 0.26, 0.25)),
+  data.frame(Stock='Red Snapper',
+             Code='rGN',
+             Year=c(1900, 2011, 2018),
+             Prob_Dead=c(0.37, 0.28, 0.26))
+)
+```
+
+The discard mortality for Gag Grouper is reported in [SEDAR 71](https://sedarweb.org/documents/sedar-71-stock-assessment-report-south-atlantic-gag/), with a fixed discard mortality of 0.4 for the commerical fleet, and 0.25 for the recreational fleets for all years:
+
+```{r}
+discard_mortality_GG <- dplyr::bind_rows(
+  data.frame(Stock='Gag Grouper',
+             Code='cHL',
+             Year=1900,
+             Prob_Dead=0.4),
+  data.frame(Stock='Gag Grouper',
+             Code='rHB',
+             Year=1900,
+             Prob_Dead=0.25),
+  data.frame(Stock='Gag Grouper',
+             Code='rGN',
+             Year=1900,
+             Prob_Dead=0.25)
+)
+
+```
+
+The discard mortality for Black Seabass is reported in Section 2.2.1 in [SEDAR 76](https://sedarweb.org/documents/sedar-76-stock-assessment-report-south-atlantic-black-sea-bass/). Here the average discard mortality is calculated for the combined commercial line and pot fleets: 
+
+```{r}
+discard_mortality_BS <- dplyr::bind_rows(
+  data.frame(Stock='Black Sea Bass',
+             Code='cHL',
+             Year=c(1900, 2007),
+             Prob_Dead=c(mean(0.14,0.19), mean(0.14, 0.068))
+             ),
+  data.frame(Stock='Black Sea Bass',
+             Code='rHB',
+             Year=1900,
+             Prob_Dead=0.152),
+  data.frame(Stock='Black Sea Bass',
+             Code='rGN',
+             Year=1900,
+             Prob_Dead=0.137)
+)
+```
+
+The stock-specific discard mortality dataframes are combined together:
+```{r}
+discard_mortality <- dplyr::bind_rows(discard_mortality_RS,
+                                      discard_mortality_GG,
+                                      discard_mortality_BS)
+
+```
+
+# Aggregate Fleets 
+
+Next, the `Aggregate_Fleets` function is used to aggregate the fleets together according to the mapping defined in `fleet_df` and the discard mortality are added from `discard_mortality`.
+
+The `Aggregate_Fleets` function does five things:
+
+1. Combine any landing fleets that are mapped together in `fleet_df` (here only applies to Black Seabass)
+2. Add the discard mortality to each fleet
+3. Combine the discard fleets with the landing fleets to produce a single fleet with selectivity and retention curves
+4. Add dummy fleets (F=0 for all years) for OMs that are missing some fleets
+5. Order the fleets for all OMs
+
+```{r}
+RS_OM <- Aggregate_Fleets(RS_OM, fleet_df, discard_mortality)
+GG_OM <- Aggregate_Fleets(GG_OM, fleet_df, discard_mortality)
+BS_OM <- Aggregate_Fleets(BS_OM, fleet_df, discard_mortality)
+```
+
+
+
+```{r, include=FALSE}
+usethis::use_data(RS_OM, overwrite = TRUE)
+usethis::use_data(GG_OM, overwrite = TRUE)
+usethis::use_data(BS_OM, overwrite = TRUE)
+```
