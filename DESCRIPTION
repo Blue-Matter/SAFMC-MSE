@@ -19,6 +19,7 @@ Depends:
     bslib,
     shinydashboard,
     shinydashboardPlus,
+    usethis,
     MSEtool,
     openMSE,
     bamExtras
