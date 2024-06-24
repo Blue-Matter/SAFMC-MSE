@@ -3,7 +3,7 @@ navbar:
     left:  [articles, reference]
     right: [search, github]
 
-url: https://blue-matter.github.io/SAFMC-MSE/
+url: https://safmc-mse.bluematterscience.com/
 template:
   bootstrap: 5
 
