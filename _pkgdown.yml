@@ -1,4 +1,17 @@
+navbar:
+  structure:
+    left:  [articles, reference]
+    right: [search, github]
+
 url: https://blue-matter.github.io/SAFMC-MSE/
 template:
   bootstrap: 5
+
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - articles/Building-Base-Case-OMs
+  - articles/Building-Sensitivity-OMs
+  - articles/Running-Historical-Simulations
 
