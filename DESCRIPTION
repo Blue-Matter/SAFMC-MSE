@@ -13,14 +13,9 @@ Depends:
     R (>= 3.5.0),
     bookdown,
     dplyr,
-    DT,
     ggplot2,
-    shiny,
-    shinyWidgets,
-    bslib,
-    shinydashboard,
-    shinydashboardPlus,
     usethis,
+    marmap,
     MSEtool,
     openMSE,
     bamExtras
@@ -33,7 +28,13 @@ Remotes:
     nikolaifish/bamExtras
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    DT,
+    shiny,
+    shinyWidgets,
+    bslib,
+    shinydashboard,
+    shinydashboardPlus
 VignetteBuilder: knitr    
 LazyData: true
 URL: https://safmc-mse.bluematterscience.com

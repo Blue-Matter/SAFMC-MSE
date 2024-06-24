@@ -375,6 +375,7 @@ saveRDS(OM_BS,'OM_BS.rda')
 
 
 ```{r saveOMs2, include=FALSE}
+if (interactive())
 if (isTRUE(getOption('knitr.in.progress'))) {
   saveRDS(OM_RS, '../../inst/OM_RS.rda')
   saveRDS(OM_GG,'../../inst/OM_GG.rda')
@@ -384,10 +385,6 @@ if (isTRUE(getOption('knitr.in.progress'))) {
   saveRDS(OM_GG,'inst/OM_GG.rda')
   saveRDS(OM_BS,'inst/OM_BS.rda')
 }
-
-usethis::use_data(OM_RS, overwrite = TRUE)
-usethis::use_data(OM_GG, overwrite = TRUE)
-usethis::use_data(OM_BS, overwrite = TRUE)
 
 ```
 
