@@ -4,7 +4,7 @@
 \alias{Compare_Catch}
 \title{Compare the landings & discards from BAM and openMSE}
 \usage{
-Compare_Catch(Hist, rdat)
+Compare_Catch(Hist, rdat, divide = FALSE)
 }
 \arguments{
 \item{Hist}{An object of class \code{multiHist}}

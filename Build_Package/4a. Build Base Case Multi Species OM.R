@@ -220,6 +220,9 @@ df_age_GG <- left_join(areas_df, df_age_GG, relationship = "many-to-many")%>%
 saveRDS(df_age_GG, 'Build_Package/Objects/BaseCase/GG_Age_Depth_Dist.rds')
 
 ## Calculate Regional-Depth Unfished Distribution by Age ----
+df_age_RS <-  readRDS('Build_Package/Objects/BaseCase/RS_Age_Depth_Dist.rds')
+df_age_GG <-  readRDS('Build_Package/Objects/BaseCase/GG_Age_Depth_Dist.rds')
+frac_region_DF <- readRDS('Build_Package/Objects/BaseCase/Spatial_Regional_Dist.rds')
 
 df_age_dist <- dplyr::bind_rows(df_age_RS, df_age_GG)
 Frac_Age_Region <- calc_region_depth_dist(df_age_dist, frac_region_DF)

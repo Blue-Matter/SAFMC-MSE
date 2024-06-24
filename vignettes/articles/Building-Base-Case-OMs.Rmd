@@ -313,7 +313,7 @@ Rel_Abun_Area_BS <- data.frame(
 
 ## Add Stock Spatial Structure to OMs
 
-The age-specific relative distribution of each stock across the depth zones was modelled by assuming 100%, 95%, and 80% of age-0, -1, and -2 fish respectively occurred in the nearshore region. The depth distribution of age-3+ fish, as well as the relative spatial distribution of the fishing fleets, were then calculated by optimizing the age-3+ stock and effort spatial distributions such that the relative distribution of the biomass across the six areas in the terminal year of the operating models closely matched the reported relative distribution from the spatiotemporal model (see above). 
+The age-specific relative distribution of each stock across the depth zones was modeled by assuming 100%, 95%, and 80% of age-0, -1, and -2 fish respectively occurred in the nearshore region. The depth distribution of age-3+ fish, as well as the relative spatial distribution of the fishing fleets, were then calculated by optimizing the age-3+ stock and effort spatial distributions such that the relative distribution of the biomass across the six areas in the terminal year of the operating models closely matched the reported relative distribution from the spatiotemporal model (see above). 
 
 ```{r, addstockspatial, cache=TRUE, cache.extra = digest::digest(list(OM_RS,OM_GG, OM_BS,Rel_Abun_Area_RS, Rel_Abun_Area_GG, Rel_Abun_Area_BS))}
 OM_RS <- Add_Spatial_to_OM(OM_RS, Rel_Abun_Area_RS)
