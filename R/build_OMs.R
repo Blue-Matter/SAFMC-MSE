@@ -405,6 +405,22 @@ Add_Discard_Mortality <- function(MOM, discard_mortality) {
   MOM
 }
 
+Add_Fleet_Names <- function(MOM, fleet_df) {
+  map <- unique(fleet_df$Mapping)
+  df <- fleet_df |> dplyr::filter(Type=='Landing')
+  nstocks <- length(MOM@Fleets)
+  nfleets <- length(MOM@Fleets[[1]])
+  for (s in 1:nstocks) {
+    names(MOM@Fleets[[s]]) <- df$Name[map]
+    names(MOM@cpars[[s]]) <- df$Name[map]
+
+    for (f in 1:nfleets) {
+      MOM@Fleets[[s]][[f]]@Name <- df$Name[map][f]
+    }
+  }
+  MOM
+}
+
 #' Compare the F trends from BAM and openMSE
 #'
 #' @param MOM An object of class `MOM`
@@ -414,7 +430,6 @@ Add_Discard_Mortality <- function(MOM, discard_mortality) {
 #' @export
 Aggregate_Fleets <- function(MOM, fleet_df, discard_mortality) {
 
-  fleet_names <- names(MOM@Fleets[[1]])
   nyears <- MOM@Fleets[[1]][[1]]@nyears
   proyears <- MOM@proyears
   nage <- MOM@Stocks[[1]]@maxage + 1
@@ -430,14 +445,8 @@ Aggregate_Fleets <- function(MOM, fleet_df, discard_mortality) {
 
   MOM5 <- Order_Fleets(MOM4, fleet_df)
 
+  Add_Fleet_Names(MOM5, fleet_df)
 
-  # Check terminal year
-
-
-  # add spatial structure
-
-
-  MOM5
 }
 
 

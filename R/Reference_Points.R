@@ -51,20 +51,21 @@ Calc_RS_Ref_Points <- function(x, y, multiHist) {
 
   # Selectivity (removals)
   F_at_age <- rep(0, maxage+1)
+  F_at_age2 <- rep(0, maxage+1)
   nfleets <- length(multiHist[[1]])
   for (fl in 1:nfleets) {
     F_at_age <- F_at_age + rowSums(multiHist[[1]][[fl]]@AtAge$F.Mortality[x,,y,])
   }
   V_at_Age <- F_at_age/max(F_at_age)
 
-
   R0x <- multiHist[[1]][[1]]@SampPars$Stock$R0[x]
   hx <- multiHist[[1]][[1]]@SampPars$Stock$hs[x]
   SSBpR <- multiHist[[1]][[1]]@SampPars$Stock$SSBpR[x,1]
   SRrelx <- multiHist[[1]][[1]]@SampPars$Stock$SRrel[x]
 
-
+  spawn_time_frac <- multiHist[[1]][[1]]@SampPars$Stock$spawn_time_frac[x]
   Fs <- seq(0,1,by=0.01)
+
   Calc_Eq_SB <- function(logF, R0, h, opt=1) {
     ref <- MSEtool:::MSYCalcs(logF,
                               M_at_Age,
@@ -81,7 +82,7 @@ Calc_RS_Ref_Points <- function(x, y, multiHist) {
                               SSBpR,
                               opt = 2,
                               plusgroup = 1L,
-                              spawn_time_frac = 0)
+                              spawn_time_frac = spawn_time_frac)
 
     if (opt==1) return(ref[3])
     return(ref[1])
