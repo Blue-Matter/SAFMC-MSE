@@ -34,12 +34,6 @@ pak::pkg_install('blue-matter/MSEtool')
 
 ```
 
-These are the package versions used to create this article:
-```{r}
-packageVersion('bamExtras')
-packageVersion('MSEtool')
-```
-
 # OM Specifications
 
 The number of simulations (`nsim`) and number of projection years (`proyears`) need to be specified for an OM. Here we are setting them as global variables so that each OM we create has the same number of stochastic simulations and projection years:
