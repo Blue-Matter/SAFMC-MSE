@@ -112,6 +112,8 @@ calulate_age_depth <- function(log_mean_nearshore, MOM, Rel_Abun_Region, average
     temp <- Age_Depth_Region_Dist %>% filter(Age==Ages[a]) |>
       dplyr::arrange(Area)
     dist <- temp$Proportion/sum(temp$Proportion)
+
+    dist <- dist/sum(dist)
     mov_age <- makemov2(dist,
                         prob=average_prob,
                         probE=1,
@@ -133,11 +135,12 @@ calulate_age_depth <- function(log_mean_nearshore, MOM, Rel_Abun_Region, average
     Hist <- Simulate(MOM, nsim=2, silent=TRUE)
 
     nyears <- MOM@Fleets[[1]][[1]]@nyears
-    b <- Hist[[1]][[1]]@TSdata$VBiomass[1,nyears,]
+    b <- Hist[[1]][[1]]@TSdata$Biomass[1,nyears,]
     b <- b/sum(b)
     ss <- sum((b-Rel_Abun_Region$Proportion)^2)
     return(ss)
   }
+
   MOM
 }
 
@@ -152,7 +155,7 @@ calulate_age_depth <- function(log_mean_nearshore, MOM, Rel_Abun_Region, average
 #' @export
 #'
 #' @examples
-Add_Spatial_to_OM <- function(MOM, Rel_Abun_Region, average_prob=0.95) {
+Add_Spatial_to_OM <- function(MOM, Rel_Abun_Region, average_prob=0.05) {
 
   # MOM <- Add_Spatial_Effort(MOM, Spatial_Effort)
 

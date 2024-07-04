@@ -346,7 +346,7 @@ Order_Fleets <- function(MOM, fleet_df) {
   i_rows <- fleet_df_new |> dplyr::distinct(Mapping)
   fleet_df_new <- fleet_df_new[i_rows$Mapping,]
   fleet_names <- names(MOM@Fleets[[1]])
-  ord <- order(match(fleet_df_new$Code, fleet_names))
+  ord <- order(match(fleet_names, fleet_df_new$Code))
   ordered_MOM <- MOM
   for (fl in seq_along(fleet_names)) {
     ordered_MOM@Fleets[[1]][[fl]] <- MOM@Fleets[[1]][[ord[fl]]]
@@ -449,4 +449,299 @@ Aggregate_Fleets <- function(MOM, fleet_df, discard_mortality) {
 
 }
 
+
+
+#' Modify M and run BAM model
+#'
+#' @param CommonName Common name for a stock in `bamExtras`
+#' @param new_M New value for adult M
+#'
+#' @return the output of `bamExtras::run_bam`
+#' @export
+modify_adult_M <- function(CommonName, new_M, bam_name=NULL) {
+  bam <- bamExtras::bam2r(CommonName)
+  init <- bam$init
+  init$set_M_constant[1] <- as.character(new_M)
+
+  set_M <- init$set_M
+  nms <- names(set_M)
+  if (!'init' %in% nms) {
+    set_M <- as.numeric(set_M)
+    set_M <- set_M * new_M/set_M[length(set_M)]
+    set_M <- as.character(set_M)
+    names(set_M) <- nms
+    init$set_M <- set_M
+  }
+
+  bam <- bamExtras::bam2r(CommonName, init=init)
+  BAM_out <- bamExtras::run_bam(bam=bam)
+  bam <- bamExtras::standardize_rdat(BAM_out$rdat)
+  if (!is.null(bam_name)) {
+    if (!dir.exists('BAM_Objects'))
+      create.dir('BAM_Objects')
+    saveRDS(bam, paste0('BAM_Objects/', bam_name, '.bam'))
+  }
+  bam
+}
+
+
+
+#' Reduce Gen Rec Landings & Discards and run BAM model
+#'
+#' @param CommonName Common name for a stock in `bamExtras`
+#' @param reduce_frac Fractions to reduce the landings & discards
+#'
+#' @return the output of `bamExtras::run_bam`
+#' @export
+lower_rec_effort <- function(CommonName, reduce_frac, bam_name=NULL) {
+  bam <- bamExtras::bam2r(CommonName)
+  bam$init$obs_L_rGN <- as.character((1-reduce_frac) * as.numeric(bam$init$obs_L_rGN))
+  bam$init$obs_released_rGN <- as.character((1-reduce_frac) * as.numeric(bam$init$obs_released_rGN))
+  bam <- bamExtras::bam2r(CommonName, init=bam$init)
+  BAM_out <- bamExtras::run_bam(bam=bam)
+  bam <- bamExtras::standardize_rdat(BAM_out$rdat)
+  if (!is.null(bam_name)) {
+    if (!dir.exists('BAM_Objects'))
+      create.dir('BAM_Objects')
+    saveRDS(bam, paste0('BAM_Objects/', bam_name, '.bam'))
+  }
+  bam
+}
+
+
+
+#' Extracts stock status (SSB/MSST and F/MFMT) from BAM output
+#'
+#' Also returns the MSST and MFMT reference points
+#'
+#' @param BAM_dir Directory with BAM files
+#'
+#' @return A data.frame
+#' @export
+get_stock_status <- function(BAM_dir='BAM_objects') {
+
+  match_stock <- data.frame(code=c('RS',
+                                   'GG',
+                                   'BS'),
+                            stock=c('Red snapper',
+                                    'Gag grouper',
+                                    'Black sea bass'))
+
+  match_om <- data.frame(code=c('BaseCase', 'Low_M', 'High_M', 'Lower_Rec_Effort'),
+                         om=c('Base Case', 'Lower M', 'Higher M', 'Lower Rec. Effort'))
+
+  fls <- list.files(BAM_dir)
+
+  df_list <- list()
+  for (i in seq_along(fls)) {
+    BAM_file <- fls[i]
+
+    bamfile <- file.path(BAM_dir, BAM_file)
+    bam <- readRDS(bamfile)
+
+    nm <- strsplit(BAM_file, '.bam')[[1]]
+    txt <- strsplit(nm, '_')[[1]]
+    stock <- txt[length(txt)]
+    ind <- which(match_stock$code ==stock)
+    Stock <- match_stock$stock[ind]
+    om <- paste(txt[1:(length(txt)-1)], collapse='_')
+    ind <- which(match_om$code ==om)
+    OM <- match_om$om[ind]
+
+    # MSST
+    MSST <- bam$parms$msst
+    SSB_MSST <- bam$t.series$SSB/MSST
+
+    # MFMT
+    if (stock=='RS') {
+      MFMT <-  bam$parms$F30
+    } else {
+      MFMT <- bam$parms$Fmsy
+    }
+
+    F_MFMT <- bam$t.series$F.full/MFMT
+
+    df_list[[i]] <- data.frame(Stock=Stock,
+                               OM=OM,
+                               Year=bam$t.series$year,
+                               SSB_MSST=SSB_MSST,
+                               F_MFMT=F_MFMT,
+                               MSST=MSST,
+                               MFMT=MFMT)
+  }
+
+  df <- do.call('rbind', df_list)
+  df$Stock <- factor(df$Stock, ordered = TRUE, levels=match_stock$stock)
+  df$OM <- factor(df$OM, ordered = TRUE, levels=match_om$om)
+  df
+}
+
+
+#' @describeIn get_stock_status Return landings and discards by fleet
+#' @export
+get_landings_discards <- function(hist_dir='Hist_Objects', OM='Base Case') {
+
+  match_stock <- data.frame(code=c('RS',
+                                   'GG',
+                                   'BS'),
+                            stock=c('Red snapper',
+                                    'Gag grouper',
+                                    'Black sea bass'))
+  match_om <- data.frame(code=c('BaseCase', 'Low_M', 'High_M', 'Lower_Rec_Effort'),
+                         om=c('Base Case', 'Lower M', 'Higher M', 'Lower Rec. Effort'))
+
+  fls <- list.files(hist_dir)
+
+  df_list <- list()
+  for (i in seq_along(fls)) {
+    fl <- fls[i]
+
+    nm <- strsplit(fl, '.hist')[[1]]
+    txt <- strsplit(nm, '_')[[1]]
+    stock <- txt[length(txt)]
+    ind <- which(match_stock$code ==stock)
+    Stock <- match_stock$stock[ind]
+    om <- paste(txt[1:(length(txt)-1)], collapse='_')
+    ind <- which(match_om$code ==om)
+    if (match_om$om[ind] != OM)
+      next()
+
+    Hist <- readRDS(file.path(hist_dir, fl))
+
+    removals <- openMSE::get_Removals(Hist) |> dplyr::filter(Sim==1)
+    landings <- openMSE::get_Landings(Hist) |> dplyr::filter(Sim==1)
+
+    df <- removals |> dplyr::select(Year, Removals=Value, Fleet)
+    df$Stock <- Stock
+    df$OM <- OM
+    df$Landings <- landings$Value
+    df$Discards <- df$Removals-df$Landings
+
+    df <- df |> tidyr::pivot_longer(cols=c(Landings, Discards))
+    df$name <- factor(df$name, ordered = TRUE, levels=c('Landings', 'Discards'))
+    df$Fleet <- factor(df$Fleet,
+                       levels=unique(removals$Fleet),
+                       ordered = TRUE)
+    df_list[[i]] <- df
+  }
+  df <- do.call('rbind', df_list)
+  df$Stock <- factor(df$Stock, ordered = TRUE, levels=match_stock$stock)
+  df$OM <- factor(df$OM, ordered = TRUE, levels=match_om$om)
+  df
+}
+
+#' @describeIn get_stock_status Return selectivity and retention by fleet
+#' @export
+get_selectivity_retention <- function(dir='Hist_Objects', OM='Base Case') {
+
+  match_stock <- data.frame(code=c('RS',
+                                   'GG',
+                                   'BS'),
+                            stock=c('Red snapper',
+                                    'Gag grouper',
+                                    'Black sea bass'))
+  match_om <- data.frame(code=c('BaseCase', 'Low_M', 'High_M', 'Lower_Rec_Effort'),
+                         om=c('Base Case', 'Lower M', 'Higher M', 'Lower Rec. Effort'))
+
+  fls <- list.files(dir)
+
+  df_list <- list()
+  for (i in seq_along(fls)) {
+    fl <- fls[i]
+
+    nm <- strsplit(fl, '.hist')[[1]]
+    txt <- strsplit(nm, '_')[[1]]
+    stock <- txt[length(txt)]
+    ind <- which(match_stock$code ==stock)
+    Stock <- match_stock$stock[ind]
+    om <- paste(txt[1:(length(txt)-1)], collapse='_')
+    ind <- which(match_om$code ==om)
+    if (match_om$om[ind] != OM)
+      next()
+
+    object <- readRDS(file.path(dir, fl))
+
+    dd <- object[[1]][[1]]@AtAge$F.Mortality |> dim()
+    nyear <- dd[3]
+    maxage <- dd[2]-1
+    fleets <- names(object[[1]])
+    fleet_list <- list()
+    for (f in seq_along(fleets)) {
+      fleet <- fleets[f]
+      select <- object[[1]][[fleet]]@AtAge$Select[1,,nyear] * object[[1]][[fleet]]@SampPars$Fleet$qs[1]
+      retention <- object[[1]][[fleet]]@AtAge$Retention[1,,nyear] * object[[1]][[fleet]]@SampPars$Fleet$qs[1]
+      discard <- select-retention
+
+      fleet_list[[f]] <- data.frame(Stock=Stock,
+                                    Fleet=fleet,
+                                    OM=OM,
+                                    Age=0:maxage,
+                                    Selection=select,
+                                    Retention=retention,
+                                    Discard=discard)
+    }
+    df_list[[i]] <- do.call('rbind', fleet_list)
+  }
+
+  df <- do.call('rbind', df_list)
+  df <- df |> tidyr::pivot_longer(cols=c(Selection, Retention, Discard))
+  df$name <- factor(df$name, ordered = TRUE, levels=c('Selection', 'Retention', 'Discard'))
+  df$Stock <- factor(df$Stock, ordered = TRUE, levels=match_stock$stock)
+  df$Fleet <- factor(df$Fleet, ordered = TRUE, levels=unique(df$Fleet))
+  df$OM <- factor(df$OM, ordered = TRUE, levels=match_om$om)
+  df
+}
+
+#' @describeIn get_stock_status Return recruitment deviations by stock
+#' @export
+get_rec_devs <- function(dir='OM_Objects', OM='Base Case') {
+
+  match_stock <- data.frame(code=c('RS',
+                                   'GG',
+                                   'BS'),
+                            stock=c('Red snapper',
+                                    'Gag grouper',
+                                    'Black sea bass'))
+  match_om <- data.frame(code=c('BaseCase', 'Low_M', 'High_M', 'Lower_Rec_Effort'),
+                         om=c('Base Case', 'Lower M', 'Higher M', 'Lower Rec. Effort'))
+
+  fls <- list.files(dir)
+
+  df_list <- list()
+  for (i in seq_along(fls)) {
+    fl <- fls[i]
+
+    nm <- strsplit(fl, '.OM')[[1]]
+    txt <- strsplit(nm, '_')[[1]]
+    stock <- txt[length(txt)]
+    ind <- which(match_stock$code ==stock)
+    Stock <- match_stock$stock[ind]
+    om_text <- paste(txt[1:(length(txt)-1)], collapse='_')
+    ind <- which(match_om$code ==om_text)
+    if (match_om$om[ind] != OM)
+      next()
+
+    om <- readRDS(file.path(dir, fl))
+    maxage <- om@Stocks[[1]]@maxage
+    nyears <- om@Fleets[[1]][[1]]@nyears
+    rec_devs <-om@cpars[[1]][[1]]$Perr_y[,(maxage+1):(om@proyears + nyears+maxage)]
+    current_yr <- om@Fleets[[1]][[1]]@CurrentYr
+    hist_yrs <- rev(seq(current_yr, by=-1, length.out=nyears))
+    pro_yrs <- seq(current_yr+1, by=1, length.out=om@proyears)
+    years <- c(hist_yrs, pro_yrs)
+    period <- c(rep('Historical', length(hist_yrs)),
+                rep('Projection', length(pro_yrs))
+    )
+    df_list[[i]] <- data.frame(Stock=Stock, OM=OM,
+                               Year=rep(years, each=om@nsim),
+                               Period=rep(period, each=om@nsim),
+                               Sim=1:om@nsim,
+                               Value=as.vector(rec_devs))
+
+  }
+  df <- do.call('rbind', df_list)
+  df$Stock <- factor(df$Stock, ordered = TRUE, levels=match_stock$stock)
+  df$OM <- factor(df$OM, ordered = TRUE, levels=match_om$om)
+  df
+}
 

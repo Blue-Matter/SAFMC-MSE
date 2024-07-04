@@ -2,13 +2,31 @@
 % Please edit documentation in R/Reference_Points.R
 \name{Calculate_Ref_Points}
 \alias{Calculate_Ref_Points}
-\title{Calculate Biological Reference Points}
+\alias{Calc_RS_Ref_Points}
+\alias{Calc_GG_Ref_Points}
+\alias{Calc_BS_Ref_Points}
+\title{Calculate Biological Reference Points from a single stock \code{multiHist} object}
 \usage{
-Calculate_Ref_Points(multiHist)
+Calculate_Ref_Points(Hist)
+
+Calc_RS_Ref_Points(Hist)
+
+Calc_GG_Ref_Points(Hist)
+
+Calc_BS_Ref_Points(Hist)
 }
 \arguments{
-\item{multiHist}{}
+\item{Hist}{An object of class \code{multiHist}}
 }
 \description{
-Calculate Biological Reference Points
+Currently supports 'Red Snapper', 'Gag Grouper', and 'Black Seabass'
 }
+\section{Functions}{
+\itemize{
+\item \code{Calc_RS_Ref_Points()}: Calculate reference points for red snapper
+
+\item \code{Calc_GG_Ref_Points()}: Calculate reference points for gag grouper
+
+\item \code{Calc_BS_Ref_Points()}: Calculate reference points for black seabass
+
+}}

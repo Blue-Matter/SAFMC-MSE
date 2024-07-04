@@ -47,8 +47,18 @@ Generate_Correlated_Rec_Devs <- function(OMList, truncsd=2) {
   lower <- -truncsd*apply(lhist_devs, 2, sd)
   upper <- truncsd*apply(lhist_devs, 2, sd)
 
+  mean <- apply(lhist_devs, 2, mean)
+  sd <- apply(lhist_devs, 2, sd)
+
+  acf <- apply(lhist_devs, 2, acf, plot=FALSE)
+  AC <- rep(NA, length(OMList))
+  for (i in 1:nstock) {
+    AC[i] <- acf[[i]]$acf[2,1,1]
+  }
+
+  mu <- -0.5 * sd^2  * (1 - AC)/sqrt(1 - AC^2)
   rldevs <- tmvtnorm::rtmvnorm(n=nsim*pyears,
-                               mean=rep(0, length(OMList)),
+                               mean=mu,
                                sigma=covvar,
                                lower=lower,
                                upper=upper)

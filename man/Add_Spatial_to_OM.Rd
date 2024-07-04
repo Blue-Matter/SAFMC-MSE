@@ -4,7 +4,7 @@
 \alias{Add_Spatial_to_OM}
 \title{Add Spatial Distribution to an Operating Model}
 \usage{
-Add_Spatial_to_OM(MOM, Rel_Abun_Region, average_prob = 0.95)
+Add_Spatial_to_OM(MOM, Rel_Abun_Region, average_prob = 0.05)
 }
 \arguments{
 \item{MOM}{An object of class \code{MOM}}
