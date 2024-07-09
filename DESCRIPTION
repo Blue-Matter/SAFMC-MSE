@@ -18,7 +18,8 @@ Depends:
     marmap,
     MSEtool,
     openMSE,
-    bamExtras
+    bamExtras,
+    tmvtnorm
 Imports:
     lubridate,
     forcats,
