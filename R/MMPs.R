@@ -44,7 +44,7 @@ Write_MPs <- function(MPList, Rec_Reduction, dir='MP_functions') {
       txt<- paste(paste0("## ----", mp_names[j], "----\n",
                          mp_names[j], '<- function(x, DataList, ...) {'),
                   paste0('  RecList <- ', mp, '(x, DataList, ...)'),
-                  paste0('  Adjust_Effort(RecList, ', Effort_Mod, ')'),
+                  paste0('  Adjust_Effort(RecList, DataList, ', Effort_Mod, ')'),
                   '}',
                   paste0('class(', mp_names[j], ') <- "MMP"\n\n'),
                   sep='\n'
@@ -110,84 +110,49 @@ Get_Year_Info <- function(DataList) {
   list(Last_3_Yrs=yr_ind, Current_Year=max(Years)+1)
 }
 
-#' @describeIn MPs Status Quo. Fishing effort for each fleet is fixed in the projection
-#' years at the geometric mean of the three last historical years
-#' @param x Simulation number
-#' @param DataList A nested list of `Data` objects
-#' @param ... Additional arguments
-#' @export
-SQ <- function(x, DataList, ...) {
-  RecList <- Create_Rec_List(DataList)
-  nstocks <- length(RecList)
-  nfleets <- length(RecList[[1]])
 
-  year_info <- Get_Year_Info(DataList)
-  yr_ind <- year_info$Last_3_Yrs
-
-  # loop over stocks and fleets
-  for (s in 1:nstocks) {
-    for (f in 1:nfleets) {
-      # calculate mean F from 3 last historical years
-      meanF <- exp(mean(log(DataList[[s]][[f]]@Misc$FleetPars$Fishing_Mortality[x,yr_ind])))
-      lastF <- DataList[[s]][[f]]@Misc$FleetPars$Fishing_Mortality[x,yr_ind[length(yr_ind)]]
-
-      deltaE <- meanF/lastF
-      if (!is.finite(deltaE)) deltaE <- 1E-5
-      RecList[[s]][[f]]@Effort <- deltaE
-    }
-  }
-  RecList
-}
-class(SQ) <- 'MMP'
 
 #' @describeIn MPs Adjust fishing effort for General Recreational Fleet
 #' @param RecList A list of `Rec` objects returned by an `MMP`
 #' @param Effort_Mod Effort modifier. Effort is adjusted as
 #' `Effort_Rec_Fleet <- Effort_Rec_Fleet * (1-Effort_Mod)`
 #' @export
-Adjust_Effort <- function(RecList, Effort_Mod=0, ...) {
-  nstocks <- length(RecList)
-  nfleets <- length(RecList[[1]])
+Adjust_Effort <- function(RecList, DataList, Effort_Mod=0, First_Management_Year=2025, ...) {
 
-  # loop over stocks and fleets
-  for (s in 1:nstocks) {
-    for (f in 1:nfleets) {
-      RecList[[s]][[f]]@Effort <- RecList[[s]][[f]]@Effort * (1-Effort_Mod[f])
-    }
-  }
-  RecList
-}
-
-#' @describeIn MPs Status Quo with Full Retention. Modify retention curve with an asymptote of 1
-#' @param First_Management_Year Year the management procedures are first implemented
-#' @export
-SQ_FR <- function(x, DataList, First_Management_Year=2025,...) {
-
-  RecList <- SQ(x, DataList)
   year_info <- Get_Year_Info(DataList)
   if (year_info$Current_Year<First_Management_Year)
     return(RecList)
 
   nstocks <- length(RecList)
   nfleets <- length(RecList[[1]])
-  yr_ind <- which.max(DataList[[1]][[1]]@Year)
+
+  # loop over stocks and fleets
   for (s in 1:nstocks) {
-    nage <- DataList[[s]][[1]]@MaxAge+1
-
     for (f in 1:nfleets) {
-      V_age <- DataList[[s]][[f]]@Misc$FleetPars$V[x,,yr_ind]
-      Fdisc <- DataList[[s]][[f]]@Misc$FleetPars$Fdisc_array1[x,,yr_ind]
-
-      r_age <- V_age
-      r_age[which.max(r_age):length(r_age)] <- 1
-      r_age <- r_age/max(r_age)
-      RecList[[s]][[f]]@Misc$R_age <- r_age # R_age
-      RecList[[s]][[f]]@Misc$Fdisc <- Fdisc
+      if (length(Effort_Mod)<nfleets)
+        Effort_Mod <- rep(Effort_Mod, nfleets)
+      RecList[[s]][[f]]@Effort <- RecList[[s]][[f]]@Effort * (1-Effort_Mod[f])
     }
   }
   RecList
 }
-class(SQ_FR) <- 'MMP'
+
+#' @describeIn MPs Close areas to fishing
+#' @export
+Close_Areas <- function(RecList, DataList, areas=c(1,1,1,1,1,1), Allocate=1, First_Management_Year) {
+  if (year_info$Current_Year<First_Management_Year)
+    return(RecList)
+  nstocks <- length(RecList)
+  nfleets <- length(RecList[[1]])
+  for (s in 1:nstocks) {
+    for (f in 1:nfleets) {
+      RecList[[s]][[f]]@Spatial <- areas
+      RecList[[s]][[f]]@Allocate <- 1
+    }
+  }
+  RecList
+}
+
 
 add_MLL <- function(x, RecList, DataList, First_Management_Year=2025, MLL=609) {
 
@@ -229,76 +194,115 @@ add_MLL <- function(x, RecList, DataList, First_Management_Year=2025, MLL=609) {
   RecList
 }
 
-#' @describeIn MPs Status Quo with a stock specific size limit.
-#' @export
-SQ_MLL <- function(x, DataList, First_Management_Year=2025, ...) {
-  RecList <- SQ(x, DataList)
-  year_info <- Get_Year_Info(DataList)
-  if (year_info$Current_Year<First_Management_Year)
-    return(RecList)
-  add_MLL(x, RecList, DataList)
-}
-class(SQ_MLL) <- 'MMP'
 
-Close_Areas <- function(RecList, areas=c(1,1,1,1,1,1), Allocate=1) {
+#' @describeIn MPs Status Quo. Fishing effort for each fleet is fixed in the projection
+#' years at the geometric mean of the three last historical years
+#' @param x Simulation number
+#' @param DataList A nested list of `Data` objects
+#' @param ... Additional arguments
+#' @export
+SQ <- function(x, DataList, ...) {
+  RecList <- Create_Rec_List(DataList)
   nstocks <- length(RecList)
   nfleets <- length(RecList[[1]])
+
+  year_info <- Get_Year_Info(DataList)
+  yr_ind <- year_info$Last_3_Yrs
+
+  # loop over stocks and fleets
   for (s in 1:nstocks) {
     for (f in 1:nfleets) {
-      RecList[[s]][[f]]@Spatial <- areas
-      RecList[[s]][[f]]@Allocate <- 1
+      # calculate mean F from 3 last historical years
+      meanF <- exp(mean(log(DataList[[s]][[f]]@Misc$FleetPars$Fishing_Mortality[x,yr_ind])))
+      lastF <- DataList[[s]][[f]]@Misc$FleetPars$Fishing_Mortality[x,yr_ind[length(yr_ind)]]
+
+      deltaE <- meanF/lastF
+      if (!is.finite(deltaE)) deltaE <- 1E-5
+      RecList[[s]][[f]]@Effort <- deltaE
     }
   }
   RecList
 }
+class(SQ) <- 'MMP'
 
-
-#' @describeIn MPs Status Quo with offshore areas closed to fishing
+#' @describeIn MPs Status Quo with Full Retention. Modify retention curve with an asymptote of 1
+#' @param First_Management_Year Year the management procedures are first implemented
 #' @export
-SQ_NS <- function(x, DataList, First_Management_Year=2025, ...) {
+SQ_FR <- function(x, DataList, First_Management_Year=2025,...) {
+
   RecList <- SQ(x, DataList)
   year_info <- Get_Year_Info(DataList)
   if (year_info$Current_Year<First_Management_Year)
     return(RecList)
-  Close_Areas(RecList, c(1,0,1,0,1,0))
+
+  nstocks <- length(RecList)
+  nfleets <- length(RecList[[1]])
+  yr_ind <- which.max(DataList[[1]][[1]]@Year)
+  for (s in 1:nstocks) {
+    nage <- DataList[[s]][[1]]@MaxAge+1
+
+    for (f in 1:nfleets) {
+      V_age <- DataList[[s]][[f]]@Misc$FleetPars$V[x,,yr_ind]
+      Fdisc <- DataList[[s]][[f]]@Misc$FleetPars$Fdisc_array1[x,,yr_ind]
+
+      r_age <- V_age
+      r_age[which.max(r_age):length(r_age)] <- 1
+      r_age <- r_age/max(r_age)
+      RecList[[s]][[f]]@Misc$R_age <- r_age # R_age
+      RecList[[s]][[f]]@Misc$Fdisc <- Fdisc
+    }
+  }
   RecList
+}
+class(SQ_FR) <- 'MMP'
+
+#' @describeIn MPs Status Quo with a stock specific size limit.
+#' @export
+SQ_MLL <- function(x, DataList, First_Management_Year=2025, MLL=609, ...) {
+  RecList <- SQ(x, DataList)
+  add_MLL(x, RecList, DataList, First_Management_Year=First_Management_Year, MLL=MLL)
+}
+class(SQ_MLL) <- 'MMP'
+
+
+#' @describeIn MPs Status Quo with offshore areas closed to fishing
+#' @export
+SQ_NS <- function(x, DataList, First_Management_Year=2025, areas=c(1,0,1,0,1,0), Allocate=1, ...) {
+  RecList <- SQ(x, DataList)
+  Close_Areas(RecList, DataList, areas=areas, Allocate=Allocate, First_Management_Year=First_Management_Year)
 }
 class(SQ_NS) <- 'MMP'
 
 #' @describeIn MPs Status Quo with nearshore areas closed to fishing
 #' @export
-SQ_OS <- function(x, DataList, First_Management_Year=2025, ...) {
+SQ_OS <- function(x, DataList, First_Management_Year=2025, areas=c(0,1,0,1,0,1), Allocate=1, ...) {
   RecList <- SQ(x, DataList)
-  year_info <- Get_Year_Info(DataList)
-  if (year_info$Current_Year<First_Management_Year)
-    return(RecList)
-  Close_Areas(RecList, c(0,1,0,1,0,1))
+  Close_Areas(RecList, DataList, areas=areas, Allocate=Allocate, First_Management_Year=First_Management_Year)
 }
 class(SQ_OS) <- 'MMP'
 
 #' @describeIn MPs Status Quo with full retention and minimum size limit
 #' @export
-SQ_FR_MLL <- function(x, DataList, First_Management_Year=2025, ...) {
+SQ_FR_MLL <- function(x, DataList, First_Management_Year=2025, MLL=609, ...) {
   RecList <- SQ_FR(x, DataList)
-  add_MLL(x, RecList, DataList)
+  add_MLL(x, RecList, DataList, First_Management_Year=First_Management_Year, MLL=MLL)
 }
 class(SQ_FR_MLL) <- 'MMP'
 
 #' @describeIn MPs Status Quo with full retention, minimum size limit, and offshore closed
 #' @export
-SQ_FR_MLL_NS <- function(x, DataList, ...) {
+SQ_FR_MLL_NS <- function(x, DataList,First_Management_Year=2025, MLL=609, areas=c(1,0,1,0,1,0), Allocate=1, ...) {
   RecList <- SQ_FR(x, DataList)
-  RecList <- add_MLL(x, RecList, DataList)
-  Close_Areas(RecList, c(1,0,1,0,1,0))
-
+  RecList <- add_MLL(x, RecList, DataList, First_Management_Year=First_Management_Year, MLL=MLL)
+  Close_Areas(RecList, DataList, areas=areas, Allocate=Allocate, First_Management_Year=First_Management_Year)
 }
 class(SQ_FR_MLL_NS) <- 'MMP'
 
 #' @describeIn MPs Status Quo with full retention, minimum size limit, and nearshore closed
 #' @export
-SQ_FR_MLL_OS <- function(x, DataList, ...) {
+SQ_FR_MLL_OS <- function(x, DataList,First_Management_Year=2025, MLL=609, areas=c(0,1,0,1,0,1), Allocate=1, ...) {
   RecList <- SQ_FR(x, DataList)
-  RecList <- add_MLL(x, RecList, DataList)
-  Close_Areas(RecList, c(0,1,0,1,0,1))
+  RecList <- add_MLL(x, RecList, DataList, First_Management_Year=First_Management_Year, MLL=MLL)
+  Close_Areas(RecList, DataList, areas=areas, Allocate=Allocate, First_Management_Year=First_Management_Year)
 }
 class(SQ_FR_MLL_OS) <- 'MMP'
