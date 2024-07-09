@@ -1,0 +1,42 @@
+## ----SQ_OS_0----
+SQ_OS_0<- function(x, DataList, ...) {
+  RecList <- SQ_OS(x, DataList, ...)
+  Adjust_Effort(RecList, Effort_Mod=c(0,0,0,0))
+}
+class(SQ_OS_0) <- "MMP"
+
+## ----SQ_OS_0.05----
+SQ_OS_0.05<- function(x, DataList, ...) {
+  RecList <- SQ_OS(x, DataList, ...)
+  Adjust_Effort(RecList, Effort_Mod=c(0,0,0.05,0))
+}
+class(SQ_OS_0.05) <- "MMP"
+
+## ----SQ_OS_0.275----
+SQ_OS_0.275<- function(x, DataList, ...) {
+  RecList <- SQ_OS(x, DataList, ...)
+  Adjust_Effort(RecList, Effort_Mod=c(0,0,0.275,0))
+}
+class(SQ_OS_0.275) <- "MMP"
+
+## ----SQ_OS_0.5----
+SQ_OS_0.5<- function(x, DataList, ...) {
+  RecList <- SQ_OS(x, DataList, ...)
+  Adjust_Effort(RecList, Effort_Mod=c(0,0,0.5,0))
+}
+class(SQ_OS_0.5) <- "MMP"
+
+## ----SQ_OS_0.725----
+SQ_OS_0.725<- function(x, DataList, ...) {
+  RecList <- SQ_OS(x, DataList, ...)
+  Adjust_Effort(RecList, Effort_Mod=c(0,0,0.725,0))
+}
+class(SQ_OS_0.725) <- "MMP"
+
+## ----SQ_OS_0.95----
+SQ_OS_0.95<- function(x, DataList, ...) {
+  RecList <- SQ_OS(x, DataList, ...)
+  Adjust_Effort(RecList, Effort_Mod=c(0,0,0.95,0))
+}
+class(SQ_OS_0.95) <- "MMP"
+
