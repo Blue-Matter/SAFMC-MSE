@@ -4,13 +4,14 @@ navbar:
     right: [search, github]
 
 url: https://safmc-mse.bluematterscience.com/
+
 template:
   bootstrap: 5
 
 vignettes:
-- title: Articles
-  navbar: ~
-  contents:
-  - articles/Building-Base-Case-Operating-Models
+  - title: Articles
+    navbar: ~
+    contents:
+      - Building-Base-Case-Operating-Models
 
 
