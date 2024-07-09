@@ -3,6 +3,9 @@
 library(SAMSE)
 All_MPs <- Source_MPs()
 
+if (!dir.exists('MSE_Objects'))
+  dir.create('MSE_Objects')
+
 Hist_Files <- list.files('Hist_Objects', pattern='BaseCase')
 
 for (st in seq_along(Hist_Files)) {

@@ -2,6 +2,10 @@ library(SAMSE)
 
 OMdir <- 'OM_Objects'
 Histdir <- 'Hist_Objects'
+
+if (!dir.exists(Histdir))
+  dir.create(Histdir)
+
 fls <- list.files(OMdir)
 
 run_hist <- TRUE

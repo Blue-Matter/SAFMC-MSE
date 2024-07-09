@@ -21,7 +21,8 @@ Depends:
     bamExtras
 Imports:
     lubridate,
-    forcats
+    forcats,
+    sf
 Remotes:    
     blue-matter/MSEtool,
     blue-matter/openMSE,

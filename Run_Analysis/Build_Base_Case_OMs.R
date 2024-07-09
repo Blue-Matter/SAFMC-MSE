@@ -9,6 +9,8 @@ rdat_GG <- bamExtras::rdat_GagGrouper |> bamExtras::standardize_rdat()
 rdat_BS <- bamExtras::rdat_BlackSeaBass |> bamExtras::standardize_rdat()
 
 ## ---- SAVE_BAM_Objects ----
+if (!dir.exists('BAM_Objects'))
+    dir.create('BAM_Objects')
 saveRDS(rdat_RS, 'BAM_Objects/BaseCase_RS.bam')
 saveRDS(rdat_GG, 'BAM_Objects/BaseCase_GG.bam')
 saveRDS(rdat_BS, 'BAM_Objects/BaseCase_BS.bam')
@@ -221,6 +223,8 @@ OM_BS <- OMList[[3]]
 
 
 ## ---- Save_OMs ----
+if (!dir.exists('OM_Objects'))
+  dir.create('OM_Objects')
 
 saveRDS(OM_RS, 'OM_Objects/BaseCase_RS.OM')
 saveRDS(OM_GG, 'OM_Objects/BaseCase_GG.OM')
