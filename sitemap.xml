@@ -1,114 +1,33 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/404.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/articles/Operating-Models.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/index.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/AddSeasonal_RS.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Aggregate_Fleets.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Calc_GG_Ref_Points.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Calc_RS_Ref_Points.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Calculate_F.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Calculate_Ref_Points.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Compare_Biomass.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Compare_Catch.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Compare_F.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Fleet_MMP.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Ftarget.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Generate_Future_Rec_Devs.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Landings_10.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Landings_20.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Landings_Removals.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/P_MFMT.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/P_MSST.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/P_rebuild.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/Shiny.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/StatusQuo.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/TradeOff.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/calc_seasons_RS_Comm.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/calculate_allocation.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/combineFleets.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/fixedC_mean3.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/plot_Catch.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/plot_Catch_Discards.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/plot_Fmort.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/plot_SB.html</loc>
-  </url>
-  <url>
-    <loc>https://blue-matter.github.io/SAFMC-MSE/reference/structure_OM.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://safmc-mse.bluematterscience.com/404.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/LICENSE.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/articles/Building-Base-Case-Operating-Models.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/articles/index.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/authors.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/index.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/Add_Spatial_Effort.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/Add_Spatial_to_OM.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/Aggregate_Fleets.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/Calculate_Ref_Points.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/Combine_OMs.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/Compare_Biomass.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/Compare_Catch.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/Compare_F.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/Generate_Correlated_Rec_Devs.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/Landings_10.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/Landings_20.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/Landings_Removals.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/MPs.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/P_MFMT.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/P_MSST.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/P_rebuild.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/Shiny.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/Spatial_Area_Definition.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/TradeOff.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/Write_MPs.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/get_stock_status.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/index.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/lower_rec_effort.html</loc></url>
+<url><loc>https://safmc-mse.bluematterscience.com/reference/modify_adult_M.html</loc></url>
 </urlset>
+
