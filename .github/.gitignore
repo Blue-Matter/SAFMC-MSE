@@ -1,1 +1,4 @@
 *.html
+
+OM_objects/*
+BAM_objects/*
