@@ -212,12 +212,13 @@ OM_BS <- Add_Spatial_to_OM(OM_BS, Rel_Abun_Area_BS)
 ## ---- RecDevs ----
 
 OMList <- Generate_Correlated_Rec_Devs(list(OM_RS, OM_GG, OM_BS), truncsd=2)
+
+Plot_Correlated_Rec_Devs(OMList)
+
 OM_RS <- OMList[[1]]
 OM_GG <- OMList[[2]]
 OM_BS <- OMList[[3]]
 
-
-Plot_Correlated_Rec_Devs(OMList)
 
 ## ---- Save_OMs ----
 

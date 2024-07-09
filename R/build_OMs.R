@@ -745,3 +745,10 @@ get_rec_devs <- function(dir='OM_Objects', OM='Base Case') {
   df
 }
 
+
+geomean <- function(x, na.rm=TRUE) {
+  if (na.rm)
+    x <- as.numeric(na.omit(x))
+  log.x <- log(x)
+  exp(mean(log.x[is.finite(log.x)]))
+}

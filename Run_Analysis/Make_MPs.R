@@ -11,7 +11,7 @@ get_MLL <- function(Name) {
 
 }
 
-Rec_Reduction <- c(0, seq(0.05, to=0.95, length.out=5))
+
 Rec_Reduction
 
 SQ
@@ -37,29 +37,7 @@ OM <- readRDS('OM_Objects/BaseCase_RS.OM')
 Hist <- Simulate(OM, nsim=2)
 
 
-Create_Rec_List <- function(DataList) {
-  nstocks <- length(DataList)
-  nfleets <- length(DataList[[1]])
-  rec_out <- vector('list', nstocks)
 
-  for (s in 1:nstocks) {
-    rec_out[[s]] <- vector('list', nfleets)
-    for (fl in 1:nfleets) {
-      rec_out[[s]][[fl]] <- new('Rec')
-    }
-  }
-  rec_out
-}
-
-Get_Year_Info <- function(DataList) {
-  Years <- DataList[[1]][[1]]@Year
-  LHYear <- DataList[[1]][[1]]@LHYear
-  pyear <- length(Years[Years>LHYear])
-  hist_yrs <- Years[Years <=  LHYear]
-  recent_yrs <- hist_yrs[(length(hist_yrs)-2):length(hist_yrs)]
-  yr_ind <- which(hist_yrs %in% recent_yrs)
-  list(Last_3_Yrs=yr_ind, Current_Year=max(Years)+1)
-}
 
 SQ <- function(x, DataList, ...) {
   rec_out <- Create_Rec_List(DataList)
@@ -84,6 +62,22 @@ SQ <- function(x, DataList, ...) {
   rec_out
 }
 class(SQ) <- 'MMP'
+
+Modify_Fleet_Effort <- function(rec_out, Effort_Mod=list(0,0,0.05,0), ...) {
+  nstocks <- length(rec_out)
+  nfleets <- length(rec_out[[1]])
+
+  # loop over stocks and fleets
+  for (s in 1:nstocks) {
+    for (f in 1:nfleets) {
+      rec_out[[s]][[f]]@Effort <- rec_out[[s]][[f]]@Effort * (1-Effort_Mod[[fl]])
+    }
+  }
+  rec_out
+}
+class(Modify_Fleet_Effort) <- 'MMP'
+
+
 
 SQ_FR <- function(x, DataList, First_Management_Year=2025,...) {
 

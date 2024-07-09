@@ -4,15 +4,15 @@
 \alias{Combine_OMs}
 \title{Combine Multiple Single-Stock MOM objects into one Multi-Stock MOM}
 \usage{
-Combine_OMs(OMlist, Name = NULL, truncsd = 2)
+Combine_OMs(OMList, Name = NULL, fill_yrs = 3)
 }
 \arguments{
-\item{OMlist}{A list of \code{MOM} objects}
+\item{OMList}{A list of \code{MOM} objects}
 
 \item{Name}{Name of the output MOM object}
 
-\item{truncsd}{Numeric value for number of standard deviations to truncate
-correlated recruitment deviations. Set to NULL to ignore.}
+\item{fill_yrs}{Number of years to calculate mean values to fill fishing effort (\code{cpars$Find}),
+for any OMs that have a terminal year before the maximum terminal year of all OMs}
 }
 \value{
 An object of class \code{\link[=MOM]{MOM()}}

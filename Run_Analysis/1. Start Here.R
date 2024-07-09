@@ -14,6 +14,13 @@ source('Run_Analysis/Simulate_Historical_Fisheries.R')
 # 4. Report Stock Status from OMs
 source('Run_Analysis/Generate_Figures.R')
 
+# 5. Create MPs
+source('Run_Analysis/create_MPs.R')
 
+# 6. Run Base Case Projections
+source('Run_Analysis/Projections_Base_Case.R')
 
-# 5. Projections
+# 7. Run Sensitivity Projections
+# source('Run_Analysis/Projections_Base_Case.R')
+
+# 8. Calculate Performance
