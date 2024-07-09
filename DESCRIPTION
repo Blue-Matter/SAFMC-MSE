@@ -1,6 +1,6 @@
 Package: SAMSE
 Title: South Atlantic Management Strategy Evaluation
-Version: 0.0.0.9005
+Version: 0.0.0.9006
 Authors@R: 
     person("Adrian", "Hordyk", , "adrian@bluematterscience.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-5620-3446"))
@@ -23,20 +23,30 @@ Depends:
 Imports:
     lubridate,
     forcats,
-    sf
-Remotes:    
+    sf,
+    abind,
+    bslib,
+    cowplot,
+    DT,
+    ggExtra,
+    ggnewscale,
+    ggrepel,
+    grid,
+    knitr,
+    pkgdown,
+    RColorBrewer,
+    rmarkdown,
+    SAMSE,
+    shiny,
+    shinydashboard,
+    shinydashboardPlus,
+    shinyWidgets,
+    tidyr,
+    tools
+Remotes: 
     blue-matter/MSEtool,
     blue-matter/openMSE,
-    nikolaifish/bamExtras
-Suggests: 
-    knitr,
-    rmarkdown,
-    DT,
-    shiny,
-    shinyWidgets,
-    bslib,
-    shinydashboard,
-    shinydashboardPlus
+    adrianhordyk/bamExtras
 VignetteBuilder: knitr    
 LazyData: true
 URL: https://safmc-mse.bluematterscience.com
