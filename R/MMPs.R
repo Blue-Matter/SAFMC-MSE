@@ -1,16 +1,16 @@
-#' Get stock specific size limit
-#'
-#' @param Name Name of the stock
-#'
-#' @return Numeric value. Minimum size limit (mm)
-#' @export
-get_MLL <- function(Name) {
-
-  grepl('Red Snapper', Name)
-
-
-}
-
+# #' Get stock specific size limit
+# #'
+# #' @param Name Name of the stock
+# #'
+# #' @return Numeric value. Minimum size limit (mm)
+# #' @export
+# get_MLL <- function(Name) {
+#
+#   grepl('Red Snapper', Name)
+#
+#
+# }
+#
 
 
 
