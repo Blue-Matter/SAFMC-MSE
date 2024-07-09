@@ -1,4 +1,6 @@
 *.html
 
-OM_objects/*
 BAM_objects/*
+MSE_objects/*
+OM_objects/*
+
