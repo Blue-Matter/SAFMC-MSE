@@ -35,7 +35,7 @@ ref_df <- DF |> dplyr::distinct(Stock,
                                 MFMT=round(MFMT,2)) |>
   dplyr::arrange(Stock, OM)
 
-saveRDS(ref_df, 'inst/ref_df.rda')
+saveRDS(ref_df, 'Misc_Objects/ref_df.rda')
 
 
 # plot landings and discards by stock and fleet

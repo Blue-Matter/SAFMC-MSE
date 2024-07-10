@@ -4,12 +4,17 @@
 \alias{MPs}
 \alias{Create_Rec_List}
 \alias{Get_Year_Info}
-\alias{SQ}
 \alias{Adjust_Effort}
-\alias{SQ_FR}
-\alias{SQ_MLL}
+\alias{Close_Areas}
+\alias{SQ}
 \alias{SQ_NS}
 \alias{SQ_OS}
+\alias{SQ_FR}
+\alias{SQ_FR_NS}
+\alias{SQ_FR_OS}
+\alias{SQ_MLL}
+\alias{SQ_MLL_NS}
+\alias{SQ_MLL_OS}
 \alias{SQ_FR_MLL}
 \alias{SQ_FR_MLL_NS}
 \alias{SQ_FR_MLL_OS}
@@ -19,30 +24,104 @@ Create_Rec_List(DataList)
 
 Get_Year_Info(DataList)
 
+Adjust_Effort(
+  RecList,
+  DataList,
+  Effort_Mod = 0,
+  First_Management_Year = 2025,
+  ...
+)
+
+Close_Areas(
+  RecList,
+  DataList,
+  areas = c(1, 1, 1, 1, 1, 1),
+  Allocate = 1,
+  First_Management_Year
+)
+
 SQ(x, DataList, ...)
 
-Adjust_Effort(RecList, Effort_Mod = 0, ...)
+SQ_NS(
+  x,
+  DataList,
+  First_Management_Year = 2025,
+  areas = c(1, 0, 1, 0, 1, 0),
+  Allocate = 1,
+  ...
+)
+
+SQ_OS(
+  x,
+  DataList,
+  First_Management_Year = 2025,
+  areas = c(0, 1, 0, 1, 0, 1),
+  Allocate = 1,
+  ...
+)
 
 SQ_FR(x, DataList, First_Management_Year = 2025, ...)
 
+SQ_FR_NS(
+  x,
+  DataList,
+  First_Management_Year = 2025,
+  areas = c(1, 0, 1, 0, 1, 0),
+  Allocate = 1,
+  ...
+)
+
+SQ_FR_OS(
+  x,
+  DataList,
+  First_Management_Year = 2025,
+  areas = c(0, 1, 0, 1, 0, 1),
+  Allocate = 1,
+  ...
+)
+
 SQ_MLL(x, DataList, First_Management_Year = 2025, ...)
 
-SQ_NS(x, DataList, First_Management_Year = 2025, ...)
+SQ_MLL_NS(
+  x,
+  DataList,
+  First_Management_Year = 2025,
+  areas = c(1, 0, 1, 0, 1, 0),
+  Allocate = 1,
+  ...
+)
 
-SQ_OS(x, DataList, First_Management_Year = 2025, ...)
+SQ_MLL_OS(
+  x,
+  DataList,
+  First_Management_Year = 2025,
+  areas = c(0, 1, 0, 1, 0, 1),
+  Allocate = 1,
+  ...
+)
 
 SQ_FR_MLL(x, DataList, First_Management_Year = 2025, ...)
 
-SQ_FR_MLL_NS(x, DataList, ...)
+SQ_FR_MLL_NS(
+  x,
+  DataList,
+  First_Management_Year = 2025,
+  areas = c(1, 0, 1, 0, 1, 0),
+  Allocate = 1,
+  ...
+)
 
-SQ_FR_MLL_OS(x, DataList, ...)
+SQ_FR_MLL_OS(
+  x,
+  DataList,
+  First_Management_Year = 2025,
+  areas = c(0, 1, 0, 1, 0, 1),
+  Allocate = 1,
+  ...
+)
 }
 \arguments{
 \item{DataList}{A nested list of \code{Data} objects}
-
-\item{x}{Simulation number}
-
-\item{...}{Additional arguments}
 
 \item{RecList}{A list of \code{Rec} objects returned by an \code{MMP}}
 
@@ -50,6 +129,10 @@ SQ_FR_MLL_OS(x, DataList, ...)
 \code{Effort_Rec_Fleet <- Effort_Rec_Fleet * (1-Effort_Mod)}}
 
 \item{First_Management_Year}{Year the management procedures are first implemented}
+
+\item{...}{Additional arguments}
+
+\item{x}{Simulation number}
 }
 \description{
 Management Procedures
@@ -60,18 +143,28 @@ Management Procedures
 
 \item \code{Get_Year_Info()}: Return information on current year from a \code{DataList}
 
-\item \code{SQ()}: Status Quo. Fishing effort for each fleet is fixed in the projection
-years at the geometric mean of the three last historical years
-
 \item \code{Adjust_Effort()}: Adjust fishing effort for General Recreational Fleet
 
-\item \code{SQ_FR()}: Status Quo with Full Retention. Modify retention curve with an asymptote of 1
+\item \code{Close_Areas()}: Close areas to fishing
 
-\item \code{SQ_MLL()}: Status Quo with a stock specific size limit.
+\item \code{SQ()}: Status Quo. Fishing effort for each fleet is fixed in the projection
+years at the geometric mean of the three last historical years
 
 \item \code{SQ_NS()}: Status Quo with offshore areas closed to fishing
 
 \item \code{SQ_OS()}: Status Quo with nearshore areas closed to fishing
+
+\item \code{SQ_FR()}: Status Quo with Full Retention. Modify retention curve with an asymptote of 1
+
+\item \code{SQ_FR_NS()}: Status Quo with full retention and offshore closed
+
+\item \code{SQ_FR_OS()}: Status Quo with full retention and nearshore closed
+
+\item \code{SQ_MLL()}: Status Quo with a stock specific size limit.
+
+\item \code{SQ_MLL_NS()}: Status Quo with a stock specific size limit and offshore areas closed to fishing
+
+\item \code{SQ_MLL_OS()}: Status Quo with a stock specific size limit and nearshore areas closed to fishing
 
 \item \code{SQ_FR_MLL()}: Status Quo with full retention and minimum size limit
 

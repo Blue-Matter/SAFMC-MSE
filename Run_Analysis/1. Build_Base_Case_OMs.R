@@ -1,5 +1,5 @@
 
-source('Run_Analysis/Global_Variables.R')
+source('Run_Analysis/0b. Global_Variables.R')
 
 
 ## ---- importBAM ----
@@ -29,7 +29,6 @@ OM_BS <- BAM2MOM(rdat_BS, stock_name='Black Sea Bass',
                  nsim=nsim, proyears=proyears)
 
 
-rdat = rdat_RS
 ## ---- fleetnames ----
 
 fleet_names_df <- dplyr::bind_rows(
@@ -39,7 +38,9 @@ fleet_names_df <- dplyr::bind_rows(
 )
 
 ## ---- SAVE_fleet_names_df ----
-saveRDS(fleet_names_df, 'inst/fleet_names_df.rda')
+if (!dir.exists('Misc_Objects'))
+  dir.create('Misc_Objects')
+saveRDS(fleet_names_df, 'Misc_Objects/fleet_names_df.rda')
 
 ## ---- fleet_df ----
 
@@ -61,7 +62,7 @@ fleet_df$Type[grepl('\\.D', fleet_df$Code)] <- 'Discard'
 fleet_df
 
 ## ---- SAVE_fleet_df ----
-saveRDS(fleet_df, 'inst/fleet_df.rda')
+saveRDS(fleet_df, 'Misc_Objects/fleet_df.rda')
 
 ## ---- RS_DiscardMort ----
 
@@ -120,7 +121,7 @@ discard_mortality <- dplyr::bind_rows(discard_mortality_RS,
                                       discard_mortality_BS)
 
 ## ---- SAVE_discard_mortality ----
-saveRDS(discard_mortality, 'inst/discard_mortality.rda')
+saveRDS(discard_mortality, 'Misc_Objects/discard_mortality.rda')
 
 
 ## ---- Aggregate_Fleets ----
@@ -199,9 +200,9 @@ Rel_Abun_Area_BS <- data.frame(
 
 
 ## ---- SAVE_Rel_Abun_Area ----
-saveRDS(Rel_Abun_Area_RS, 'inst/Rel_Abun_Area_RS.rda')
-saveRDS(Rel_Abun_Area_GG, 'inst/Rel_Abun_Area_GG.rda')
-saveRDS(Rel_Abun_Area_BS, 'inst/Rel_Abun_Area_BS.rda')
+saveRDS(Rel_Abun_Area_RS, 'Misc_Objects/Rel_Abun_Area_RS.rda')
+saveRDS(Rel_Abun_Area_GG, 'Misc_Objects/Rel_Abun_Area_GG.rda')
+saveRDS(Rel_Abun_Area_BS, 'Misc_Objects/Rel_Abun_Area_BS.rda')
 
 ## ---- Add_Spatial ----
 

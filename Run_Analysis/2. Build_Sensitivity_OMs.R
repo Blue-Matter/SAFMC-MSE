@@ -1,12 +1,12 @@
 
-source('Run_Analysis/Global_Variables.R')
+source('Run_Analysis/0b. Global_Variables.R')
 
-fleet_df <- readRDS('inst/fleet_df.rda')
-discard_mortality <- readRDS('inst/discard_mortality.rda')
+fleet_df <- readRDS('Misc_Objects/fleet_df.rda')
+discard_mortality <- readRDS('Misc_Objects/discard_mortality.rda')
 
-Rel_Abun_Area_RS <- readRDS('inst/Rel_Abun_Area_RS.rda')
-Rel_Abun_Area_GG <- readRDS('inst/Rel_Abun_Area_GG.rda')
-Rel_Abun_Area_BS <- readRDS('inst/Rel_Abun_Area_BS.rda')
+Rel_Abun_Area_RS <- readRDS('Misc_Objects/Rel_Abun_Area_RS.rda')
+Rel_Abun_Area_GG <- readRDS('Misc_Objects/Rel_Abun_Area_GG.rda')
+Rel_Abun_Area_BS <- readRDS('Misc_Objects/Rel_Abun_Area_BS.rda')
 
 
 # Lower Natural Mortality ----

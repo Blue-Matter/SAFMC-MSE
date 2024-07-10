@@ -140,6 +140,7 @@ Adjust_Effort <- function(RecList, DataList, Effort_Mod=0, First_Management_Year
 #' @describeIn MPs Close areas to fishing
 #' @export
 Close_Areas <- function(RecList, DataList, areas=c(1,1,1,1,1,1), Allocate=1, First_Management_Year) {
+  year_info <- Get_Year_Info(DataList)
   if (year_info$Current_Year<First_Management_Year)
     return(RecList)
   nstocks <- length(RecList)
@@ -154,7 +155,30 @@ Close_Areas <- function(RecList, DataList, areas=c(1,1,1,1,1,1), Allocate=1, Fir
 }
 
 
-add_MLL <- function(x, RecList, DataList, First_Management_Year=2025, MLL=609) {
+#' Return the minimum legal length (MLL) for a given stock
+#'
+#' @param Name The common name of the stock
+#'
+#' @return numeric value. MLL in mm
+#' @export
+get_MLL <- function(Name) {
+  name <- tolower(Name)
+  if (grepl('red snapper', name)) {
+    return(openMSE::inch2mm(24))
+  } else if (grepl('gag grouper', name)) {
+    return(openMSE::inch2mm(24))
+  } else if (grepl('black sea bass', name)) {
+    return(openMSE::inch2mm(12))
+  } else {
+    warning('No MLL specified for this stock ', Name)
+  }
+  0
+}
+
+
+add_MLL <- function(x, RecList, DataList, First_Management_Year=2025) {
+
+  MLL <- get_MLL(Name=DataList[[1]][[1]]@Name)
 
   year_info <- Get_Year_Info(DataList)
   if (year_info$Current_Year<First_Management_Year)
@@ -187,8 +211,11 @@ add_MLL <- function(x, RecList, DataList, First_Management_Year=2025, MLL=609) {
                                     CAL_binsmid)
       ret_a <- ret_a[,1]
       ret_a[!is.finite(ret_a)] <- 0
-
-      RecList[[s]][[f]]@Misc$R_age <-  RecList[[s]][[f]]@Misc$R_age * ret_a
+      if (is.null(RecList[[s]][[f]]@Misc$R_age)) {
+        RecList[[s]][[f]]@Misc$R_age <- ret_a
+      } else {
+        RecList[[s]][[f]]@Misc$R_age <-  RecList[[s]][[f]]@Misc$R_age * ret_a
+      }
     }
   }
   RecList
@@ -225,6 +252,25 @@ SQ <- function(x, DataList, ...) {
 }
 class(SQ) <- 'MMP'
 
+#' @describeIn MPs Status Quo with offshore areas closed to fishing
+#' @export
+SQ_NS <- function(x, DataList, First_Management_Year=2025, areas=c(1,0,1,0,1,0), Allocate=1, ...) {
+  RecList <- SQ(x, DataList)
+  Close_Areas(RecList, DataList, areas=areas, Allocate=Allocate,
+              First_Management_Year=First_Management_Year)
+}
+class(SQ_NS) <- 'MMP'
+
+#' @describeIn MPs Status Quo with nearshore areas closed to fishing
+#' @export
+SQ_OS <- function(x, DataList, First_Management_Year=2025, areas=c(0,1,0,1,0,1), Allocate=1, ...) {
+  RecList <- SQ(x, DataList)
+  Close_Areas(RecList, DataList, areas=areas, Allocate=Allocate,
+              First_Management_Year=First_Management_Year)
+}
+class(SQ_OS) <- 'MMP'
+
+
 #' @describeIn MPs Status Quo with Full Retention. Modify retention curve with an asymptote of 1
 #' @param First_Management_Year Year the management procedures are first implemented
 #' @export
@@ -256,53 +302,76 @@ SQ_FR <- function(x, DataList, First_Management_Year=2025,...) {
 }
 class(SQ_FR) <- 'MMP'
 
+
+
+#' @describeIn MPs Status Quo with full retention and offshore closed
+#' @export
+SQ_FR_NS <- function(x, DataList,First_Management_Year=2025, areas=c(1,0,1,0,1,0), Allocate=1, ...) {
+  RecList <- SQ_FR(x, DataList)
+  Close_Areas(RecList, DataList, areas=areas, Allocate=Allocate, First_Management_Year=First_Management_Year)
+}
+class(SQ_FR_NS) <- 'MMP'
+
+#' @describeIn MPs Status Quo with full retention and nearshore closed
+#' @export
+SQ_FR_OS <- function(x, DataList,First_Management_Year=2025, areas=c(0,1,0,1,0,1), Allocate=1, ...) {
+  RecList <- SQ_FR(x, DataList)
+  Close_Areas(RecList, DataList, areas=areas, Allocate=Allocate, First_Management_Year=First_Management_Year)
+}
+class(SQ_FR_OS) <- 'MMP'
+
+
 #' @describeIn MPs Status Quo with a stock specific size limit.
 #' @export
-SQ_MLL <- function(x, DataList, First_Management_Year=2025, MLL=609, ...) {
+SQ_MLL <- function(x, DataList, First_Management_Year=2025, ...) {
   RecList <- SQ(x, DataList)
-  add_MLL(x, RecList, DataList, First_Management_Year=First_Management_Year, MLL=MLL)
+  add_MLL(x, RecList, DataList, First_Management_Year=First_Management_Year)
 }
 class(SQ_MLL) <- 'MMP'
 
 
-#' @describeIn MPs Status Quo with offshore areas closed to fishing
+#' @describeIn MPs Status Quo with a stock specific size limit and offshore areas closed to fishing
 #' @export
-SQ_NS <- function(x, DataList, First_Management_Year=2025, areas=c(1,0,1,0,1,0), Allocate=1, ...) {
+SQ_MLL_NS <- function(x, DataList, First_Management_Year=2025, areas=c(1,0,1,0,1,0), Allocate=1, ...) {
   RecList <- SQ(x, DataList)
+  RecList <- add_MLL(x, RecList, DataList, First_Management_Year=First_Management_Year)
   Close_Areas(RecList, DataList, areas=areas, Allocate=Allocate, First_Management_Year=First_Management_Year)
 }
-class(SQ_NS) <- 'MMP'
+class(SQ_MLL_NS) <- 'MMP'
 
-#' @describeIn MPs Status Quo with nearshore areas closed to fishing
+#' @describeIn MPs Status Quo with a stock specific size limit and nearshore areas closed to fishing
 #' @export
-SQ_OS <- function(x, DataList, First_Management_Year=2025, areas=c(0,1,0,1,0,1), Allocate=1, ...) {
+SQ_MLL_OS <- function(x, DataList, First_Management_Year=2025, areas=c(0,1,0,1,0,1), Allocate=1, ...) {
   RecList <- SQ(x, DataList)
+  RecList <- add_MLL(x, RecList, DataList, First_Management_Year=First_Management_Year)
   Close_Areas(RecList, DataList, areas=areas, Allocate=Allocate, First_Management_Year=First_Management_Year)
 }
-class(SQ_OS) <- 'MMP'
+class(SQ_MLL_OS) <- 'MMP'
 
 #' @describeIn MPs Status Quo with full retention and minimum size limit
 #' @export
-SQ_FR_MLL <- function(x, DataList, First_Management_Year=2025, MLL=609, ...) {
+SQ_FR_MLL <- function(x, DataList, First_Management_Year=2025, ...) {
   RecList <- SQ_FR(x, DataList)
-  add_MLL(x, RecList, DataList, First_Management_Year=First_Management_Year, MLL=MLL)
+  add_MLL(x, RecList, DataList, First_Management_Year=First_Management_Year)
 }
 class(SQ_FR_MLL) <- 'MMP'
 
 #' @describeIn MPs Status Quo with full retention, minimum size limit, and offshore closed
 #' @export
-SQ_FR_MLL_NS <- function(x, DataList,First_Management_Year=2025, MLL=609, areas=c(1,0,1,0,1,0), Allocate=1, ...) {
+SQ_FR_MLL_NS <- function(x, DataList,First_Management_Year=2025, areas=c(1,0,1,0,1,0), Allocate=1, ...) {
   RecList <- SQ_FR(x, DataList)
-  RecList <- add_MLL(x, RecList, DataList, First_Management_Year=First_Management_Year, MLL=MLL)
+  RecList <- add_MLL(x, RecList, DataList, First_Management_Year=First_Management_Year)
   Close_Areas(RecList, DataList, areas=areas, Allocate=Allocate, First_Management_Year=First_Management_Year)
 }
 class(SQ_FR_MLL_NS) <- 'MMP'
 
 #' @describeIn MPs Status Quo with full retention, minimum size limit, and nearshore closed
 #' @export
-SQ_FR_MLL_OS <- function(x, DataList,First_Management_Year=2025, MLL=609, areas=c(0,1,0,1,0,1), Allocate=1, ...) {
+SQ_FR_MLL_OS <- function(x, DataList,First_Management_Year=2025, areas=c(0,1,0,1,0,1), Allocate=1, ...) {
   RecList <- SQ_FR(x, DataList)
-  RecList <- add_MLL(x, RecList, DataList, First_Management_Year=First_Management_Year, MLL=MLL)
+  RecList <- add_MLL(x, RecList, DataList, First_Management_Year=First_Management_Year)
   Close_Areas(RecList, DataList, areas=areas, Allocate=Allocate, First_Management_Year=First_Management_Year)
 }
 class(SQ_FR_MLL_OS) <- 'MMP'
+
+
