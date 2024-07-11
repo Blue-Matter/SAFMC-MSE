@@ -527,8 +527,6 @@ get_stock_status <- function(BAM_dir='BAM_objects') {
                                     'Gag grouper',
                                     'Black sea bass'))
 
-  match_om <- data.frame(code=c('BaseCase', 'Low_M', 'High_M', 'Lower_Rec_Effort'),
-                         om=c('Base Case', 'Lower M', 'Higher M', 'Lower Rec. Effort'))
 
   fls <- list.files(BAM_dir)
 
@@ -544,9 +542,7 @@ get_stock_status <- function(BAM_dir='BAM_objects') {
     stock <- txt[length(txt)]
     ind <- which(match_stock$code ==stock)
     Stock <- match_stock$stock[ind]
-    om <- paste(txt[1:(length(txt)-1)], collapse='_')
-    ind <- which(match_om$code ==om)
-    OM <- match_om$om[ind]
+    OM <- paste(txt[1:(length(txt)-1)], collapse='_')
 
     # MSST
     MSST <- bam$parms$msst

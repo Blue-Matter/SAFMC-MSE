@@ -10,11 +10,22 @@ Stock_levels <- function() {
   c('Red snapper', 'Gag grouper', 'Black sea bass')
 }
 
+
+#' Create data.frames of MSE results
+#'
+#' @param om OM name
+#' @param MSE_dir
+#'
+#' @return Nothing. Saves data.frames to 'Results_Objects'
+#' @export
 make_DFs <- function(om='BaseCase', MSE_dir='MSE_Objects') {
 
   MSE_files <- list.files(MSE_dir)
   OM_fls <- lapply(strsplit(MSE_files, paste0(om, '_')), '[[', 2) |> unlist()
   stocks <- lapply(strsplit(OM_fls, '_'), '[[', 1) |> unlist() |> unique()
+
+  if (!dir.exists('Results_Objects'))
+    dir.create('Results_Objects')
 
   st_list <- list()
   for (st in seq_along(stocks)) {
@@ -148,7 +159,7 @@ Plot_Prob_Rebuild <- function(om='BaseCase', results_dir='Results_Objects') {
     theme_bw() +
     scale_x_discrete(expand=c(0,0))+
     scale_y_discrete(expand=c(0,0)) +
-    labs(x='General Recreational Relative Effort',
+    labs(x='Relative Effort General Recreational Fleet',
          y='Management Actions',
          fill='Probability')
 
@@ -165,36 +176,34 @@ prob_rebuild <- apply(ssb>=array(ref_targets$MSST, dim=dim(ssb)), 2:3, mean)
 
 
 # TODO:
-# 1. why does RS MLL have worse SSB performance than SQ??
-
-MSE_1 <- readRDS('MSE_Objects/BaseCase_RS_SQ.mmse')
-MSE_2 <- readRDS('MSE_Objects/BaseCase_RS_SQ_MLL.mmse')
-
-MSE_1@MPs[[1]]
-mm <- 91
-
-MSE_1@SB_SBMSY[,1,mm,] |> mean()
-MSE_2@SB_SBMSY[,1,mm,] |> mean()
-
-sim <- 1
-fl <- 3
-mm <- 1
-MSE_1@Removals[sim,1,fl,mm,] - MSE_1@Catch[sim,1,fl,mm,]
-MSE_2@Removals[sim,1,fl,mm,] - MSE_2@Catch[sim,1,fl,mm,]
-
-data.frame(Year=2020:2044,
-           SQ=MSE_1@SB_SBMSY[sim,1,mm,],
-           SQ_MLL=MSE_2@SB_SBMSY[sim,1,mm,])
-
-
-multiHist <- readRDS('Hist_Objects/BaseCase_RS.hist')
-fl <- tempfile()
-fl
-saveRDS(multiHist, fl)
-
-MSE_2@PPD[[1]][[1]][[mm]]@Misc$StockPars
-
 # 2. why does GG NS perform better than OS at lower effort
+MSE_1 <- readRDS('MSE_Objects/BaseCase_GG_SQ_OS.mmse')
+MSE_2 <- readRDS('MSE_Objects/BaseCase_GG_SQ_NS.mmse')
+
+sim<- 1
+mm <- 1
+data.frame(OS=MSE_1@SB_SBMSY[sim,1,mm,],
+           NS=MSE_2@SB_SBMSY[sim,1,mm,])
+
+RS_multiHist <- readRDS('Hist_Objects/BaseCase_RS.hist')
+GG_multiHist <- readRDS('Hist_Objects/BaseCase_GG.hist')
+BS_multiHist <- readRDS('Hist_Objects/BaseCase_BS.hist')
+
+b <- RS_multiHist[[1]][[1]]@TSdata$Biomass[1,70, ]
+plot(b/sum(b)*100, c(3,1,70,19,3,4))
+abline(a=0, b=1, lty=3)
+
+b <- GG_multiHist[[1]][[1]]@TSdata$Biomass[1,58, ]
+b/sum(b)
+plot(b/sum(b)*100, c(34, 21, 21, 18, 3, 3))
+abline(a=0, b=1, lty=3)
+
+b <- BS_multiHist[[1]][[1]]@TSdata$Biomass[1,44, ]
+b/sum(b)
+plot(b/sum(b)*100, c(14,2,72,6,4,2))
+abline(a=0, b=1, lty=3)
+
+
 ## SB/SBMSST
 
 ## Relative STY

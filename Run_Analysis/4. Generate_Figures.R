@@ -24,9 +24,7 @@ p
 
 ggsave('img/Stock_Status.png', p, width=8, height=4)
 
-DF |> dplyr::filter(Stock=='Red snapper',
-                    OM %in% c('Base Case', 'Lower Rec. Effort'),
-                    Year==2019)
+
 
 # save reference points
 ref_df <- DF |> dplyr::distinct(Stock,

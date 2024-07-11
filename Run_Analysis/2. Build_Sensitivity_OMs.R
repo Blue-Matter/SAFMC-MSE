@@ -53,9 +53,9 @@ OM_Low_M_BS <- OMList[[3]]
 
 ## ---- Save_low_M_OMs ----
 
-saveRDS(OM_Low_M_RS, 'OM_Objects/Low_M_RS.OM')
-saveRDS(OM_Low_M_GG, 'OM_Objects/Low_M_GG.OM')
-saveRDS(OM_Low_M_BS, 'OM_Objects/Low_M_BS.OM')
+saveRDS(OM_Low_M_RS, 'OM_Objects/LowM_RS.OM')
+saveRDS(OM_Low_M_GG, 'OM_Objects/LowM_GG.OM')
+saveRDS(OM_Low_M_BS, 'OM_Objects/LowM_BS.OM')
 
 
 # Higher Natural Mortality ----
@@ -102,9 +102,9 @@ OM_High_M_BS <- OMList[[3]]
 
 ## ---- Save_high_M_OMs ----
 
-saveRDS(OM_High_M_RS, 'OM_Objects/High_M_RS.OM')
-saveRDS(OM_High_M_GG, 'OM_Objects/High_M_GG.OM')
-saveRDS(OM_High_M_BS, 'OM_Objects/High_M_BS.OM')
+saveRDS(OM_High_M_RS, 'OM_Objects/HighM_RS.OM')
+saveRDS(OM_High_M_GG, 'OM_Objects/HighM_GG.OM')
+saveRDS(OM_High_M_BS, 'OM_Objects/HighM_BS.OM')
 
 
 # Reduced Recreational Effort ----
@@ -151,7 +151,7 @@ OM_lower_rec_effort_BS <- OMList[[3]]
 
 ## ---- Save_high_M_OMs ----
 
-saveRDS(OM_lower_rec_effort_RS, 'OM_Objects/Lower_Rec_Effort_RS.OM')
-saveRDS(OM_lower_rec_effort_GG, 'OM_Objects/Lower_Rec_Effort_GG.OM')
-saveRDS(OM_lower_rec_effort_BS, 'OM_Objects/Lower_Rec_Effort_BS.OM')
+saveRDS(OM_lower_rec_effort_RS, 'OM_Objects/LowerRecEffort_RS.OM')
+saveRDS(OM_lower_rec_effort_GG, 'OM_Objects/LowerRecEffort_GG.OM')
+saveRDS(OM_lower_rec_effort_BS, 'OM_Objects/LowerRecEffort_BS.OM')
 

@@ -160,7 +160,7 @@ Add_Spatial_to_OM <- function(MOM, Rel_Abun_Region, average_prob=0.05) {
   # MOM <- Add_Spatial_Effort(MOM, Spatial_Effort)
 
   # optimize for age-depth distribution
-  opt <- optimize(calulate_age_depth, interval=log(c(0.1,0.9)),
+  opt <- optimize(calulate_age_depth, interval=log(c(0.01,0.9)),
                   MOM=MOM, Rel_Abun_Region=Rel_Abun_Region,
                   average_prob)
 
