@@ -212,7 +212,8 @@ add_MLL <- function(x, RecList, DataList, First_Management_Year=2025) {
       ret_a <- ret_a[,1]
       ret_a[!is.finite(ret_a)] <- 0
       if (is.null(RecList[[s]][[f]]@Misc$R_age)) {
-        RecList[[s]][[f]]@Misc$R_age <- ret_a
+
+        RecList[[s]][[f]]@Misc$R_age <- DataList[[s]][[f]]@Misc$FleetPars$retA_P[x,, yr_ind] * ret_a
       } else {
         RecList[[s]][[f]]@Misc$R_age <-  RecList[[s]][[f]]@Misc$R_age * ret_a
       }
