@@ -42,8 +42,8 @@ pak::pkg_install('blue-matter/MSEtool')
 ```
 
 ```{r, include=FALSE, cache=FALSE}
-do.call(read_chunk, list(path = '../Run_Analysis/Global_Variables.R'))
-do.call(read_chunk, list(path = '../Run_Analysis/Build_Base_Case_OMs.R'))
+do.call(read_chunk, list(path = '../Run_Analysis/0b. Global_Variables.R'))
+do.call(read_chunk, list(path = '../Run_Analysis/1. Build_Base_Case_OMs.R'))
 
 ```
 
