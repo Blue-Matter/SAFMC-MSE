@@ -44,23 +44,101 @@
 <span></span>
 <span><span class="fu">Get_Year_Info</span><span class="op">(</span><span class="va">DataList</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">Adjust_Effort</span><span class="op">(</span></span>
+<span>  <span class="va">RecList</span>,</span>
+<span>  <span class="va">DataList</span>,</span>
+<span>  Effort_Mod <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  First_Management_Year <span class="op">=</span> <span class="fl">2025</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">Close_Areas</span><span class="op">(</span></span>
+<span>  <span class="va">RecList</span>,</span>
+<span>  <span class="va">DataList</span>,</span>
+<span>  areas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  Allocate <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">First_Management_Year</span></span>
+<span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">SQ</span><span class="op">(</span><span class="va">x</span>, <span class="va">DataList</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">Adjust_Effort</span><span class="op">(</span><span class="va">RecList</span>, Effort_Mod <span class="op">=</span> <span class="fl">0</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">SQ_NS</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">DataList</span>,</span>
+<span>  First_Management_Year <span class="op">=</span> <span class="fl">2025</span>,</span>
+<span>  areas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  Allocate <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">SQ_OS</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">DataList</span>,</span>
+<span>  First_Management_Year <span class="op">=</span> <span class="fl">2025</span>,</span>
+<span>  areas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  Allocate <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">SQ_FR</span><span class="op">(</span><span class="va">x</span>, <span class="va">DataList</span>, First_Management_Year <span class="op">=</span> <span class="fl">2025</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">SQ_FR_NS</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">DataList</span>,</span>
+<span>  First_Management_Year <span class="op">=</span> <span class="fl">2025</span>,</span>
+<span>  areas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  Allocate <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">SQ_FR_OS</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">DataList</span>,</span>
+<span>  First_Management_Year <span class="op">=</span> <span class="fl">2025</span>,</span>
+<span>  areas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  Allocate <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">SQ_MLL</span><span class="op">(</span><span class="va">x</span>, <span class="va">DataList</span>, First_Management_Year <span class="op">=</span> <span class="fl">2025</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">SQ_NS</span><span class="op">(</span><span class="va">x</span>, <span class="va">DataList</span>, First_Management_Year <span class="op">=</span> <span class="fl">2025</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">SQ_MLL_NS</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">DataList</span>,</span>
+<span>  First_Management_Year <span class="op">=</span> <span class="fl">2025</span>,</span>
+<span>  areas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  Allocate <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">SQ_OS</span><span class="op">(</span><span class="va">x</span>, <span class="va">DataList</span>, First_Management_Year <span class="op">=</span> <span class="fl">2025</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">SQ_MLL_OS</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">DataList</span>,</span>
+<span>  First_Management_Year <span class="op">=</span> <span class="fl">2025</span>,</span>
+<span>  areas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  Allocate <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">SQ_FR_MLL</span><span class="op">(</span><span class="va">x</span>, <span class="va">DataList</span>, First_Management_Year <span class="op">=</span> <span class="fl">2025</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">SQ_FR_MLL_NS</span><span class="op">(</span><span class="va">x</span>, <span class="va">DataList</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">SQ_FR_MLL_NS</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">DataList</span>,</span>
+<span>  First_Management_Year <span class="op">=</span> <span class="fl">2025</span>,</span>
+<span>  areas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  Allocate <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">SQ_FR_MLL_OS</span><span class="op">(</span><span class="va">x</span>, <span class="va">DataList</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">SQ_FR_MLL_OS</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">DataList</span>,</span>
+<span>  First_Management_Year <span class="op">=</span> <span class="fl">2025</span>,</span>
+<span>  areas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  Allocate <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -69,14 +147,6 @@
 
 <dl><dt id="arg-datalist">DataList<a class="anchor" aria-label="anchor" href="#arg-datalist"></a></dt>
 <dd><p>A nested list of <code>Data</code> objects</p></dd>
-
-
-<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>Simulation number</p></dd>
-
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments</p></dd>
 
 
 <dt id="arg-reclist">RecList<a class="anchor" aria-label="anchor" href="#arg-reclist"></a></dt>
@@ -91,19 +161,32 @@
 <dt id="arg-first-management-year">First_Management_Year<a class="anchor" aria-label="anchor" href="#arg-first-management-year"></a></dt>
 <dd><p>Year the management procedures are first implemented</p></dd>
 
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Additional arguments</p></dd>
+
+
+<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+<dd><p>Simulation number</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a></h2>
 
 <ul><li><p><code>Create_Rec_List()</code>: Generate a list of <code>Rec</code> objects for an <code>MMP</code></p></li>
 <li><p><code>Get_Year_Info()</code>: Return information on current year from a <code>DataList</code></p></li>
+<li><p><code>Adjust_Effort()</code>: Adjust fishing effort for General Recreational Fleet</p></li>
+<li><p><code>Close_Areas()</code>: Close areas to fishing</p></li>
 <li><p><code>SQ()</code>: Status Quo. Fishing effort for each fleet is fixed in the projection
 years at the geometric mean of the three last historical years</p></li>
-<li><p><code>Adjust_Effort()</code>: Adjust fishing effort for General Recreational Fleet</p></li>
-<li><p><code>SQ_FR()</code>: Status Quo with Full Retention. Modify retention curve with an asymptote of 1</p></li>
-<li><p><code>SQ_MLL()</code>: Status Quo with a stock specific size limit.</p></li>
 <li><p><code>SQ_NS()</code>: Status Quo with offshore areas closed to fishing</p></li>
 <li><p><code>SQ_OS()</code>: Status Quo with nearshore areas closed to fishing</p></li>
+<li><p><code>SQ_FR()</code>: Status Quo with Full Retention. Modify retention curve with an asymptote of 1</p></li>
+<li><p><code>SQ_FR_NS()</code>: Status Quo with full retention and offshore closed</p></li>
+<li><p><code>SQ_FR_OS()</code>: Status Quo with full retention and nearshore closed</p></li>
+<li><p><code>SQ_MLL()</code>: Status Quo with a stock specific size limit.</p></li>
+<li><p><code>SQ_MLL_NS()</code>: Status Quo with a stock specific size limit and offshore areas closed to fishing</p></li>
+<li><p><code>SQ_MLL_OS()</code>: Status Quo with a stock specific size limit and nearshore areas closed to fishing</p></li>
 <li><p><code>SQ_FR_MLL()</code>: Status Quo with full retention and minimum size limit</p></li>
 <li><p><code>SQ_FR_MLL_NS()</code>: Status Quo with full retention, minimum size limit, and offshore closed</p></li>
 <li><p><code>SQ_FR_MLL_OS()</code>: Status Quo with full retention, minimum size limit, and nearshore closed</p></li>
