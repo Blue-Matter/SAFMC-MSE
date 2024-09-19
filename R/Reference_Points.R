@@ -51,7 +51,7 @@ Calc_RS_Ref_Points <- function(Hist) {
   for (fl in 1:nfleets) {
     F_at_age <- F_at_age + rowSums(Hist[[1]][[fl]]@AtAge$F.Mortality[x,,y,])
   }
-  V_at_Age <- F_at_age/max(F_at_age)
+  V_at_Age <<- F_at_age/max(F_at_age)
 
   R0x <- Hist[[1]][[1]]@SampPars$Stock$R0[x]
   hx <- Hist[[1]][[1]]@SampPars$Stock$hs[x]

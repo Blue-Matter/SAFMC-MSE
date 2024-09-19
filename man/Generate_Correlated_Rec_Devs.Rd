@@ -5,14 +5,16 @@
 \alias{Plot_Correlated_Rec_Devs}
 \title{Update Recruitment Deviations in the projection years}
 \usage{
-Generate_Correlated_Rec_Devs(OMList, truncsd = 2)
+Generate_Correlated_Rec_Devs(OMList, truncsd = 2, yrind = NULL)
 
-Plot_Correlated_Rec_Devs(OMList, ncol = 3)
+Plot_Correlated_Rec_Devs(OMList, ncol = 3, addtheme = NULL, ylim = NULL)
 }
 \arguments{
 \item{OMList}{A list of MOM objects with cpars populated}
 
 \item{truncsd}{Integer. The number of standard deviations to truncate recruitment deviations}
+
+\item{yrind}{Integer. Number of recent years to include. NULL includes all historical years in common with the stocks}
 
 \item{ncol}{Number of columns for the plot}
 }

@@ -24,7 +24,7 @@ source('Run_Analysis/6. Projections_Base_Case.R')
 source('Run_Analysis/7. Results_Base_Case.R')
 
 # 8. Run Sensitivity Projections
-# source('Run_Analysis/8. Projections_Sensitivities.R')
+source('Run_Analysis/8. Projections_Sensitivities.R')
 
 # 9. Sensitivity Performance Results
 # source('Run_Analysis/9. Results_Sensitivities.R')

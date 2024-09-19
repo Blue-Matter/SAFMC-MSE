@@ -518,7 +518,7 @@ lower_rec_effort <- function(CommonName, reduce_frac, bam_name=NULL) {
 #'
 #' @return A data.frame
 #' @export
-get_stock_status <- function(BAM_dir='BAM_objects') {
+get_stock_status <- function(BAM_dir='BAM_Objects') {
 
   match_stock <- data.frame(code=c('RS',
                                    'GG',
@@ -527,6 +527,8 @@ get_stock_status <- function(BAM_dir='BAM_objects') {
                                     'Gag grouper',
                                     'Black sea bass'))
 
+
+  match_om <- data.frame(code=c('BaseCase', 'LowM', 'HighM', 'LowerRecEffort'))
 
   fls <- list.files(BAM_dir)
 
@@ -543,6 +545,7 @@ get_stock_status <- function(BAM_dir='BAM_objects') {
     ind <- which(match_stock$code ==stock)
     Stock <- match_stock$stock[ind]
     OM <- paste(txt[1:(length(txt)-1)], collapse='_')
+    OM <- gsub("_","", OM)
 
     # MSST
     MSST <- bam$parms$msst
@@ -568,14 +571,58 @@ get_stock_status <- function(BAM_dir='BAM_objects') {
 
   df <- do.call('rbind', df_list)
   df$Stock <- factor(df$Stock, ordered = TRUE, levels=match_stock$stock)
-  df$OM <- factor(df$OM, ordered = TRUE, levels=match_om$om)
+  df$OM <- factor(df$OM, ordered = TRUE, levels=match_om$code)
+  df
+}
+
+#' @describeIn get_stock_status Return fishing mortality by fleet
+#' @export
+get_F <- function(om='BaseCase', Hist_dir='Hist_Objects') {
+
+  fls <- list.files(Hist_dir)
+  fls <- fls[grepl(om, fls)]
+
+  df_list <- list()
+
+  for (i in seq_along(fls)) {
+    Hist <- readRDS(file.path(Hist_dir,fls[i]))
+    stock <- firstup(tolower(names(Hist)))
+    fleets <- names(Hist[[1]])
+    fleet_list <- list()
+    nyears <- Hist[[1]][[1]]@Misc$MOM@Fleets[[1]][[1]]@nyears
+    currYr <- Hist[[1]][[1]]@Misc$MOM@Fleets[[1]][[1]]@CurrentYr
+    years <- rev(seq(currYr, by=-1, length.out=nyears))
+    for (fl in seq_along(fleets)) {
+      Fdisc <- Hist[[1]][[fl]]@SampPars$Fleet$Fdisc_array1[1,1,1:nyears]
+      Finteract <- Hist[[1]][[fl]]@TSdata$Find[1,]
+      Fretain <- Finteract *  apply(Hist[[1]][[fl]]@AtAge$Retention[1,,1:nyears], 2, max)
+      Fdiscard <- (Finteract-Fretain) * Fdisc
+
+      fleet_list[[fl]] <- data.frame(Stock=stock,
+                                     Fleet=fleets[fl],
+                                     Year=years,
+                                     Interact=Finteract,
+                                     Retained=Fretain,
+                                     Discard=Fdiscard
+      )
+    }
+    df_list[[i]] <- do.call('rbind', fleet_list)
+  }
+  df <- do.call('rbind', df_list)
+  df$Stock <- factor(df$Stock, levels=c('Red snapper', 'Gag grouper', 'Black sea bass'), ordered = TRUE)
+  df$Fleet <- factor(df$Fleet, levels=unique(df$Fleet), ordered = TRUE)
+
+  df <- df |> tidyr::pivot_longer(cols=c(Interact, Retained, Discard))
+  df$name <- factor(df$name, levels=unique(df$name), ordered=TRUE)
+
   df
 }
 
 
+
 #' @describeIn get_stock_status Return landings and discards by fleet
 #' @export
-get_landings_discards <- function(hist_dir='Hist_Objects', OM='Base Case') {
+get_landings_discards <- function(hist_dir='Hist_Objects') {
 
   match_stock <- data.frame(code=c('RS',
                                    'GG',
@@ -583,8 +630,7 @@ get_landings_discards <- function(hist_dir='Hist_Objects', OM='Base Case') {
                             stock=c('Red snapper',
                                     'Gag grouper',
                                     'Black sea bass'))
-  match_om <- data.frame(code=c('BaseCase', 'Low_M', 'High_M', 'Lower_Rec_Effort'),
-                         om=c('Base Case', 'Lower M', 'Higher M', 'Lower Rec. Effort'))
+  match_om <- data.frame(code=c('BaseCase', 'LowM', 'HighM', 'LowerRecEffort'))
 
   fls <- list.files(hist_dir)
 
@@ -597,9 +643,9 @@ get_landings_discards <- function(hist_dir='Hist_Objects', OM='Base Case') {
     stock <- txt[length(txt)]
     ind <- which(match_stock$code ==stock)
     Stock <- match_stock$stock[ind]
-    om <- paste(txt[1:(length(txt)-1)], collapse='_')
-    ind <- which(match_om$code ==om)
-    if (match_om$om[ind] != OM)
+    OM <- paste(txt[1:(length(txt)-1)], collapse='_')
+    ind <- which(match_om$code ==OM)
+    if (length(ind)<1)
       next()
 
     Hist <- readRDS(file.path(hist_dir, fl))
@@ -622,13 +668,13 @@ get_landings_discards <- function(hist_dir='Hist_Objects', OM='Base Case') {
   }
   df <- do.call('rbind', df_list)
   df$Stock <- factor(df$Stock, ordered = TRUE, levels=match_stock$stock)
-  df$OM <- factor(df$OM, ordered = TRUE, levels=match_om$om)
+  df$OM <- factor(df$OM, ordered = TRUE, levels=match_om$code)
   df
 }
 
 #' @describeIn get_stock_status Return selectivity and retention by fleet
 #' @export
-get_selectivity_retention <- function(dir='Hist_Objects', OM='Base Case') {
+get_selectivity_retention <- function(dir='Hist_Objects') {
 
   match_stock <- data.frame(code=c('RS',
                                    'GG',
@@ -636,8 +682,7 @@ get_selectivity_retention <- function(dir='Hist_Objects', OM='Base Case') {
                             stock=c('Red snapper',
                                     'Gag grouper',
                                     'Black sea bass'))
-  match_om <- data.frame(code=c('BaseCase', 'Low_M', 'High_M', 'Lower_Rec_Effort'),
-                         om=c('Base Case', 'Lower M', 'Higher M', 'Lower Rec. Effort'))
+  match_om <- data.frame(code=c('BaseCase', 'LowM', 'HighM', 'LowerRecEffort'))
 
   fls <- list.files(dir)
 
@@ -652,7 +697,7 @@ get_selectivity_retention <- function(dir='Hist_Objects', OM='Base Case') {
     Stock <- match_stock$stock[ind]
     om <- paste(txt[1:(length(txt)-1)], collapse='_')
     ind <- which(match_om$code ==om)
-    if (match_om$om[ind] != OM)
+    if (length(ind)<1)
       next()
 
     object <- readRDS(file.path(dir, fl))
@@ -668,13 +713,16 @@ get_selectivity_retention <- function(dir='Hist_Objects', OM='Base Case') {
       retention <- object[[1]][[fleet]]@AtAge$Retention[1,,nyear] * object[[1]][[fleet]]@SampPars$Fleet$qs[1]
       discard <- select-retention
 
+      maturity <- object[[1]][[1]]@AtAge$Maturity[1,,nyear]
+
       fleet_list[[f]] <- data.frame(Stock=Stock,
                                     Fleet=fleet,
-                                    OM=OM,
+                                    OM=om,
                                     Age=0:maxage,
                                     Selection=select,
                                     Retention=retention,
-                                    Discard=discard)
+                                    Discard=discard,
+                                    Maturity=maturity)
     }
     df_list[[i]] <- do.call('rbind', fleet_list)
   }
@@ -684,13 +732,13 @@ get_selectivity_retention <- function(dir='Hist_Objects', OM='Base Case') {
   df$name <- factor(df$name, ordered = TRUE, levels=c('Selection', 'Retention', 'Discard'))
   df$Stock <- factor(df$Stock, ordered = TRUE, levels=match_stock$stock)
   df$Fleet <- factor(df$Fleet, ordered = TRUE, levels=unique(df$Fleet))
-  df$OM <- factor(df$OM, ordered = TRUE, levels=match_om$om)
+  df$OM <- factor(df$OM, ordered = TRUE, levels=match_om$code)
   df
 }
 
 #' @describeIn get_stock_status Return recruitment deviations by stock
 #' @export
-get_rec_devs <- function(dir='OM_Objects', OM='Base Case') {
+get_rec_devs <- function(dir='OM_Objects') {
 
   match_stock <- data.frame(code=c('RS',
                                    'GG',
@@ -698,8 +746,7 @@ get_rec_devs <- function(dir='OM_Objects', OM='Base Case') {
                             stock=c('Red snapper',
                                     'Gag grouper',
                                     'Black sea bass'))
-  match_om <- data.frame(code=c('BaseCase', 'Low_M', 'High_M', 'Lower_Rec_Effort'),
-                         om=c('Base Case', 'Lower M', 'Higher M', 'Lower Rec. Effort'))
+  match_om <- data.frame(code=c('BaseCase', 'LowM', 'HighM', 'LowerRecEffort'))
 
   fls <- list.files(dir)
 
@@ -714,7 +761,7 @@ get_rec_devs <- function(dir='OM_Objects', OM='Base Case') {
     Stock <- match_stock$stock[ind]
     om_text <- paste(txt[1:(length(txt)-1)], collapse='_')
     ind <- which(match_om$code ==om_text)
-    if (match_om$om[ind] != OM)
+    if (length(ind)<1)
       next()
 
     om <- readRDS(file.path(dir, fl))
@@ -728,7 +775,7 @@ get_rec_devs <- function(dir='OM_Objects', OM='Base Case') {
     period <- c(rep('Historical', length(hist_yrs)),
                 rep('Projection', length(pro_yrs))
     )
-    df_list[[i]] <- data.frame(Stock=Stock, OM=OM,
+    df_list[[i]] <- data.frame(Stock=Stock, OM=om_text,
                                Year=rep(years, each=om@nsim),
                                Period=rep(period, each=om@nsim),
                                Sim=1:om@nsim,
@@ -737,7 +784,7 @@ get_rec_devs <- function(dir='OM_Objects', OM='Base Case') {
   }
   df <- do.call('rbind', df_list)
   df$Stock <- factor(df$Stock, ordered = TRUE, levels=match_stock$stock)
-  df$OM <- factor(df$OM, ordered = TRUE, levels=match_om$om)
+  df$OM <- factor(df$OM, ordered = TRUE, levels=match_om$code)
   df
 }
 

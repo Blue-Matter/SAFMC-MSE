@@ -6,6 +6,7 @@
 \alias{Get_Year_Info}
 \alias{Adjust_Effort}
 \alias{Close_Areas}
+\alias{Effort_Creep}
 \alias{SQ}
 \alias{SQ_NS}
 \alias{SQ_OS}
@@ -38,6 +39,14 @@ Close_Areas(
   areas = c(1, 1, 1, 1, 1, 1),
   Allocate = 1,
   First_Management_Year
+)
+
+Effort_Creep(
+  RecList,
+  DataList,
+  First_Management_Year = 2025,
+  effort_creep = 0.02,
+  ...
 )
 
 SQ(x, DataList, ...)
@@ -146,6 +155,8 @@ Management Procedures
 \item \code{Adjust_Effort()}: Adjust fishing effort for General Recreational Fleet
 
 \item \code{Close_Areas()}: Close areas to fishing
+
+\item \code{Effort_Creep()}: 2\% annual creep in fishing effort for Gen Rec fleet
 
 \item \code{SQ()}: Status Quo. Fishing effort for each fleet is fixed in the projection
 years at the geometric mean of the three last historical years

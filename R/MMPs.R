@@ -55,6 +55,47 @@ Write_MPs <- function(MPList, Rec_Reduction, dir='MP_functions') {
   }
 }
 
+
+
+#' @describeIn Write_MPs Source the MPs with a 2% effort creep
+#' @return A list of MPs names
+#' @export
+Write_MPs_effort_creep <- function(MPList, Rec_Reduction, dir='MP_functions_effort_creep') {
+  if (!dir.exists(dir))
+    dir.create(dir)
+
+  for (i in seq_along(MPList)) {
+    nm <- names(MPList)[i]
+    if (file.exists(file.path(dir, paste0(nm,'.R'))))
+      file.remove(file.path(dir, paste0(nm,'.R')))
+
+    file.create(file.path(dir, paste0(nm,'.R')))
+
+    mp_names <- paste(nm, Rec_Reduction, sep='_')
+
+    for (j in seq_along(mp_names)) {
+      mp <- strsplit(mp_names[j], '_')[[1]]
+      Effort_Mod <- c(0,0,as.numeric(mp[length(mp)]),0)
+      Effort_Mod <- paste0('Effort_Mod=c(', paste0(Effort_Mod, collapse=','), ')')
+      mp <- mp[1:(length(mp)-1)]
+      mp <- paste(mp, collapse='_')
+
+      txt<- paste(paste0("## ----", mp_names[j], "----\n",
+                         mp_names[j], '<- function(x, DataList, ...) {'),
+                  paste0('  RecList <- ', mp, '(x, DataList, ...)'),
+                  paste0('  RecList <-  Adjust_Effort(RecList, DataList, ', Effort_Mod, ')'),
+                  '  Effort_Creep(RecList, DataList, First_Management_Year=2025,  effort_creep=0.02)',
+                  '}',
+                  paste0('class(', mp_names[j], ') <- "MMP"\n\n'),
+                  sep='\n'
+      )
+
+      cat(txt, file=file.path(dir, paste0(nm,'.R')), append=TRUE)
+    }
+  }
+}
+
+
 #' @describeIn Write_MPs Source the MPs
 #' @return A list of MPs names
 #' @export
@@ -155,6 +196,18 @@ Close_Areas <- function(RecList, DataList, areas=c(1,1,1,1,1,1), Allocate=1, Fir
 }
 
 
+#' @describeIn MPs 2% annual creep in fishing effort for Gen Rec fleet
+#' @export
+Effort_Creep <- function(RecList, DataList,First_Management_Year=2025,  effort_creep=0.02, ...) {
+  year_info <- Get_Year_Info(DataList)
+  if (year_info$Current_Year<First_Management_Year)
+    return(RecList)
+
+  nyear <- (max(DataList[[1]][[1]]@Year)+1) -First_Management_Year
+  this_effort <- RecList[[1]][[3]]@Effort
+  RecList[[1]][[3]]@Effort <- this_effort * (1+effort_creep)^(nyear)
+  RecList
+}
 #' Return the minimum legal length (MLL) for a given stock
 #'
 #' @param Name The common name of the stock
@@ -212,11 +265,14 @@ add_MLL <- function(x, RecList, DataList, First_Management_Year=2025) {
       ret_a <- ret_a[,1]
       ret_a[!is.finite(ret_a)] <- 0
       if (is.null(RecList[[s]][[f]]@Misc$R_age)) {
-
-        RecList[[s]][[f]]@Misc$R_age <- DataList[[s]][[f]]@Misc$FleetPars$retA_P[x,, yr_ind] * ret_a
+        RecList[[s]][[f]]@Misc$R_age <-  DataList[[s]][[f]]@Misc$FleetPars$retA_P[x,, yr_ind] * ret_a
+        RecList[[s]][[f]]@Misc$Fdisc <- DataList[[s]][[f]]@Misc$FleetPars$Fdisc_array1[x,,yr_ind]
       } else {
         RecList[[s]][[f]]@Misc$R_age <-  RecList[[s]][[f]]@Misc$R_age * ret_a
+        RecList[[s]][[f]]@Misc$Fdisc <- DataList[[s]][[f]]@Misc$FleetPars$Fdisc_array1[x,,yr_ind]
       }
+
+      DataList[[s]][[f]]
     }
   }
   RecList
@@ -292,9 +348,9 @@ SQ_FR <- function(x, DataList, First_Management_Year=2025,...) {
       V_age <- DataList[[s]][[f]]@Misc$FleetPars$V[x,,yr_ind]
       Fdisc <- DataList[[s]][[f]]@Misc$FleetPars$Fdisc_array1[x,,yr_ind]
 
-      r_age <- V_age
-      r_age[which.max(r_age):length(r_age)] <- 1
-      r_age <- r_age/max(r_age)
+      r_age <- rep(1, length(V_age))
+
+      RecList[[s]][[f]]@Misc$V_age <- V_age # R_age
       RecList[[s]][[f]]@Misc$R_age <- r_age # R_age
       RecList[[s]][[f]]@Misc$Fdisc <- Fdisc
     }
@@ -374,5 +430,11 @@ SQ_FR_MLL_OS <- function(x, DataList,First_Management_Year=2025, areas=c(0,1,0,1
   Close_Areas(RecList, DataList, areas=areas, Allocate=Allocate, First_Management_Year=First_Management_Year)
 }
 class(SQ_FR_MLL_OS) <- 'MMP'
+
+
+
+
+
+
 
 

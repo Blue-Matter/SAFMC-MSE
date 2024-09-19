@@ -135,7 +135,8 @@ calulate_age_depth <- function(log_mean_nearshore, MOM, Rel_Abun_Region, average
     Hist <- Simulate(MOM, nsim=2, silent=TRUE)
 
     nyears <- MOM@Fleets[[1]][[1]]@nyears
-    b <- Hist[[1]][[1]]@TSdata$Biomass[1,nyears,]
+    b <- Hist[[1]][[1]]@TSdata$VBiomass[1,nyears,]
+
     b <- b/sum(b)
     ss <- sum((b-Rel_Abun_Region$Proportion)^2)
     return(ss)

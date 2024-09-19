@@ -102,7 +102,7 @@ discard_mortality_BS <- dplyr::bind_rows(
   data.frame(Stock='Black Sea Bass',
              Code='cHL',
              Year=c(1900, 2007),
-             Prob_Dead=c(mean(0.14,0.19), mean(0.14, 0.068))
+             Prob_Dead=c(mean(c(0.14,0.19)), mean(c(0.14, 0.068)))
   ),
   data.frame(Stock='Black Sea Bass',
              Code='rHB',
@@ -175,7 +175,7 @@ Rel_Abun_Area_RS <- data.frame(
            rep('Cape Canaveral - Florida',2)),
   Depth=c('Nearshore', 'Offshore'),
   Stock='Red Snapper',
-  Proportion=c(0.03,0.01, 0.7, 0.19, 0.03, 0.04)
+  Proportion=c(0.095,	0.048, 0.497, 0.309, 0.020, 0.031)
 )
 
 Rel_Abun_Area_GG <- data.frame(
@@ -185,7 +185,7 @@ Rel_Abun_Area_GG <- data.frame(
            rep('Cape Canaveral - Florida',2)),
   Depth=c('Nearshore', 'Offshore'),
   Stock='Gag Grouper',
-  Proportion=c(0.34, 0.21, 0.21, 0.18, 0.03, 0.03)
+  Proportion=c(0.318,	0.298, 0.148,	0.182, 0.025, 0.029)
 )
 
 Rel_Abun_Area_BS <- data.frame(
@@ -195,7 +195,7 @@ Rel_Abun_Area_BS <- data.frame(
            rep('Cape Canaveral - Florida',2)),
   Depth=c('Nearshore', 'Offshore'),
   Stock='Black Seabass',
-  Proportion=c(0.14, 0.02, 0.72, 0.06, 0.04, 0.02)
+  Proportion=c(0.449, 0.055, 0.415, 0.047, 0.027, 0.008)
 )
 
 
@@ -261,8 +261,6 @@ Compare_Biomass(Hist_BS, rdat_BS)
 ## ---- plotcompareBS ----
 p <- Compare_Biomass(Hist_BS, rdat_BS)
 ggsave('man/figures/BS_compare.png', p, height=4, width=)
-
-
 
 
 

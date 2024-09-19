@@ -2,10 +2,17 @@
 % Please edit documentation in R/MMPs.R
 \name{Write_MPs}
 \alias{Write_MPs}
+\alias{Write_MPs_effort_creep}
 \alias{Source_MPs}
 \title{Write MP functions}
 \usage{
 Write_MPs(MPList, Rec_Reduction, dir = "MP_functions")
+
+Write_MPs_effort_creep(
+  MPList,
+  Rec_Reduction,
+  dir = "MP_functions_effort_creep"
+)
 
 Source_MPs(dir = "MP_functions")
 }
@@ -19,12 +26,16 @@ Recreational fleet}
 }
 \value{
 A list of MPs names
+
+A list of MPs names
 }
 \description{
 Write MP functions
 }
 \section{Functions}{
 \itemize{
+\item \code{Write_MPs_effort_creep()}: Source the MPs with a 2\% effort creep
+
 \item \code{Source_MPs()}: Source the MPs
 
 }}

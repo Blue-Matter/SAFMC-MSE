@@ -6,10 +6,11 @@
 #'
 #' @param OMList A list of MOM objects with cpars populated
 #' @param truncsd Integer. The number of standard deviations to truncate recruitment deviations
+#' @param yrind Integer. Number of recent years to include. NULL includes all historical years in common with the stocks
 #'
 #' @return An updated A list of MOM objects with rec devs updated in cpars
 #' @export
-Generate_Correlated_Rec_Devs <- function(OMList, truncsd=2) {
+Generate_Correlated_Rec_Devs <- function(OMList, truncsd=2, yrind=NULL) {
   set.seed(OMList[[1]]@seed)
   nsim <- OMList[[1]]@nsim
   pyears <- OMList[[1]]@proyears
@@ -31,6 +32,10 @@ Generate_Correlated_Rec_Devs <- function(OMList, truncsd=2) {
                                               max=max(Year))
 
   common_years <- max(yr_df$min):min(yr_df$max)
+  if (!is.null(yrind)) {
+    l <- length(common_years)
+    common_years <- common_years[(l-yrind+1):l]
+  }
 
   # Get historical deviations for common years
   hist_dev_list <- list()
@@ -57,6 +62,10 @@ Generate_Correlated_Rec_Devs <- function(OMList, truncsd=2) {
   }
 
   mu <- -0.5 * sd^2  * (1 - AC)/sqrt(1 - AC^2)
+  if (!is.null(yrind)) {
+    mu <- mean -0.5 * sd^2  * (1 - AC)/sqrt(1 - AC^2)
+  }
+
   rldevs <- tmvtnorm::rtmvnorm(n=nsim*pyears,
                                mean=mu,
                                sigma=covvar,
@@ -65,6 +74,7 @@ Generate_Correlated_Rec_Devs <- function(OMList, truncsd=2) {
 
   rldevs <- array(as.vector(rldevs), dim=c(pyears, nsim, nstock)) %>%
     aperm(., c(2,1,3))
+
 
   acrldevs <- rldevs
   # add auto-correlation
@@ -88,7 +98,7 @@ Generate_Correlated_Rec_Devs <- function(OMList, truncsd=2) {
 #' @describeIn Generate_Correlated_Rec_Devs Scatter plot with marginal histograms
 #' @param ncol Number of columns for the plot
 #' @export
-Plot_Correlated_Rec_Devs <- function(OMList, ncol=3) {
+Plot_Correlated_Rec_Devs <- function(OMList, ncol=3, addtheme=NULL, ylim=NULL, alpha=0.5) {
 
   library(ggplot2)
   library(ggExtra)
@@ -118,18 +128,23 @@ Plot_Correlated_Rec_Devs <- function(OMList, ncol=3) {
   grid <- grid[!duplicated(apply(grid[,1:2], 1, function(row) paste(sort(row), collapse=""))),]
 
   lproj_devs <- log(proj_devs)
-  ylim <- range(lproj_devs)
+  if (is.null(ylim))
+    ylim <- range(lproj_devs)
   plot_list <- list()
 
   for (i in 1:nrow(grid)) {
     tt <- as.numeric(grid[i,])
     df <- lproj_devs[,c(tt[2],tt[1])]
     p <- ggplot(df, aes(x=.data[[stock_names[tt[2]]]], y=.data[[stock_names[tt[1]]]])) +
-      geom_point() +
+      geom_point(alpha=alpha) +
       theme_bw() +
       theme(axis.title=element_text(size=14)) +
       expand_limits(x=ylim, y=ylim)
+    if (!is.null(addtheme))
+      p <- p + addtheme
+
     p <- ggMarginal(p, type="histogram")
+
     plot_list[[i]] <- p
 
   }
