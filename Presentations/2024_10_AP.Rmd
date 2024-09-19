@@ -1,12 +1,11 @@
 ---
-title: "Snapper-Grouper MSE: Preliminary Results"
+title: "Snapper-Grouper MSE\\\Preliminary Results"
 subtitle: 'SAFMC Snapper-Grouper Advisory Panel'
-author: "Adrian Hordyk"
-institute: 'Blue Matter Science'
+author: "adrian@bluematterscience.com"
 date: "`r Sys.Date()`"
 header-includes: 
   - \titlegraphic{\includegraphics[width = 6cm]{logo.png}}
-  - \AtBeginDocument{\title[Preliminary Results]{Snapper Grouper MSE\\Preliminary Results}}
+  - \AtBeginDocument{\title[Preliminary MSE Results]{Snapper-Grouper MSE\\Preliminary  Results}}
 output: 
   beamer_presentation:
     theme: "Berlin"
@@ -19,7 +18,10 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 # Introduction
+
 ## R Markdown
+
+### this is 3rd level
 
 This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
