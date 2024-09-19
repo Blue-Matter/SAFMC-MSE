@@ -60,6 +60,14 @@
 <span>  <span class="va">First_Management_Year</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">Effort_Creep</span><span class="op">(</span></span>
+<span>  <span class="va">RecList</span>,</span>
+<span>  <span class="va">DataList</span>,</span>
+<span>  First_Management_Year <span class="op">=</span> <span class="fl">2025</span>,</span>
+<span>  effort_creep <span class="op">=</span> <span class="fl">0.02</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">SQ</span><span class="op">(</span><span class="va">x</span>, <span class="va">DataList</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">SQ_NS</span><span class="op">(</span></span>
@@ -177,6 +185,7 @@
 <li><p><code>Get_Year_Info()</code>: Return information on current year from a <code>DataList</code></p></li>
 <li><p><code>Adjust_Effort()</code>: Adjust fishing effort for General Recreational Fleet</p></li>
 <li><p><code>Close_Areas()</code>: Close areas to fishing</p></li>
+<li><p><code>Effort_Creep()</code>: 2% annual creep in fishing effort for Gen Rec fleet</p></li>
 <li><p><code>SQ()</code>: Status Quo. Fishing effort for each fleet is fixed in the projection
 years at the geometric mean of the three last historical years</p></li>
 <li><p><code>SQ_NS()</code>: Status Quo with offshore areas closed to fishing</p></li>
@@ -201,7 +210,7 @@ years at the geometric mean of the three last historical years</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>
