@@ -65,9 +65,9 @@ remotes::install_github("Blue-Matter/SAFMC-MSE")
 ## Background Documents
 
 ### Assessment Reports
-- [SEDAR 71 South Atlantic Gag](../resources/SEDAR_Reports/sedar-71-stock-assessment-report-south-atlantic-gag.pdf)
-- [SEDAR 73 South Atlantic Red Snapper](../resources/SEDAR_Reports/sedar-73-stock-assessment-report-south-atlantic-red-snapper.pdf)
-- [SEDAR 76 South Atlantic Red Snapper](../resources/SEDAR_Reports/sedar-76-stock-assessment-report-south-atlantic-black-sea-bass.pdf)
+- [SEDAR 71 South Atlantic Gag](resources/SEDAR_Reports/sedar-71-stock-assessment-report-south-atlantic-gag.pdf)
+- [SEDAR 73 South Atlantic Red Snapper](resources/SEDAR_Reports/sedar-73-stock-assessment-report-south-atlantic-red-snapper.pdf)
+- [SEDAR 76 South Atlantic Red Snapper](resources/SEDAR_Reports/sedar-76-stock-assessment-report-south-atlantic-black-sea-bass.pdf)
 
 ## Additional Resources and Material
 
