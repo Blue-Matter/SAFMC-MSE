@@ -68,7 +68,8 @@ ggsave('img/Stock_Status.png', p, width=6, height=4)
 ref_df <- DF |> dplyr::distinct(Stock,
                                 OM,
                                 MSST=round(MSST,0),
-                                MFMT=round(MFMT,2)) |>
+                                MFMT=round(MFMT,2),
+                                Rebuild=round(Rebuild,0)) |>
   dplyr::arrange(Stock, OM)
 
 ref_df_2 <- DF |> dplyr::group_by(Stock, OM) |>
@@ -82,10 +83,7 @@ saveRDS(ref_df, 'Misc_Objects/ref_df.rda')
 
 # fishing mortality -----
 
-firstup <- function(x) {
-  substr(x, 1, 1) <- toupper(substr(x, 1, 1))
-  x
-}
+
 
 F_mortality <- get_F()
 

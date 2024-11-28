@@ -210,7 +210,7 @@ Calc_BS_Ref_Points <- function(Hist) {
   SRrelx <- Hist[[1]][[1]]@SampPars$Stock$SRrel[x]
   spawn_time_frac <- Hist[[1]][[1]]@SampPars$Stock$spawn_time_frac[x]
 
-  Fs <- seq(0,1,by=0.01)
+  Fs <- seq(0,5,by=0.01)
   Calc_Eq_SB <- function(logF, R0, h, opt=1) {
     ref <- MSEtool:::MSYCalcs(logF,
                               M_at_Age,
@@ -223,7 +223,7 @@ Calc_BS_Ref_Points <- function(Hist) {
                               SRRpars=list(),
                               R0x=R0,
                               SRrelx,
-                              hx=h,
+                              hx=hx,
                               SSBpR,
                               opt = 2,
                               plusgroup = 1L,
@@ -248,17 +248,26 @@ Calc_BS_Ref_Points <- function(Hist) {
 
   BS_SP_SPR_df <- data.frame(Sim=x, Year=y, F=Fs, SPR=SPR, SB=SB, Removals=Removals)
 
-  # par(mfrow=c(2,2))
-  #
-  # plot(rdat$eq.series$F.eq, rdat$eq.series$spr.eq/max(rdat$eq.series$spr.eq), ylim=c(0,1), type='l')
-  # lines(BS_SP_SPR_df$F, BS_SP_SPR_df$SPR, col='blue')
-  #
-  # plot(rdat$eq.series$F.eq, rdat$eq.series$SSB.eq, type='l')
-  # lines(BS_SP_SPR_df$F, BS_SP_SPR_df$SB, col='blue')
-  #
-  # plot(rdat$eq.series$F.eq, rdat$eq.series$L.eq.klb/max(rdat$eq.series$L.eq.klb), type='l')
-  # lines(rdat$eq.series$F.eq, rdat$eq.series$D.eq.klb/max(rdat$eq.series$D.eq.klb), col='red')
-  # lines(BS_SP_SPR_df$F, BS_SP_SPR_df$Removals/max(BS_SP_SPR_df$Removals), col='blue')
+  par(mfrow=c(2,2))
+  rdat <- bamExtras::rdat_BlackSeaBass
+
+  plot(rdat$eq.series$F.eq, rdat$eq.series$spr.eq/max(rdat$eq.series$spr.eq), ylim=c(0,1), type='l')
+  lines(BS_SP_SPR_df$F, BS_SP_SPR_df$SPR, col='blue')
+
+  plot(rdat$eq.series$F.eq, rdat$eq.series$SSB.eq, type='l')
+  lines(BS_SP_SPR_df$F, BS_SP_SPR_df$SB, col='blue')
+
+  plot(rdat$eq.series$F.eq, rdat$eq.series$L.eq.klb/max(rdat$eq.series$L.eq.klb), type='l')
+
+  plot(rdat$eq.series$SSB.eq, rdat$eq.series$L.eq.klb/max(rdat$eq.series$L.eq.klb), type='l')
+
+
+  lines(rdat$eq.series$F.eq, rdat$eq.series$D.eq.klb/max(rdat$eq.series$D.eq.klb), col='red')
+  plot(BS_SP_SPR_df$F, BS_SP_SPR_df$Removals/max(BS_SP_SPR_df$Removals), col='blue')
+
+
+  plot(rdat$eq.series$SSB.eq, rdat$eq.series$D.eq.klb/max(rdat$eq.series$D.eq.klb), type='l')
+  lines(BS_SP_SPR_df$SB, BS_SP_SPR_df$Removals/max(BS_SP_SPR_df$Removals), col='blue')
 
 
   ind <- which.max(BS_SP_SPR_df$Removals)

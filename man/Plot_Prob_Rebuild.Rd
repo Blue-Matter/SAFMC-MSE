@@ -4,6 +4,7 @@
 \alias{Plot_Prob_Rebuild}
 \alias{PM_plots}
 \alias{SSB_plot}
+\alias{trade_off_plot}
 \title{PM Plotting Functions}
 \usage{
 Plot_Prob_Rebuild(
@@ -12,14 +13,11 @@ Plot_Prob_Rebuild(
   addtheme = NULL
 )
 
-PM_plots(
-  om = "BaseCase",
-  stock_code = "RS",
-  results_dir = "Results_Objects",
-  textsize = 2
-)
+PM_plots(om = "BaseCase", results_dir = "Results_Objects", textsize = 2)
 
 SSB_plot(om = "BaseCase", stock_code = "RS", results_dir = "Results_Objects")
+
+trade_off_plot(df, rec_reduction = 1, mps_keep = NULL)
 }
 \arguments{
 \item{results_dir}{}
@@ -32,5 +30,7 @@ PM Plotting Functions
 \item \code{PM_plots()}: Plots of other performance metrics
 
 \item \code{SSB_plot()}: SSB/MSST time-series plot
+
+\item \code{trade_off_plot()}: tradeoff plots
 
 }}

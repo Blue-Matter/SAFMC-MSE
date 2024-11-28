@@ -439,6 +439,10 @@ Aggregate_Fleets <- function(MOM, fleet_df, discard_mortality) {
 
   MOM2 <- Add_Discard_Mortality(MOM1, discard_mortality)
 
+  MOM2@cpars$`Red Snapper`$cHL$Find[1,] +
+  MOM2@cpars$`Red Snapper`$cHL.D$Find[1,]
+
+
   MOM3 <- Combine_Discard_Fleets(MOM2, fleet_df)
 
   MOM4 <- Add_Dummy_Fleets(MOM3, fleet_df)
@@ -547,9 +551,25 @@ get_stock_status <- function(BAM_dir='BAM_Objects') {
     OM <- paste(txt[1:(length(txt)-1)], collapse='_')
     OM <- gsub("_","", OM)
 
+    # Rebuild Target
+
     # MSST
     MSST <- bam$parms$msst
     SSB_MSST <- bam$t.series$SSB/MSST
+
+    # Rebuild Target
+    if (stock =='RS' | stock =='GG') {
+      Rebuild <- MSST/0.75
+    }
+    if (stock == 'BS') {
+      # match M
+      thisM <- switch(OM,
+                      'LowM'=0.22,
+                      'HighM'=0.60)
+      if (is.null(thisM))
+        thisM <- 0.375
+      Rebuild <- MSST/(1-thisM)
+    }
 
     # MFMT
     if (stock=='RS') {
@@ -566,7 +586,8 @@ get_stock_status <- function(BAM_dir='BAM_Objects') {
                                SSB_MSST=SSB_MSST,
                                F_MFMT=F_MFMT,
                                MSST=MSST,
-                               MFMT=MFMT)
+                               MFMT=MFMT,
+                               Rebuild=Rebuild)
   }
 
   df <- do.call('rbind', df_list)

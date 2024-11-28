@@ -7,7 +7,13 @@
 \usage{
 Generate_Correlated_Rec_Devs(OMList, truncsd = 2, yrind = NULL)
 
-Plot_Correlated_Rec_Devs(OMList, ncol = 3, addtheme = NULL, ylim = NULL)
+Plot_Correlated_Rec_Devs(
+  OMList,
+  ncol = 3,
+  addtheme = NULL,
+  ylim = NULL,
+  alpha = 0.5
+)
 }
 \arguments{
 \item{OMList}{A list of MOM objects with cpars populated}

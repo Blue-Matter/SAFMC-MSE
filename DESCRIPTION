@@ -8,7 +8,7 @@ Description: Code for conducting management strategy evaluation (MSE) for the So
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Depends: 
     R (>= 3.5.0),
     bookdown,

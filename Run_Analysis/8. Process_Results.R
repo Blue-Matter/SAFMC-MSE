@@ -22,17 +22,17 @@ for (i in seq_along(MSE_files)) {
 
 # Process MSE Results and save data.frames to disk ----
 
-# Process_Results(om='BaseCase')
+Process_Results(om='BaseCase')
 
-# Process_Results(om='LowM')
+Process_Results(om='LowM')
 
-# Process_Results(om='HighM')
+Process_Results(om='HighM')
 
-# Process_Results(om='LowerRecEffort')
+Process_Results(om='LowerRecEffort')
 
-# Process_Results(om='EC')
+Process_Results(om='EC')
 
-# Process_Results(om='Rec1')
+Process_Results(om='Rec1')
 
 
 
@@ -65,13 +65,14 @@ ggplot(DF, aes(x=Rec_Reduction, y=MP_Name)) +
   facet_grid(Stock~OM) +
   geom_tile(aes(fill=Prob)) +
   geom_text(aes(label = round(Prob, 2)), size=2) +
-  scale_fill_gradient2(low = "red", mid='white', high = "green", midpoint=0.5) +
+  scale_fill_gradient2(low = "#1E88E5", mid='white', high = "#FFC107", midpoint=0.5) +
   theme_bw() +
   labs(x='Relative Effort General Recreational Fleet',
        y='Management Actions',
        fill='Probability')
 
 ggsave('img/rebuild_all.png', width=20, height=8)
+
 
 
 for (om in OMs) {

@@ -126,7 +126,21 @@ saveRDS(discard_mortality, 'Misc_Objects/discard_mortality.rda')
 
 ## ---- Aggregate_Fleets ----
 
+OM_RSTEMP <- Aggregate_Fleets(OM_RS, fleet_df, discard_mortality)
+
+OM_RSTEMP@cpars$`Red Snapper`$`Commercial Line`$Find[1,]
+
+OM_RSTEMP@cpars$`Red Snapper`$`Commercial Line`$V[1,,1]
+OM_RSTEMP@cpars$`Red Snapper`$`Commercial Line`$V[1,,43]
+OM_RSTEMP@cpars$`Red Snapper`$`Commercial Line`$retA[1,,43]
+
+OM_RSTEMP@cpars$`Red Snapper`$`Commercial Line`$V[1,,70]
+OM_RSTEMP@cpars$`Red Snapper`$`Commercial Line`$retA[1,,70]
+
+
+
 OM_RS <- Aggregate_Fleets(OM_RS, fleet_df, discard_mortality)
+
 OM_GG <- Aggregate_Fleets(OM_GG, fleet_df, discard_mortality)
 OM_BS <- Aggregate_Fleets(OM_BS, fleet_df, discard_mortality)
 

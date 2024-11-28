@@ -22,3 +22,15 @@ if (run_hist) {
 
 
 
+#
+OM <- readRDS('OM_Objects/BaseCase_RS.OM')
+OM@cpars$`Red Snapper`$`Commercial Line`$Mat_age[1,,1]
+OM@cpars$`Red Snapper`$`Commercial Line`$Fec_age[1,,1]
+OM@cpars$`Red Snapper`$`Commercial Line`$R0
+OM@cpars$`Red Snapper`$`Commercial Line`$hs
+OM@cpars$`Red Snapper`$`Commercial Line`$Perr
+OM@cpars$`Red Snapper`$`Commercial Line`$AC
+OM@cpars$`Red Snapper`$`Commercial Line`$spawn_time_frac
+
+
+OM@cpars$`Red Snapper`$`Commercial Line`$Perr_y[1,]
