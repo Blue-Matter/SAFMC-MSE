@@ -66,18 +66,13 @@ remotes::install_github("Blue-Matter/SAFMC-MSE")
 ### Assessment Reports
 
 - [SEDAR 71 South Atlantic
-  Gag](resources/SEDAR_Reports/sedar-71-stock-assessment-report-south-atlantic-gag.pdf)
+  Gag](../resources/SEDAR_Reports/sedar-71-stock-assessment-report-south-atlantic-gag.pdf)
 - [SEDAR 73 South Atlantic Red
-  Snapper](resources/SEDAR_Reports/sedar-73-stock-assessment-report-south-atlantic-red-snapper.pdf)
+  Snapper](../resources/SEDAR_Reports/sedar-73-stock-assessment-report-south-atlantic-red-snapper.pdf)
 - [SEDAR 76 South Atlantic Red
-  Snapper](resources/SEDAR_Reports/sedar-76-stock-assessment-report-south-atlantic-black-sea-bass.pdf)
+  Snapper](../resources/SEDAR_Reports/sedar-76-stock-assessment-report-south-atlantic-black-sea-bass.pdf)
 
 ## Additional Resources and Material
 
 - [openMSE](https://openmse.com/): the MSE framework used to conduct the
   closed-loop simulation testing.
-
-- [The Data-Limited Methods Toolkit (DLMtool): An R package for
-  informing management of data-limited
-  populations](/resources/Methods%20Ecol%20Evol%20-%202018%20-%20Carruthers%20-%20The%20Data‐Limited%20Methods%20Toolkit%20DLMtool%20An%20R%20package%20for%20informing%20management.pdf):
-  scientific paper describing the development of the DLMtool package.
