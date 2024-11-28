@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   Building-Base-Case-Operating-Models: Building-Base-Case-Operating-Models.html
-last_built: 2024-11-28T22:45Z
+last_built: 2024-11-28T22:49Z
 urls:
   reference: https://safmc-mse.bluematterscience.com/reference
   article: https://safmc-mse.bluematterscience.com/articles
