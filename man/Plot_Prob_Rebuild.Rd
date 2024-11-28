@@ -29,7 +29,7 @@ PM Plotting Functions
 \itemize{
 \item \code{PM_plots()}: Plots of other performance metrics
 
-\item \code{SSB_plot()}: SSB/MSST time-series plot
+\item \code{SSB_plot()}: SSB/Rebuild time-series plot
 
 \item \code{trade_off_plot()}: tradeoff plots
 
