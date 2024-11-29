@@ -59,7 +59,9 @@ remotes::install_github("Blue-Matter/SAFMC-MSE")
 
 ## MSE Process Documents
 
-- [MSE Trial Specifications](../TS/TS.html)
+- [MSE Trial Specifications](resources/TS/TS.html)
+- [Building Base Case Operating
+  Models](articles/Building-Base-Case-Operating-Models.html)
 
 ## Background Documents
 
