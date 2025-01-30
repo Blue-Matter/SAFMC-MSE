@@ -8,26 +8,33 @@ library(shinydashboardPlus)
 library(dplyr)
 library(DT)
 library(ggplot2)
+library(SAMSE)
 
 OMdat <- read.csv('Data/OM_descriptions.csv')
-OMdat <- OMdat %>% dplyr::rename(., 'Key Uncertainty'=Key.Uncertainty)
 
 MPdat <- read.csv('Data/MP_descriptions.csv')
 
-
 MSE_info <- readRDS('Data/MSE_info.rda')
 
-OM_numbers <- names(MSE_info)
+
+OM_numbers <- seq_along(MSE_info)
 OM_names <- OMdat$Name[1:length(OM_numbers)]
+OM_namesHist <- OM_names[1:4]
+
+OMCodes <- c("BaseCase", 'LowM', 'HighM', 'LowerRecEffort', 'EC', 'Rec1')
+OM_Details <- data.frame(Name=OM_names, Code=OMCodes)
 
 MPs <- unique(MSE_info[[1]]$Projection$MP)
 MPs <- MPs[!is.na(MPs)]
 
-ref_points <- names(MSE_info$OM_01$Ref_Points)
+Rec_Reduction <- unique(MSE_info[[1]]$Projection$Rec_Reduction)
+Rec_Reduction <- Rec_Reduction[!is.na(Rec_Reduction)]
 
-SB_ref_points <- ref_points[ref_points%in%c('SBtarg', 'MSST')]
+ref_points <- names(MSE_info[[1]]$Ref_Points)
 
-stocks <- unique(MSE_info[[1]]$Historical$Stock)
+SB_ref_points <- ref_points[ref_points%in%c('Rebuild', 'MSST')]
+
+stocks <- unique(MSE_info[[1]]$Historical$Stock) |> sort()
 
 # plot_choices_hist <- c('Spawning Biomass', 'Catch', 'Fishing Mortality')
 plot_choices_hist <- c('Spawning Biomass', 'Fishing Mortality')
@@ -89,10 +96,7 @@ hist_plot <- function(DF, byfleet=FALSE, ymax=NULL, free_y=FALSE, title='') {
       }
     }
   }
-
-
-
-  p +geom_vline(xintercept = 2019, linetype=2, color='darkgray')
+  p # +geom_vline(xintercept = max(DF$Year), linetype=2, color='darkgray')
 }
 
 

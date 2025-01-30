@@ -62,6 +62,7 @@ remotes::install_github("Blue-Matter/SAFMC-MSE")
 
 - [MSE Trial Specifications](resources/TS/TS.html)
 - [Building Base Case Operating Models](articles/Building-Base-Case-Operating-Models.html)
+- [SAFMC MSE Results App](https://shiny.bluematterscience.com/app/samse)
 
 ## Background Documents
 

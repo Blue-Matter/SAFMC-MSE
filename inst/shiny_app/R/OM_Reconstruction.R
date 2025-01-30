@@ -8,7 +8,6 @@ OM_Select_UI <- function(id) {
 }
 
 
-
 OM_Select_Server <- function(id='OM_select', number, OM_selections, incMP=FALSE) {
   ns <- NS(id)
   moduleServer(id, function(input, output, session) {
@@ -30,6 +29,9 @@ OM_Select_Server <- function(id='OM_select', number, OM_selections, incMP=FALSE)
       observeEvent(input$selected_mp, {
         OM_selections$selected_MP <- isolate(input$selected_mp)
       })
+      observeEvent(input$selected_recEffort, {
+        OM_selections$selected_recEffort <- isolate(input$selected_recEffort)
+      })
     }
 
     observeEvent(input$rel_to, {
@@ -49,9 +51,9 @@ OM_Select_Server <- function(id='OM_select', number, OM_selections, incMP=FALSE)
     output$ref_options <- renderUI({
       if ( OM_selections$by_fleet) return(NULL)
       if (input$selected_choice == 'Spawning Biomass') {
-        options <- c('None', c('SBtarg', 'MSST'))
+        options <- c('None', c('Rebuild Target', 'MSST'))
       } else if (input$selected_choice == 'Fishing Mortality') {
-        options <- c('None', 'FMSY')
+        options <- c('None', 'MFMT')
       } else {
         options <- 'None'
       }
@@ -75,7 +77,10 @@ OM_Select_Server <- function(id='OM_select', number, OM_selections, incMP=FALSE)
 
     output$mp_select <- renderUI({
       if (incMP) {
-        out <- tagList(  selectInput(ns('selected_mp'), 'Select MP', choices=MPs, selected=MP2))
+        out <- tagList(
+          selectInput(ns('selected_mp'), 'Management Action', choices=MPs, selected=MP2),
+          selectInput(ns('selected_recEffort'), 'Relative Reduction Gen. Rec. Effort', choices=Rec_Reduction, selected=Rec_Reduction[1])
+          )
 
       }
     })
@@ -93,8 +98,8 @@ OM_Select_Server <- function(id='OM_select', number, OM_selections, incMP=FALSE)
 
       tagList(
         column(3,
-               selectInput(ns('selected_stock'), paste('Select Stock', number), choices=stocks),
-               selectInput(ns('selected_OM'), paste('Select OM', number), choices=OM_names, selected=OM2),
+               selectInput(ns('selected_stock'), paste('Stock', number), choices=stocks),
+               selectInput(ns('selected_OM'), paste('OM', number), choices=OM_namesHist, selected=OM2),
                uiOutput(ns('mp_select')),
                selectInput(ns('selected_choice'), 'Plot Variable', choices=get_plot_choices),
                conditionalPanel(condition = paste0('input[\'', ns('selected_choice'), "\'] != \'Spawning Biomass\'"),
@@ -187,18 +192,18 @@ get_Hist_DF <- function(id='get_Hist_DF', reconstruct_OM) {
                         do_ref <- FALSE
                         if (reconstruct_OM$selected_choice=='Spawning Biomass') {
                           df <- left_join(df, ref_points, by = join_by(Stock)) %>%
-                            tidyr::pivot_longer(., cols=c('F', 'SPR', 'SBtarg', 'MSST'),
+                            tidyr::pivot_longer(., cols=c('MFMT', 'Rebuild Target', 'MSST'),
                                                 names_to = 'Reference Point') %>%
-                            dplyr::filter(`Reference Point` %in% c('SBtarg', 'MSST'))
+                            dplyr::filter(`Reference Point` %in% c('Rebuild Target', 'MSST'))
                           do_ref <- TRUE
                         }
 
                         if (reconstruct_OM$selected_choice=='Fishing Mortality') {
                           df <- left_join(df, ref_points, by = join_by(Stock)) %>%
-                            tidyr::pivot_longer(., cols=c('F', 'SPR', 'SBtarg', 'MSST'),
+                            tidyr::pivot_longer(., cols=c('MFMT', 'Rebuild Target', 'MSST'),
                                                 names_to = 'Reference Point') %>%
-                            dplyr::filter(`Reference Point` %in% c('F'))
-                          df$`Reference Point` <- 'FMSY'
+                            dplyr::filter(`Reference Point` %in% c('MFMT'))
+                          # df$`Reference Point` <- 'FMSY'
                           do_ref <- TRUE
 
 
@@ -251,7 +256,6 @@ OM_Plot_Server <- function(id='OM_select', reconstruct_OM)  {
 
 
 
-
 OM_Plot_UI <- function(id) {
   ns <- NS(id)
   tagList(
@@ -263,7 +267,16 @@ OM_ReconstructUI <- function(id) {
   ns <- NS(id)
   tagList(
     fluidPage(
-      h3('Compare the Historical Fishery Dynamics for 2 Operating Models'),
+      h2('Compare the Historical Fishery Dynamics'),
+      markdown('
+This page shows two time series plots showing the historical fishery dynamics as described in the operating models.
+
+Use the selection buttons to chose the Stock, the Operating Model (OM), and the Plot Variable (Spawning Biomas or Fishing Mortality) for each plot.
+
+By default the plots are shown in absolute units, but they can be shown relative to a reference point by selecting an option under the Relative to Reference Point selection button.
+               '),
+
+
       column(6,
              fluidRow(
                OM_Select_UI('Select_Hist_OM1'),

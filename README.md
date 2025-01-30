@@ -41,27 +41,28 @@ remotes::install_github("Blue-Matter/SAFMC-MSE")
 
 ## MSE Technical Group Members
 
-| Name              | Email                          | Role                          |
-|:------------------|:-------------------------------|:------------------------------|
-| Adrian Hordyk     | <adrian@bluematterscience.com> | Lead MSE Analyst              |
-| Quang Huynh       | <quang@bluematterscience.com>  | Supporting MSE Analyst        |
-| Tom Carruthers    | <tom@bluematterscience.com>    | Supporting MSE Analyst        |
-| Chip Collier      | <chip.collier@safmc.net>       | SAFMC Lead                    |
-| Cassidy Peterson  | <cassidy.peterson@noaa.gov>    | MSE Specialist                |
-| Erik Williams     | <erik.williams@noaa.gov>       | Stock Assessment Specialist   |
-| Christina Wiegand | <christina.wiegand@safmc.net>  | Social Scientist              |
-| Scott Crosson     | <scott.crosson@noaa.gov>       | Economist                     |
-| Mike Larkin       | <michael.larkin@noaa.gov>      | Data Analyst                  |
-| Kai Lorenzen      | <klorenzen@ufl.edu>            | Meeting Moderator/Facilitator |
-| Mike Schmidtke    | <mike.schmidtke@safmc.net>     | SAFMC Fishery Scientist       |
-| Judd Curtis       | <judd.curtis@safmc.net>        | SAFMC Fishery Scientist       |
-| Allie Iberle      | <allie.iberle@safmc.net>       | SAFMC Fishery Scientist       |
+| Name | Email | Role |
+|:---|:---|:---|
+| Adrian Hordyk | <adrian@bluematterscience.com> | Lead MSE Analyst |
+| Quang Huynh | <quang@bluematterscience.com> | Supporting MSE Analyst |
+| Tom Carruthers | <tom@bluematterscience.com> | Supporting MSE Analyst |
+| Chip Collier | <chip.collier@safmc.net> | SAFMC Lead |
+| Cassidy Peterson | <cassidy.peterson@noaa.gov> | MSE Specialist |
+| Erik Williams | <erik.williams@noaa.gov> | Stock Assessment Specialist |
+| Christina Wiegand | <christina.wiegand@safmc.net> | Social Scientist |
+| Scott Crosson | <scott.crosson@noaa.gov> | Economist |
+| Mike Larkin | <michael.larkin@noaa.gov> | Data Analyst |
+| Kai Lorenzen | <klorenzen@ufl.edu> | Meeting Moderator/Facilitator |
+| Mike Schmidtke | <mike.schmidtke@safmc.net> | SAFMC Fishery Scientist |
+| Judd Curtis | <judd.curtis@safmc.net> | SAFMC Fishery Scientist |
+| Allie Iberle | <allie.iberle@safmc.net> | SAFMC Fishery Scientist |
 
 ## MSE Process Documents
 
 - [MSE Trial Specifications](resources/TS/TS.html)
 - [Building Base Case Operating
   Models](articles/Building-Base-Case-Operating-Models.html)
+- [SAFMC MSE Results App](https://shiny.bluematterscience.com/app/samse)
 
 ## Background Documents
 

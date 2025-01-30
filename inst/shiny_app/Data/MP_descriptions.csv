@@ -1,7 +1,6 @@
-Name,Class,Description
-StatusQuo,Fixed Effort,Fishing Effort for each fleet is fixed to mean from the last 3 historical years
-RecEff20,Fixed Effort,"Status Quo, but General Recreational Effort is reduced by 20% for all projection years"
-RecEff40,Fixed Effort,"Status Quo, but General Recreational Effort is reduced by 40% for all projection years"
-Ftarget,Fixed Effort,"Effort for all fleets is adjusted, independently by species, by a fixed proportion so that F = Ftarget."
-MLL20_25,Size Regulation,"StatusQuo Fixed Effort, with a 20 and 25 "" MLL for RS and GG respectively"
-MLL25_25,Size Regulation,"StatusQuo Fixed Effort, with a 25 and 25 "" MLL for RS and GG respectively"
+Code,Name,Description
+SQ,Status Quo,Fishing mortality is fixed in the projection years to the geometric mean of the 3 most recent historical years
+FR,Full Retention,All fish that are caught are retained. No discarding.
+MLL,Minimum Length Limit,"A minimum length limit of 609 mm (24 inch) was applied to the red snapper and gag grouper, and a 304 mm (12 inch) size limit to the black sea bass. Fish below the MLL were discarded (even under the FR scenario) and suffer from discard mortality."
+NS,Nearshore,"Fishing is only permitted in the Nearshore region, with no fishing mortality in the Offshore region."
+OS,Offshore,"Fishing is only permitted in the Offshore region, with no fishing mortality in the Nearshore region."
