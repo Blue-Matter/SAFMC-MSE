@@ -4,50 +4,73 @@
 #'
 #' Sampling from a multivariate truncated normal distribution
 #'
-#' @param MOM An MOM object with cpars populated
-#' @param truncsd Integer. The number of standard deviations to truncate
+#' @param OMList A list of MOM objects with cpars populated
+#' @param truncsd Integer. The number of standard deviations to truncate recruitment deviations
+#' @param yrind Integer. Number of recent years to include. NULL includes all historical years in common with the stocks
 #'
-#' @return An updated MOM
+#' @return An updated A list of MOM objects with rec devs updated in cpars
 #' @export
-Generate_Future_Rec_Devs <- function(MOM, truncsd=2, sd_multi=NULL) {
-  set.seed(MOM@seed)
-  nsim <- MOM@nsim
-  pyears <- MOM@proyears
-  nyears <- MOM@Fleets[[1]][[1]]@nyears
-  maxage <- MOM@Stocks[[1]]@maxage
+Generate_Correlated_Rec_Devs <- function(OMList, truncsd=2, yrind=NULL) {
+  set.seed(OMList[[1]]@seed)
+  nsim <- OMList[[1]]@nsim
+  pyears <- OMList[[1]]@proyears
+  nstock <- length(OMList)
 
-  nstock <- length(MOM@Stocks)
-  hist_devs <- list()
-  for (i in 1:nstock) {
-    hist_devs[[i]] <- MOM@cpars[[i]][[1]]$Perr_y[1,1:(nyears+maxage)]
+  # Years
+  df_list <- list()
+  for (i in seq_along(OMList)) {
+    nyears <- OMList[[i]]@Fleets[[1]][[1]]@nyears
+    current_yr <- OMList[[i]]@Fleets[[1]][[1]]@CurrentYr
+    hist_yrs <- rev(seq(current_yr, by=-1, length.out=nyears))
+
+    df_list[[i]] <- data.frame(Stock=OMList[[i]]@Stocks[[1]]@Name,
+                               Year=hist_yrs)
   }
-  hist_devs <- do.call('cbind', hist_devs)
-  ind <- round(hist_devs,3)!=1 # identify years where rec devs are fixed to 1
-  ind <- as.logical(apply(ind, 1, prod))
-  hist_devs <- hist_devs[ind,]
-  lhist_devs <- log(hist_devs)
+  df <- do.call('rbind',df_list)
+  yr_df <- df |> group_by(Stock) |> summarise(nyear=length(Year),
+                                              min=min(Year),
+                                              max=max(Year))
 
+  common_years <- max(yr_df$min):min(yr_df$max)
+  if (!is.null(yrind)) {
+    l <- length(common_years)
+    common_years <- common_years[(l-yrind+1):l]
+  }
+
+  # Get historical deviations for common years
+  hist_dev_list <- list()
+  for (i in seq_along(OMList)) {
+    OM <- OMList[[i]]
+    nyears <- OM@Fleets[[1]][[1]]@nyears
+    maxage <- OM@Stocks[[1]]@maxage
+    ind <- match(common_years, df_list[[i]]$Year)
+    hist_dev_list[[i]] <- OM@cpars[[1]][[1]]$Perr_y[1,(maxage+ind)]
+  }
+  hist_devs <- do.call('cbind', hist_dev_list)
+  lhist_devs <- log(hist_devs)
   covvar <- cov(lhist_devs)
   lower <- -truncsd*apply(lhist_devs, 2, sd)
   upper <- truncsd*apply(lhist_devs, 2, sd)
 
-  if(!is.null(sd_multi)) {
-    if (length(sd_multi)!=nstock)
-      stop('sd_multi must be length nstock')
+  mean <- apply(lhist_devs, 2, mean)
+  sd <- apply(lhist_devs, 2, sd)
 
-    sd <- sqrt(diag(covvar)) * sd_multi
-    diag(covvar) <- sd^2
-    lower <- -truncsd*sd
-    upper <- truncsd*sd
+  acf <- apply(lhist_devs, 2, acf, plot=FALSE)
+  AC <- rep(NA, length(OMList))
+  for (i in 1:nstock) {
+    AC[i] <- acf[[i]]$acf[2,1,1]
+  }
+
+  mu <- -0.5 * sd^2  * (1 - AC)/sqrt(1 - AC^2)
+  if (!is.null(yrind)) {
+    mu <- mean -0.5 * sd^2  * (1 - AC)/sqrt(1 - AC^2)
   }
 
   rldevs <- tmvtnorm::rtmvnorm(n=nsim*pyears,
-                               mean=rep(0, nstock),
+                               mean=mu,
                                sigma=covvar,
                                lower=lower,
                                upper=upper)
-
-
 
   rldevs <- array(as.vector(rldevs), dim=c(pyears, nsim, nstock)) %>%
     aperm(., c(2,1,3))
@@ -56,7 +79,7 @@ Generate_Future_Rec_Devs <- function(MOM, truncsd=2, sd_multi=NULL) {
   acrldevs <- rldevs
   # add auto-correlation
   for (i in 1:nstock) {
-    ac <- MOM@cpars[[i]][[1]]$AC[1]
+    ac <- OMList[[i]]@cpars[[1]][[1]]$AC[1]
     acrldevs[,1,i] <- ac * lhist_devs[nrow(lhist_devs),i] + acrldevs[,1,i] * sqrt(1-ac^2)
     for (y in 2:pyears) {
       acrldevs[,y,i] <- ac *acrldevs[,y-1,i] + acrldevs[,y,i]*sqrt(1-ac^2)
@@ -65,7 +88,67 @@ Generate_Future_Rec_Devs <- function(MOM, truncsd=2, sd_multi=NULL) {
 
   # update OM
   for (i in 1:nstock) {
-    MOM@cpars[[i]][[1]]$Perr_y[,(nyears+maxage+1):(nyears+maxage+pyears)] <- exp(acrldevs[,,i])
+    nyears <- OMList[[i]]@Fleets[[1]][[1]]@nyears
+    maxage <- OMList[[i]]@Stocks[[1]]@maxage
+    OMList[[i]]@cpars[[1]][[1]]$Perr_y[,(nyears+maxage+1):(nyears+maxage+pyears)] <- exp(acrldevs[,,i])
   }
-  MOM
+  OMList
 }
+
+#' @describeIn Generate_Correlated_Rec_Devs Scatter plot with marginal histograms
+#' @param ncol Number of columns for the plot
+#' @export
+Plot_Correlated_Rec_Devs <- function(OMList, ncol=3, addtheme=NULL, ylim=NULL, alpha=0.5) {
+
+  library(ggplot2)
+  library(ggExtra)
+  library(cowplot)
+
+  stock_names <- NULL
+  proj_dev_sim_list <- list()
+  for (sim in 1:OMList[[1]]@nsim) {
+    proj_dev_list <- list()
+    for (i in seq_along(OMList)) {
+      OM <- OMList[[i]]
+      nyears <- OM@Fleets[[1]][[1]]@nyears
+      maxage <- OM@Stocks[[1]]@maxage
+      pyears <- OM@proyears
+      proj_dev_list[[i]] <-  OM@cpars[[1]][[1]]$Perr_y[sim,(nyears+maxage+1):(nyears+maxage+pyears)]
+      stock_names[i] <- OMList[[i]]@Stocks[[1]]@Name
+    }
+    proj_dev_sim_list[[sim]] <- do.call('cbind', proj_dev_list)
+  }
+  proj_devs <- do.call('rbind', proj_dev_sim_list) |> as.data.frame()
+  colnames(proj_devs) <- stock_names
+
+
+  n <- ncol(proj_devs)
+  grid <- expand.grid(1:n, 1:n)
+  grid <- grid[grid[,1] != grid[,2],]
+  grid <- grid[!duplicated(apply(grid[,1:2], 1, function(row) paste(sort(row), collapse=""))),]
+
+  lproj_devs <- log(proj_devs)
+  if (is.null(ylim))
+    ylim <- range(lproj_devs)
+  plot_list <- list()
+
+  for (i in 1:nrow(grid)) {
+    tt <- as.numeric(grid[i,])
+    df <- lproj_devs[,c(tt[2],tt[1])]
+    p <- ggplot(df, aes(x=.data[[stock_names[tt[2]]]], y=.data[[stock_names[tt[1]]]])) +
+      geom_point(alpha=alpha) +
+      theme_bw() +
+      theme(axis.title=element_text(size=14)) +
+      expand_limits(x=ylim, y=ylim)
+    if (!is.null(addtheme))
+      p <- p + addtheme
+
+    p <- ggMarginal(p, type="histogram")
+
+    plot_list[[i]] <- p
+
+  }
+
+  cowplot::plot_grid(plotlist = plot_list, ncol=ncol)
+}
+

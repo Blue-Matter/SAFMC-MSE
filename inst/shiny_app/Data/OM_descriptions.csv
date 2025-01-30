@@ -1,9 +1,7 @@
-OM,Name,Key Uncertainty,Description
-1,Base Case,,Base Case Operating Model
-2,Lower M,Important assessment sensitivity test ,Re-run assessments with M-at-age reduced to the lower values considered in the assessment
-3,Higher M,Important assessment sensitivity test ,Re-run assessments with M-at-age reduced to the higher values considered in the assessment
-4,Reduced Rec Landings,Possible over-estimation of recreational catch,Re-run assessments with Recreational landings decreased by 40%
-5,Increased PE,Future productivity changes due to climate,Base Case with increased variability in recruitment process error in the projections
-6,Increased Rec Effort,Future recreation capacity (latent effort or tech creep),Base Case with Recreational effort is increased by 2% per year
-7,Lower FL Biomass,Assumed fraction of stocks in southernmost region,Base Case with lower fraction of unfished biomass in southern FL
-8,Higher FL Biomass,Assumed fraction of stocks in southernmost region,Base Case with lower fraction of unfished biomass in southern FL
+OM,Name,Description,Type
+1,Base Case,The base case run of the most recent stock assessments,Base Case
+2,Lower M,Natural mortality (M) was assumed to be the lower value considered in the sensitivity tests of the assessments,Robustness
+3,Higher M,Natural mortality (M) was assumed to be the higher value considered in the sensitivity tests of the assessments,Robustness
+4,Reduced Recreational Removals,The assessment models were re-run with removals of the recreational fleet reduced by 40%,Robustness
+5,Effort Creep,Same as Base Case except that the effort of the General Recreational fleet increased by 2% per year in the projection period,Robustness
+6,Recent Recruitment,Same as Base Case except that the recruitment deviations for the projection period were based on the 10 most recent historical years rather than the entire historical period,Robustness
