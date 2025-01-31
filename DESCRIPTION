@@ -33,6 +33,7 @@ Imports:
     ggrepel,
     grid,
     knitr,
+    marmap,
     pkgdown,
     RColorBrewer,
     rmarkdown,
