@@ -15,7 +15,6 @@ Depends:
     dplyr,
     ggplot2,
     usethis,
-    marmap,
     MSEtool,
     openMSE,
     bamExtras,
