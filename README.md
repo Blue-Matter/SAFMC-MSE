@@ -26,9 +26,7 @@ management approaches.
 `SAMSE` uses the [openMSE](https:://openMSE.com) platform to build the
 OMs and conduct the closed-loop simulation testing.
 
-Documentation on building the OMs, specifying the management methods,
-and running the closed-loop simualation testing is available under the
-**Articles** menu on the top navigation bar.
+<!-- Documentation on building the OMs, specifying the management methods, and running the closed-loop simulation testing is available under the **Articles** menu on the top navigation bar. -->
 
 ## Installation
 
@@ -59,10 +57,18 @@ remotes::install_github("Blue-Matter/SAFMC-MSE")
 
 ## MSE Process Documents
 
-- [MSE Trial Specifications](resources/TS/TS.html)
+- [MSE Technical
+  Specifications](https://safmc-mse.bluematterscience.com/resources/TS/TS.html):
+  document describing the technical details of the MSE framework,
+  including the methodology and assumptions for creating the operating
+  models.
 - [Building Base Case Operating
-  Models](articles/Building-Base-Case-Operating-Models.html)
-- [SAFMC MSE Results App](https://shiny.bluematterscience.com/app/samse)
+  Model](https://safmc-mse.bluematterscience.com/articles/Building-Base-Case-Operating-Models.html):
+  article providing a description and reproducible code for generating
+  the Base Case Operating Models.
+- [SAFMC MSE Results
+  App](https://shiny.bluematterscience.com/app/samse): An online App
+  designed to interactively explore the MSE Results
 
 ## Background Documents
 
