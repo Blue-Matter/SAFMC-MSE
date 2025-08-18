@@ -15,6 +15,8 @@ library(SAMSE)
 # FMSYref75 - fishing at 0.75FMSY exactly
 # NFref - no fishing reference MP
 
+avail('MP')
+
 MPs <- c('curE', 'CurC', 'FMSYref', 'FMSYref75', 'NFref')
 
 MSE <- ProjectMOM(Hist, MPs=MPs)

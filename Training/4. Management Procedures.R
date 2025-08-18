@@ -8,6 +8,10 @@ library(SAMSE)
 # ---- Management Procedures ----
 avail('MP') # built-in MPs
 
+avail('Output')
+
+avail('Input')
+
 ?Islope3 # help documentation
 
 # ---- Custom Management Procedures ----
@@ -20,10 +24,10 @@ avail('MP') # built-in MPs
 
 Rec <- new("Rec") # management recommendations
 slotNames(Rec)
+
 # TAC - total allowable catch
 # Effort - fishing effort relative to last historical year
 # Spatial - open or close areas
-#
 
 CurrentEffort <- function(x, Data, ...) {
   Rec <- new("Rec") # create management recommendations object
@@ -103,6 +107,7 @@ MPs <- c('CurrentEffort', 'Close_Area_1')
 MSE4 <- ProjectMOM(Hist, MPs=MPs)
 
 # Compare Performance
+ProjYears <- 2020:2044
 SB_SBMSY <- apply(MSE4@SB_SBMSY, 3:4, mean) # mean SB/SBMSY over simulations
 dimnames(SB_SBMSY) <- list(MP=MPs, Year=ProjYears)
 SB_SBMSY <- array2DF(SB_SBMSY)
@@ -125,10 +130,5 @@ ggplot(DF, aes(x=Year, y=Value, color=MP)) +
   geom_line() +
   theme_classic() +
   expand_limits(y=0)
-
-
-
-
-
 
 

@@ -61,6 +61,7 @@ Calc_RS_Ref_Points <- function(Hist) {
   spawn_time_frac <- Hist[[1]][[1]]@SampPars$Stock$spawn_time_frac[x]
   Fs <- seq(0,1,by=0.01)
 
+
   Calc_Eq_SB <- function(logF, R0, h, opt=1) {
     ref <- MSEtool:::MSYCalcs(logF,
                               M_at_Age,
@@ -68,7 +69,8 @@ Calc_RS_Ref_Points <- function(Hist) {
                               Mat_at_Age,
                               Fec_at_Age,
                               V_at_Age,
-                              maxage,
+                              Wt_at_Age,
+                              maxage=maxage,
                               relRfun=function() NULL,
                               SRRpars=list(),
                               R0x=R0,
