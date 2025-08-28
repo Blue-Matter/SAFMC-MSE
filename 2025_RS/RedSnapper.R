@@ -101,46 +101,103 @@ ggsave(file.path(img.dir, 'RS_Select_Retain.png'), width=8, height=6)
 
 # ---- MSE Runs with Different Assumptions ----
 
-CE <- function(Data) {
+CurrentEffort <- function(Data) {
   advice <- Advice()
   advice@Effort <- 1
   advice
 }
 
-CE_FR <- function(Data) {
+FullRetention <- function(Data) {
   advice <- Advice()
   advice@Effort <- 1
   advice@Retention@Pars <- list(RL50=0, RL50_95=0.1)
   advice
 }
 
-CE_nDR <- function(Data) {
+NoDiscardMortality <- function(Data) {
   advice <- Advice()
   advice@Effort <- 1
   advice@DiscardMortality@MeanAtAge <- 0
   advice
 }
 
+FullRetention_0.25Effort <- function(Data) {
+  advice <- Advice()
+  advice@Effort <- 0.25
+  advice@Retention@Pars <- list(RL50=0, RL50_95=0.1)
+  advice
+}
 
-MPs <- c('CE', 'CE_FR', 'CE_nDR')
+
+MPs <- c('CurrentEffort',
+         'FullRetention',
+         'NoDiscardMortality',
+         'FullRetention_0.25Effort')
+
 MSE <- Project(Hist, MPs=MPs)
+
 
 b <- Biomass(MSE) |>
   dplyr::group_by(TimeStep, MP) |>
-  dplyr::summarise(Value=mean(Value))
+  dplyr::summarise(Value=mean(Value)/1000)
 
-ggplot(b, aes(x=TimeStep, y=Value, color=MP)) +
+labDF1 <- b |> dplyr::filter(TimeStep==1975)
+labDF2 <- b |> dplyr::filter(TimeStep==2048)
+
+labDF <- dplyr::bind_rows(labDF1, labDF2)
+
+p1 <- ggplot(b, aes(x=TimeStep, y=Value, color=MP)) +
   geom_line() +
-  theme_bw()
+  labs(y='Biomass (1000 lb)') +
+  theme_bw() +
+  ggrepel::geom_text_repel(data=labDF, aes(label=MP, y=Value)) +
+  guides(color='none')
 
 
 
 
+r <- Removals(MSE) |>
+  dplyr::group_by(TimeStep, MP) |>
+  dplyr::summarise(Value=mean(Value)/1000)
 
+labDF1 <- r |> dplyr::filter(TimeStep==1975)
+labDF2 <- r |> dplyr::filter(TimeStep==2048)
+labDF <- dplyr::bind_rows(labDF1, labDF2)
+
+p2 <- ggplot(r, aes(x=TimeStep, y=Value, color=MP)) +
+  geom_line() +
+  theme_bw() +
+  ggrepel::geom_text_repel(data=labDF, aes(label=MP, y=Value)) +
+  guides(color='none') +
+  labs(y='Removals (1000 lb)')
+
+
+l <- Landings(MSE) |>
+  dplyr::group_by(TimeStep, MP) |>
+  dplyr::summarise(Value=mean(Value)/1000)
+
+labDF1 <- l |> dplyr::filter(TimeStep==1975)
+labDF2 <- l |> dplyr::filter(TimeStep==2048)
+labDF <- dplyr::bind_rows(labDF1, labDF2)
+
+p3 <- ggplot(l, aes(x=TimeStep, y=Value, color=MP)) +
+  geom_line() +
+  labs(y='Landings (1000 lb)') +
+  theme_bw() +
+  ggrepel::geom_text_repel(data=labDF, aes(label=MP, y=Value)) +
+  guides(color='none') +
+  labs(y='Landings (1000 lb)')
+
+library(patchwork)
+
+pout <- p1 / p3
+
+ggsave(file.path(img.dir, 'RS_Projections.png'),
+       plot=pout,
+       width=10, height=6)
 
 
 # ----- New Assessment Run with Zero Historical Discard Mortality -----
-
 
 
 # Run Red Snapper Assessment assuming no discard mortality
