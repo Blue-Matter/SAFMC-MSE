@@ -2,7 +2,6 @@
 if (packageVersion('MSEtool') < '4.0.0')
   stop('This code requires the latest development version of `MSEtool`')
 
-
 library(MSEtool)
 library(ggplot2)
 
@@ -22,11 +21,10 @@ disc[1,,4,]
 
 Removals <- Removals(Hist, ByFleet=TRUE, ByAge=TRUE)
 Landings <- Landings(Hist, ByFleet=TRUE, ByAge=TRUE)
-Discards <- Removals
-Discards$Variable <- 'Dead Discards'
-Discards$Value <- Removals$Value - Landings$Value
+DiscardsDead <- Discards(Hist, ByAge=TRUE, ByFleet=TRUE, type='Dead')
+DiscardsAlive <- Discards(Hist, ByAge=TRUE, ByFleet=TRUE, type='Alive')
 
-LandingsDiscards <- dplyr::bind_rows(Removals, Landings, Discards) |>
+LandingsDiscards <- dplyr::bind_rows(Removals, Landings, DiscardsDead, DiscardsAlive) |>
   dplyr::filter(TimeStep==2019, Sim==1)
 
 LandingsDiscards$Fleet <- dplyr::case_match(LandingsDiscards$Fleet,
@@ -35,7 +33,7 @@ LandingsDiscards$Fleet <- dplyr::case_match(LandingsDiscards$Fleet,
                                             'rGN'~'Recreational General')
 
 LandingsDiscards$Variable <- factor(LandingsDiscards$Variable,
-                                    levels=c('Removals', 'Landings', 'Dead Discards'),
+                                    levels=c('Removals', 'Landings', 'Discards (dead)', 'Discards (alive)'),
                                     ordered = TRUE)
 
 
@@ -44,7 +42,8 @@ ggplot(LandingsDiscards |> dplyr::filter(Variable!='Removals'),
   facet_grid(~Fleet, scales='free') +
   geom_bar(stat='identity') +
   theme_bw() +
-  labs(y='1000 lb')
+  labs(y='1000 lb') +
+  scale_fill_brewer(type='qual', palette='Dark2')
 
 ggsave(file.path(img.dir, 'RS_Landings_Discards.png'), width=12, height=3)
 
@@ -52,7 +51,8 @@ ggplot(LandingsDiscards |> dplyr::filter(Variable!='Removals', Fleet=='Recreatio
        aes(x=Age, y=Value/1000, fill=Variable)) +
   geom_bar(stat='identity') +
   theme_bw() +
-  labs(y='1000 lb')
+  labs(y='1000 lb') +
+  scale_fill_brewer(type='qual', palette='Dark2')
 
 ggsave(file.path(img.dir, 'RS_Landings_Discards_Rec_Gen.png'), width=8, height=6)
 
@@ -139,14 +139,13 @@ FullRetention_0.25Effort <- function(Data) {
 
 MPs <- c('CurrentEffort',
          'FullRetention',
-         'NoDiscardMortality',
-         'FullRetention_0.25Effort')
+         'NoDiscardMortality')
 
 MSE <- Project(Hist, MPs=MPs)
 
 
 b <- Biomass(MSE) |>
-  dplyr::group_by(TimeStep, MP) |>
+  dplyr::group_by(TimeStep, MP, Variable) |>
   dplyr::summarise(Value=mean(Value)/1000)
 
 labDF1 <- b |> dplyr::filter(TimeStep==1975)
@@ -161,11 +160,12 @@ p1 <- ggplot(b, aes(x=TimeStep, y=Value, color=MP)) +
   ggrepel::geom_text_repel(data=labDF, aes(label=MP, y=Value)) +
   guides(color='none')
 
-
+ggsave(file.path(img.dir, 'RS_Biomass.png'),
+       width=6, height=4)
 
 
 r <- Removals(MSE) |>
-  dplyr::group_by(TimeStep, MP) |>
+  dplyr::group_by(TimeStep, MP, Variable) |>
   dplyr::summarise(Value=mean(Value)/1000)
 
 labDF1 <- r |> dplyr::filter(TimeStep==1975)
@@ -179,9 +179,11 @@ p2 <- ggplot(r, aes(x=TimeStep, y=Value, color=MP)) +
   guides(color='none') +
   labs(y='Removals (1000 lb)')
 
+ggsave(file.path(img.dir, 'RS_Removals.png'),
+       width=6, height=4)
 
 l <- Landings(MSE) |>
-  dplyr::group_by(TimeStep, MP) |>
+  dplyr::group_by(TimeStep, MP, Variable) |>
   dplyr::summarise(Value=mean(Value)/1000)
 
 
@@ -211,6 +213,9 @@ p4 <- ggplot(discards, aes(x=TimeStep, y=Value, color=MP)) +
   guides(color='none')
 
 
+ggsave(file.path(img.dir, 'RS_Landing.png'),
+       width=6, height=4)
+
 library(patchwork)
 
 pout <- p1 / p3
@@ -218,6 +223,9 @@ pout <- p1 / p3
 ggsave(file.path(img.dir, 'RS_Projections.png'),
        plot=pout,
        width=10, height=6)
+
+DF <- dplyr::bind_rows(b,r,l)
+write.csv(DF, '2025_RS/plotData.csv')
 
 
 # ----- New Assessment Run with Zero Historical Discard Mortality -----
