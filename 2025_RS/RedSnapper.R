@@ -11,6 +11,14 @@ img.dir <- file.path('img', '2025_08_28_TT')
 OM_Base <- ImportBAM(pYear=30)
 Hist <- Simulate(OM_Base)
 
+disc <- Hist@OM@Fleet$`SA Red Snapper`@DiscardMortality@MeanAtAge |>
+  ArrayReduceDims()
+
+disc[1,,4,]
+
+# should discard mortality be instantaneous F??
+
+
 Removals <- Removals(Hist, ByFleet=TRUE, ByAge=TRUE)
 Landings <- Landings(Hist, ByFleet=TRUE, ByAge=TRUE)
 DiscardsDead <- Discards(Hist, ByAge=TRUE, ByFleet=TRUE, type='Dead')
@@ -178,6 +186,8 @@ l <- Landings(MSE) |>
   dplyr::group_by(TimeStep, MP, Variable) |>
   dplyr::summarise(Value=mean(Value)/1000)
 
+
+
 labDF1 <- l |> dplyr::filter(TimeStep==1975)
 labDF2 <- l |> dplyr::filter(TimeStep==2048)
 labDF <- dplyr::bind_rows(labDF1, labDF2)
@@ -187,8 +197,21 @@ p3 <- ggplot(l, aes(x=TimeStep, y=Value, color=MP)) +
   labs(y='Landings (1000 lb)') +
   theme_bw() +
   ggrepel::geom_text_repel(data=labDF, aes(label=MP, y=Value)) +
-  guides(color='none') +
-  labs(y='Landings (1000 lb)')
+  guides(color='none')
+
+discards <- l
+discards$Value <- r$Value - l$Value
+labDF1 <- discards |> dplyr::filter(TimeStep==1975)
+labDF2 <- discards |> dplyr::filter(TimeStep==2048)
+labDF <- dplyr::bind_rows(labDF1, labDF2)
+
+p4 <- ggplot(discards, aes(x=TimeStep, y=Value, color=MP)) +
+  geom_line() +
+  labs(y='Dead Discards (1000 lb)') +
+  theme_bw() +
+  ggrepel::geom_text_repel(data=labDF, aes(label=MP, y=Value)) +
+  guides(color='none')
+
 
 ggsave(file.path(img.dir, 'RS_Landing.png'),
        width=6, height=4)
