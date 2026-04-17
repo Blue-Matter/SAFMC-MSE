@@ -15,11 +15,7 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/Building-Base-Case-Operating-Models.html">Building Base Case Operating Models</a></li>
-  </ul></li>
-<li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+      <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
       </ul></div>
@@ -37,174 +33,45 @@
 
 
 
-
-    </div><div class="section level2">
+      <dl></dl></div><div class="section level2">
 
 
 
 
       <dl><dt>
 
-          <code><a href="Add_Spatial_Effort.html">Add_Spatial_Effort()</a></code>
+          <code><a href="CheckPackages.html">CheckPackages()</a></code>
 
         </dt>
-        <dd>Add Fishing Effort Spatial Distribution to MOM</dd>
-      </dl><dl><dt>
+        <dd>Check Required Package Dependencies</dd>
 
-          <code><a href="Add_Spatial_to_OM.html">Add_Spatial_to_OM()</a></code>
+        <dt>
 
-        </dt>
-        <dd>Add Spatial Distribution to an Operating Model</dd>
-      </dl><dl><dt>
-
-          <code><a href="Aggregate_Fleets.html">Aggregate_Fleets()</a></code>
+          <code><a href="Import_OMs.html">Import_OMs()</a></code>
 
         </dt>
-        <dd>Compare the F trends from BAM and openMSE</dd>
-      </dl><dl><dt>
+        <dd>Import BAM Operating Models</dd>
 
-          <code><a href="Calculate_Ref_Points.html">Calculate_Ref_Points()</a></code> <code><a href="Calculate_Ref_Points.html">Calc_RS_Ref_Points()</a></code> <code><a href="Calculate_Ref_Points.html">Calc_GG_Ref_Points()</a></code> <code><a href="Calculate_Ref_Points.html">Calc_BS_Ref_Points()</a></code>
+        <dt>
 
-        </dt>
-        <dd>Calculate Biological Reference Points from a single stock <code>multiHist</code> object</dd>
-      </dl><dl><dt>
-
-          <code><a href="Combine_OMs.html">Combine_OMs()</a></code>
+          <code><a href="LoadSettings.html">LoadSettings()</a></code>
 
         </dt>
-        <dd>Combine Multiple Single-Stock MOM objects into one Multi-Stock MOM</dd>
-      </dl><dl><dt>
+        <dd>Load Project Settings</dd>
 
-          <code><a href="Compare_Biomass.html">Compare_Biomass()</a></code>
+        <dt>
 
-        </dt>
-        <dd>Compare the biomass trends from BAM and openMSE</dd>
-      </dl><dl><dt>
-
-          <code><a href="Compare_Catch.html">Compare_Catch()</a></code>
+          <code><a href="OM-files.html">ListOMFiles()</a></code> <code><a href="OM-files.html">LoadOM()</a></code> <code><a href="OM-files.html">DeleteOMs()</a></code>
 
         </dt>
-        <dd>Compare the landings &amp; discards from BAM and openMSE</dd>
-      </dl><dl><dt>
+        <dd>Manage Operating Model Files</dd>
 
-          <code><a href="Compare_F.html">Compare_F()</a></code>
+        <dt>
 
-        </dt>
-        <dd>Compare the F trends from BAM and openMSE</dd>
-      </dl><dl><dt>
-
-          <code><a href="Generate_Correlated_Rec_Devs.html">Generate_Correlated_Rec_Devs()</a></code> <code><a href="Generate_Correlated_Rec_Devs.html">Plot_Correlated_Rec_Devs()</a></code>
+          <code><a href="fleet-tables.html">FleetTable()</a></code> <code><a href="fleet-tables.html">StockFleetTable()</a></code>
 
         </dt>
-        <dd>Update Recruitment Deviations in the projection years</dd>
-      </dl><dl><dt>
-
-          <code><a href="Landings_10.html">Landings_10()</a></code>
-
-        </dt>
-        <dd>Mean Landings (t) in first 10 years</dd>
-      </dl><dl><dt>
-
-          <code><a href="Landings_20.html">Landings_20()</a></code>
-
-        </dt>
-        <dd>Mean Landings (t) in last 10 years</dd>
-      </dl><dl><dt>
-
-          <code><a href="Landings_Removals.html">Landings_Removals()</a></code>
-
-        </dt>
-        <dd>Mean ratio of landings to total removals</dd>
-      </dl><dl><dt>
-
-          <code><a href="MPs.html">Create_Rec_List()</a></code> <code><a href="MPs.html">Get_Year_Info()</a></code> <code><a href="MPs.html">Adjust_Effort()</a></code> <code><a href="MPs.html">Close_Areas()</a></code> <code><a href="MPs.html">Effort_Creep()</a></code> <code><a href="MPs.html">SQ()</a></code> <code><a href="MPs.html">SQ_NS()</a></code> <code><a href="MPs.html">SQ_OS()</a></code> <code><a href="MPs.html">SQ_FR()</a></code> <code><a href="MPs.html">SQ_FR_NS()</a></code> <code><a href="MPs.html">SQ_FR_OS()</a></code> <code><a href="MPs.html">SQ_MLL()</a></code> <code><a href="MPs.html">SQ_MLL_NS()</a></code> <code><a href="MPs.html">SQ_MLL_OS()</a></code> <code><a href="MPs.html">SQ_FR_MLL()</a></code> <code><a href="MPs.html">SQ_FR_MLL_NS()</a></code> <code><a href="MPs.html">SQ_FR_MLL_OS()</a></code>
-
-        </dt>
-        <dd>Management Procedures</dd>
-      </dl><dl><dt>
-
-          <code><a href="P_MFMT.html">P_MFMT()</a></code>
-
-        </dt>
-        <dd>Probability F &lt; MFMT</dd>
-      </dl><dl><dt>
-
-          <code><a href="P_MSST.html">P_MSST()</a></code>
-
-        </dt>
-        <dd>Probability SB &gt; MSST</dd>
-      </dl><dl><dt>
-
-          <code><a href="P_rebuild.html">P_rebuild()</a></code>
-
-        </dt>
-        <dd>Probability of rebuilding to target level by end of projection period</dd>
-      </dl><dl><dt>
-
-          <code><a href="Plot_Prob_Rebuild.html">Plot_Prob_Rebuild()</a></code> <code><a href="Plot_Prob_Rebuild.html">PM_plots()</a></code> <code><a href="Plot_Prob_Rebuild.html">SSB_plot()</a></code> <code><a href="Plot_Prob_Rebuild.html">trade_off_plot()</a></code>
-
-        </dt>
-        <dd>PM Plotting Functions</dd>
-      </dl><dl><dt>
-
-          <code><a href="Process_Results.html">Process_Results()</a></code>
-
-        </dt>
-        <dd>Create data.frames of MSE results and save to disk</dd>
-      </dl><dl><dt>
-
-          <code><a href="Shiny.html">Shiny()</a></code>
-
-        </dt>
-        <dd>Run the SAFMC Shiny Application</dd>
-      </dl><dl><dt>
-
-          <code><a href="Spatial_Area_Definition.html">Spatial_Area_Definition()</a></code>
-
-        </dt>
-        <dd>Extract Lat Longs for Spatial Areass</dd>
-      </dl><dl><dt>
-
-          <code><a href="TradeOff.html">TradeOff()</a></code>
-
-        </dt>
-        <dd>Trade-Off Plot of Two Performance Metrics</dd>
-      </dl><dl><dt>
-
-          <code><a href="Write_MPs.html">Write_MPs()</a></code> <code><a href="Write_MPs.html">Write_MPs_effort_creep()</a></code> <code><a href="Write_MPs.html">Source_MPs()</a></code>
-
-        </dt>
-        <dd>Write MP functions</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_MLL.html">get_MLL()</a></code>
-
-        </dt>
-        <dd>Return the minimum legal length (MLL) for a given stock</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_rebuild_year.html">get_rebuild_year()</a></code>
-
-        </dt>
-        <dd>Get the rebuilding target year</dd>
-      </dl><dl><dt>
-
-          <code><a href="get_stock_status.html">get_stock_status()</a></code> <code><a href="get_stock_status.html">get_F()</a></code> <code><a href="get_stock_status.html">get_landings_discards()</a></code> <code><a href="get_stock_status.html">get_selectivity_retention()</a></code> <code><a href="get_stock_status.html">get_rec_devs()</a></code>
-
-        </dt>
-        <dd>Extracts stock status (SSB/MSST and F/MFMT) from BAM output</dd>
-      </dl><dl><dt>
-
-          <code><a href="lower_rec_effort.html">lower_rec_effort()</a></code>
-
-        </dt>
-        <dd>Reduce Gen Rec Landings &amp; Discards and run BAM model</dd>
-      </dl><dl><dt>
-
-          <code><a href="modify_adult_M.html">modify_adult_M()</a></code>
-
-        </dt>
-        <dd>Modify M and run BAM model</dd>
+        <dd>Fleet and Stock-Fleet Reference Tables</dd>
       </dl></div>
   </main></div>
 
@@ -214,7 +81,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
