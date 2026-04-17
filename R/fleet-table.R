@@ -46,3 +46,16 @@ StockFleetTable <- function(OM_List=NULL) {
     dplyr::group_by(Fleet, Code, nStock) |>
     dplyr::summarise(Stock = paste(unique(Stock), collapse = ', '))
 }
+
+#' @export
+#' @rdname fleet-tables
+MissingFleets <- function(OM_List = NULL) {
+  tab <- FleetTable(OM_List)
+  fleets <- unique(tab$Fleet)
+
+  tab |> dplyr::group_by(Stock) |>
+    dplyr::filter(all(fleets %in% Fleet)==FALSE) |>
+    dplyr::mutate(MissingFleet=fleets[which(!fleets %in% Fleet)]) |>
+    dplyr::distinct(Stock, MissingFleet)
+
+}
