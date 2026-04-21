@@ -27,7 +27,7 @@ SEDAR("BlackSeaBass")
 
 ?BAM_Specs
 
-
+MissingFleets
 # ---- Import using BAM_Specs ----
 
 Import_Stocks <- names(BAM_Specs)
@@ -37,7 +37,7 @@ Import_Stocks # BAM assessments to import
 
 BAM_Specs$RedSnapper
 
-Import_OMs('RedSnapper', plot=TRUE) # demo
+Import_OMs('RedSnapper', plot=TRUE, save=FALSE) # demo
 
 ## ---- Loop over Import_Stocks, import OMs, and save to disk ----
 

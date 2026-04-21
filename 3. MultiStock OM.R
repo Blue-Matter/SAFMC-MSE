@@ -3,102 +3,62 @@
 
 library(SAMSE)
 
-FleetTable()
+OMpath <- "../SAFMC-MSE/Objects/OM"
+# OMpath <- "Objects/OM"
 
-OM_List <- LoadOM()
 
+# List of all the OM that have been imported
+OM_List <- LoadOM(OMpath=OMpath)
+
+# List of Stock and Fleets
+FleetTable(OM_List)
 StockFleetTable(OM_List)
 
-OM_List_Combined <- OM_List
+CommonFleets <- c('cHL', 'rHB', 'rGN', 'cOT')
 
-# Combine Fleets
-# Rename Fleets
+StockFleetList <- list(
 
-
-OM_List_Combined$GagGrouper <- OM_List$GagGrouper |>
-  CombineFleets(FleetList = list(
+  GagGrouper = list(
     cOT = c('cDV')
-  ))
+  ),
 
-Rename
-
-OM_List_Combined$GagGrouper@Obs$`Gag Grouper`
-OM_List_Combined$GagGrouper@Data$`Gag Grouper`@Landings@Name
-
-# TODO
-# - Obs
-# - Data
-# - then CombineOM
-
-
-OM_List_Combined$ScampGrouper <- OM_List$ScampGrouper |>
-  CombineFleets(FleetList = list(
+  ScampGrouper = list(
     cOT = c('cGN')
-  ))
+  ),
 
-OM_List_Combined$ScampGrouper <- OM_List$ScampGrouper |>
-  CombineFleets(FleetList = list(
-    cOT = c('cGN')
-  ))
-
-OM_List_Combined$GrayTriggerfish <- OM_List$GrayTriggerfish |>
-  CombineFleets(FleetList = list(
+  GrayTriggerfish = list(
     cHL = c('cHLn', 'cHLs'),
     rGN = c('rGNn', 'rGNs'),
     rHB = c('rHBs')
-  ))
+  ),
 
-OM_List_Combined$BlackSeaBass <- OM_List$BlackSeaBass |>
-  CombineFleets(FleetList = list(
+  BlackSeaBass = list(
     cOT = c('cPT')
-  ))
+  ),
 
-OM_List_Combined$SnowyGrouper <- OM_List$SnowyGrouper |>
-  CombineFleets(FleetList = list(
+  SnowyGrouper = list(
     cOT = c('cLL')
-  ))
+  ),
 
-OM_List_Combined$Tilefish <- OM_List$Tilefish |>
-  CombineFleets(FleetList = list(
+  Tilefish = list(
     cOT = c('cLL')
-  ))
+  ),
 
-OM_List_Combined$VermilionSnapper <- OM_List$VermilionSnapper |>
-  CombineFleets(FleetList = list(
+  VermilionSnapper = list(
+    cOT = c('cOT', 'cTW')
+  ),
+
+  RedPorgy = list(
     cOT = c('cTW')
-  ))
+  )
+)
 
-OM_List_Combined$RedPorgy <- OM_List$RedPorgy |>
-  CombineFleets(FleetList = list(
-    cOT = c('cTW')
-  ))
-
-MissFleetDF <- MissingFleets(OM_List_Combined)
-
-OM <- OM_List_Combined$GrayTriggerfish
-
-AddDummuFleet <- function(OM, FleetName) {
-
-}
-
-StockFleetTable(OM_List_Combined)
+OM_List <- MakeCommonFleets(OM_List, CommonFleets, StockFleetList, OMpath=OMpath)
 
 
+OM_List <- LoadOM(OMpath=OMpath, type='MultiStock')
 
 
-# do rest of stocks
-
-Stock <- 'ScampGrouper'
-
-Hist <- Simulate(OM_List[[Stock]])
-Hist2 <- Simulate(OM_List_Combined[[Stock]])
-
-df1 <- Biomass(Hist, df=TRUE)
-df2 <- Biomass(Hist2, df=TRUE)
-
-plot(df1$Year, df1$Value)
-lines(df2$Year, df2$Value)
-
-
+Multi_OM_Files <- ListOMFiles(OMpath=OMpath, type='MultiStock')
 
 

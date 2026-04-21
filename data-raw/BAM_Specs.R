@@ -6,8 +6,8 @@ BAM_Specs <- list(
     Link = 'https://sedarweb.org/documents/sedar-76-stock-assessment-report-south-atlantic-black-sea-bass/',
 
     SurveyNames = c('MARMAP blackfish/snapper trap', 'SERFS Chevron Trap'),
-    UnitsLandings = c('1000 lb', '1000 lb',' 1000 lb', '1000 lb', '1000 lb'),
-    UnitsDiscards = c('1000 lb', '1000 n', '1000 n'),
+    UnitsLandings = c('1000 lb',' 1000 lb', '1000 lb', '1000 lb'),
+    UnitsDiscards = c('1000 n', '1000 n'),
 
     DiscMortDF = data.frame(Fleet=c('cHL', 'cPT', 'cPT', 'rHB', 'rGN'),
                             Value=c(0.19,   0.14, 0.068, 0.152, 0.137),
@@ -48,7 +48,7 @@ BAM_Specs <- list(
                       rGNs = '1000 n',
                       rGNn = '1000 n'),
 
-    UnitsDiscards = c('1000 lb', '1000 lb', '1000 n')
+    UnitsDiscards = c("1000 lb", "1000 n", "1000 n")
 
 
   ),

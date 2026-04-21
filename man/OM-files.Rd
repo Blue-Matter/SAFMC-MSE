@@ -34,7 +34,7 @@ OM files to the console. If \code{FALSE} (default), returns the file paths invis
 without printing.}
 
 \item{name}{\code{character(1)}. Name of the OM to load, without the \code{.om}
-extension. Defaults to \code{"BlackSeaBass"}. (\code{LoadOM} only.)}
+extension. If \code{NULL} (default) it loads all OMs returned by \code{\link[=ListOMFiles]{ListOMFiles()}}.}
 }
 \value{
 \itemize{

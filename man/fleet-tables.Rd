@@ -7,11 +7,19 @@
 \alias{MissingFleets}
 \title{Fleet and Stock-Fleet Reference Tables}
 \usage{
-FleetTable(OM_List = NULL)
+FleetTable(
+  OM_List = NULL,
+  OMpath = "Objects/OM",
+  type = c("SingleStock", "MultiStock")
+)
 
 StockFleetTable(OM_List = NULL)
 
-MissingFleets(OM_List = NULL)
+MissingFleets(
+  OM_List = NULL,
+  OMpath = "Objects/OM",
+  type = c("SingleStock", "MultiStock")
+)
 }
 \value{
 \itemize{

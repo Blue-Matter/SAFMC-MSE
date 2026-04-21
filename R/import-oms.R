@@ -13,11 +13,12 @@
 #' @param plot `logical`. If `TRUE`, diagnostic plots are produced during
 #'   [MSEtool::CompareBAM()]. Passed directly to that function. Defaults to
 #'   `FALSE`.
+#' @param save `logical`. Save the OM to disk? Default TRUE
 #' @param OMpath `character`. Directory where `.om` files are saved.
 #'   Defaults to `"Objects/OM/SingleStock"`.
 #'
 #' @return Called for its side effects. Each imported OM is saved to `OMpath`
-#'   as `<StockName>.om`. Returns `NULL` invisibly.
+#'   as `<StockName>.om`. Returns list of imported OMs invisibly.
 #'
 #' @details
 #' Project-wide settings `nSim`, `pYear`) are loaded at the
@@ -30,6 +31,7 @@
 Import_OMs <- function(Import_Stocks=NULL,
                        Compare=TRUE,
                        plot=FALSE,
+                       save= TRUE,
                        OMpath="Objects/OM/SingleStock") {
 
 
@@ -72,8 +74,10 @@ Import_OMs <- function(Import_Stocks=NULL,
 
     cli::cli_text('')
 
-    fl <- paste0(BAM_Stock, '.om')
-    Save(OM, file.path(OMpath, fl), overwrite = TRUE)
+    if (save) {
+      fl <- paste0(BAM_Stock, '.om')
+      Save(OM, file.path(OMpath, fl), overwrite = TRUE)
+    }
 
   }
   invisible(OM_List)

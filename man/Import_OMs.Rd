@@ -8,6 +8,7 @@ Import_OMs(
   Import_Stocks = NULL,
   Compare = TRUE,
   plot = FALSE,
+  save = TRUE,
   OMpath = "Objects/OM/SingleStock"
 )
 }
@@ -23,12 +24,14 @@ reference points.}
 \code{\link[MSEtool:CompareBAM]{MSEtool::CompareBAM()}}. Passed directly to that function. Defaults to
 \code{FALSE}.}
 
+\item{save}{\code{logical}. Save the OM to disk? Default TRUE}
+
 \item{OMpath}{\code{character}. Directory where \code{.om} files are saved.
 Defaults to \code{"Objects/OM/SingleStock"}.}
 }
 \value{
 Called for its side effects. Each imported OM is saved to \code{OMpath}
-as \verb{<StockName>.om}. Returns \code{NULL} invisibly.
+as \verb{<StockName>.om}. Returns list of imported OMs invisibly.
 }
 \description{
 Imports one or more stock Operating Models (OMs) from BAM (Beaufort

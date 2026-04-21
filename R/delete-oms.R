@@ -12,7 +12,7 @@
 #'   OM files to the console. If `FALSE` (default), returns the file paths invisibly
 #'   without printing.
 #' @param name `character(1)`. Name of the OM to load, without the `.om`
-#'   extension. Defaults to `"BlackSeaBass"`. (`LoadOM` only.)
+#'   extension. If `NULL` (default) it loads all OMs returned by [ListOMFiles()].
 #'
 #' @return
 #' - `ListOMFiles`: character vector of full file paths. Returned invisibly

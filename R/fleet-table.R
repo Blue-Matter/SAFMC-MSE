@@ -20,10 +20,13 @@ NULL
 
 #' @export
 #' @rdname fleet-tables
-FleetTable <- function(OM_List=NULL) {
+FleetTable <- function(OM_List=NULL,
+                       OMpath = "Objects/OM",
+                       type = c("SingleStock", "MultiStock")) {
 
   if (is.null(OM_List))
-    OM_List <- LoadOM()
+    OM_List <- LoadOM(name=NULL, OMpath, type)
+
   StockNames_List <- purrr::map(OM_List, \(OM) MSEtool::Name(Stock(OM,1)))
   FleetNames_List <- purrr::map(OM_List, MSEtool::FleetNames)
   names(FleetNames_List) <- StockNames_List
@@ -44,18 +47,27 @@ StockFleetTable <- function(OM_List=NULL) {
     dplyr::group_by(Fleet) |>
     dplyr::mutate(nStock=length(unique(Stock))) |>
     dplyr::group_by(Fleet, Code, nStock) |>
-    dplyr::summarise(Stock = paste(unique(Stock), collapse = ', '))
+    dplyr::summarise(Stock = paste(unique(Stock), collapse = ', ')) |>
+    dplyr::arrange(nStock)
 }
 
 #' @export
 #' @rdname fleet-tables
-MissingFleets <- function(OM_List = NULL) {
-  tab <- FleetTable(OM_List)
+MissingFleets <- function(OM_List = NULL,
+                          OMpath = "Objects/OM",
+                          type = c("SingleStock", "MultiStock")) {
+  tab <- FleetTable(OM_List, OMpath=OMpath, type=type)
   fleets <- unique(tab$Fleet)
+  tab$Code[match(fleets, tab$Fleet)]
 
-  tab |> dplyr::group_by(Stock) |>
+  df <- tab |> dplyr::group_by(Stock) |>
     dplyr::filter(all(fleets %in% Fleet)==FALSE) |>
     dplyr::mutate(MissingFleet=fleets[which(!fleets %in% Fleet)]) |>
     dplyr::distinct(Stock, MissingFleet)
+
+  codes <- tab$Code[match(df$MissingFleet, tab$Fleet)]
+
+  df$Code <- codes
+  df
 
 }
