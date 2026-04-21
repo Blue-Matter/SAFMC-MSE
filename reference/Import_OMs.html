@@ -59,8 +59,7 @@ each OM to disk as a <code>.om</code> file.</p>
 
 <dl><dt id="arg-import-stocks">Import_Stocks<a class="anchor" aria-label="anchor" href="#arg-import-stocks"></a></dt>
 <dd><p><code>character</code>. Names of stocks to import. If <code>NULL</code>
-(default), all stocks defined in <code>BAM_Info_List</code> (loaded via
-<code><a href="LoadSettings.html">LoadSettings()</a></code>) are imported.</p></dd>
+(default), all stocks defined in <code>BAM_Specs</code></p></dd>
 
 
 <dt id="arg-compare">Compare<a class="anchor" aria-label="anchor" href="#arg-compare"></a></dt>
@@ -87,13 +86,13 @@ as <code>&lt;StockName&gt;.om</code>. Returns <code>NULL</code> invisibly.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Project-wide settings (<code>BAM_Info_List</code>, <code>nSim</code>, <code>pYear</code>) are loaded at the
-start of the function via <code><a href="LoadSettings.html">LoadSettings()</a></code>. Each stock's BAM configuration
-is drawn from <code>BAM_Info_List</code>.</p>
+    <p>Project-wide settings <code>nSim</code>, <code>pYear</code>) are loaded at the
+start of the function via <code><a href="Settings.html">Settings()</a></code>. Each stock's BAM configuration
+is drawn from <a href="BAM_Specs.html">BAM_Specs</a>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="LoadSettings.html">LoadSettings()</a></code>, <code><a href="https://msetool.openmse.com/reference/ImportBAM.html" class="external-link">MSEtool::ImportBAM()</a></code>, <code><a href="https://msetool.openmse.com/reference/CompareBAM.html" class="external-link">MSEtool::CompareBAM()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="Settings.html">Settings()</a></code>, <code><a href="https://msetool.openmse.com/reference/ImportBAM.html" class="external-link">MSEtool::ImportBAM()</a></code>, <code><a href="https://msetool.openmse.com/reference/CompareBAM.html" class="external-link">MSEtool::CompareBAM()</a></code></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

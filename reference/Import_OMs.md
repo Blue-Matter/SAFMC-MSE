@@ -23,9 +23,7 @@ Import_OMs(
 - Import_Stocks:
 
   `character`. Names of stocks to import. If `NULL` (default), all
-  stocks defined in `BAM_Info_List` (loaded via
-  [`LoadSettings()`](https://safmc-mse.bluematterscience.com/reference/LoadSettings.md))
-  are imported.
+  stocks defined in `BAM_Specs`
 
 - Compare:
 
@@ -51,13 +49,14 @@ Called for its side effects. Each imported OM is saved to `OMpath` as
 
 ## Details
 
-Project-wide settings (`BAM_Info_List`, `nSim`, `pYear`) are loaded at
-the start of the function via
-[`LoadSettings()`](https://safmc-mse.bluematterscience.com/reference/LoadSettings.md).
-Each stock's BAM configuration is drawn from `BAM_Info_List`.
+Project-wide settings `nSim`, `pYear`) are loaded at the start of the
+function via
+[`Settings()`](https://safmc-mse.bluematterscience.com/reference/Settings.md).
+Each stock's BAM configuration is drawn from
+[BAM_Specs](https://safmc-mse.bluematterscience.com/reference/BAM_Specs.md).
 
 ## See also
 
-[`LoadSettings()`](https://safmc-mse.bluematterscience.com/reference/LoadSettings.md),
+[`Settings()`](https://safmc-mse.bluematterscience.com/reference/Settings.md),
 [`MSEtool::ImportBAM()`](https://msetool.openmse.com/reference/ImportBAM.html),
 [`MSEtool::CompareBAM()`](https://msetool.openmse.com/reference/CompareBAM.html)
