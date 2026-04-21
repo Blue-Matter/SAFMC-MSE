@@ -13,8 +13,7 @@ Import_OMs(
 }
 \arguments{
 \item{Import_Stocks}{\code{character}. Names of stocks to import. If \code{NULL}
-(default), all stocks defined in \code{BAM_Info_List} (loaded via
-\code{\link[=LoadSettings]{LoadSettings()}}) are imported.}
+(default), all stocks defined in \code{BAM_Specs}}
 
 \item{Compare}{\code{logical}. If \code{TRUE} (default), runs
 \code{\link[MSEtool:CompareBAM]{MSEtool::CompareBAM()}} on each imported OM to validate against BAM
@@ -38,10 +37,10 @@ them against BAM population dynamics with \code{\link[MSEtool:CompareBAM]{MSEtoo
 each OM to disk as a \code{.om} file.
 }
 \details{
-Project-wide settings (\code{BAM_Info_List}, \code{nSim}, \code{pYear}) are loaded at the
-start of the function via \code{\link[=LoadSettings]{LoadSettings()}}. Each stock's BAM configuration
-is drawn from \code{BAM_Info_List}.
+Project-wide settings \code{nSim}, \code{pYear}) are loaded at the
+start of the function via \code{\link[=Settings]{Settings()}}. Each stock's BAM configuration
+is drawn from \link{BAM_Specs}.
 }
 \seealso{
-\code{\link[=LoadSettings]{LoadSettings()}}, \code{\link[MSEtool:ImportBAM]{MSEtool::ImportBAM()}}, \code{\link[MSEtool:CompareBAM]{MSEtool::CompareBAM()}}
+\code{\link[=Settings]{Settings()}}, \code{\link[MSEtool:ImportBAM]{MSEtool::ImportBAM()}}, \code{\link[MSEtool:CompareBAM]{MSEtool::CompareBAM()}}
 }

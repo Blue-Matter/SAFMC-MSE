@@ -7,19 +7,44 @@
 
 library(SAMSE)
 
+# Check the settings - in general, these will apply to all OMs
+Settings(nSim = 50)
 
-Import_Stocks <- names(BAM_Info_List)
+# List the stocks for which assessments are available in the BAMextras package
+ListBAMStocks()
+
+# --- Import OM Example ----
+
+OM <- ImportBAM('RedSnapper') # requires settings
+
+SEDAR("Red Snapper")
+
+
+OM <- ImportBAM('BlackSeaBass') # error - requires specifications
+
+SEDAR("BlackSeaBass")
+
+
+?BAM_Specs
+
+
+# ---- Import using BAM_Specs ----
+
+Import_Stocks <- names(BAM_Specs)
 Import_Stocks # BAM assessments to import
+
+## ---- Example One ----
+
+BAM_Specs$RedSnapper
 
 Import_OMs('RedSnapper', plot=TRUE) # demo
 
+## ---- Loop over Import_Stocks, import OMs, and save to disk ----
 
-
-# Loop over Import_Stocks, import OMs, and save to disk
 Import_OMs(Import_Stocks)
 
 
-# ---- Red Snapper - Update ----
+# ---- Red Snapper - manual ----
 # SEDAR 73 - Update
 # 1950 - 2023
 # https://sedarweb.org/documents/sefsc-2024-update-to-sedar-73-south-atlantic-red-snapper-assessment/

@@ -6,8 +6,7 @@
 #' each OM to disk as a `.om` file.
 #'
 #' @param Import_Stocks `character`. Names of stocks to import. If `NULL`
-#'   (default), all stocks defined in `BAM_Info_List` (loaded via
-#'   [LoadSettings()]) are imported.
+#'   (default), all stocks defined in `BAM_Specs`
 #' @param Compare `logical`. If `TRUE` (default), runs
 #'   [MSEtool::CompareBAM()] on each imported OM to validate against BAM
 #'   reference points.
@@ -21,38 +20,52 @@
 #'   as `<StockName>.om`. Returns `NULL` invisibly.
 #'
 #' @details
-#' Project-wide settings (`BAM_Info_List`, `nSim`, `pYear`) are loaded at the
-#' start of the function via [LoadSettings()]. Each stock's BAM configuration
-#' is drawn from `BAM_Info_List`.
+#' Project-wide settings `nSim`, `pYear`) are loaded at the
+#' start of the function via [Settings()]. Each stock's BAM configuration
+#' is drawn from [BAM_Specs].
 #'
-#' @seealso [LoadSettings()], [MSEtool::ImportBAM()], [MSEtool::CompareBAM()]
+#' @seealso [Settings()], [MSEtool::ImportBAM()], [MSEtool::CompareBAM()]
 #'
 #' @export
-Import_OMs <- function(Import_Stocks=NULL, Compare=TRUE, plot=FALSE, OMpath="Objects/OM/SingleStock") {
+Import_OMs <- function(Import_Stocks=NULL,
+                       Compare=TRUE,
+                       plot=FALSE,
+                       OMpath="Objects/OM/SingleStock") {
 
-  LoadSettings()
 
-  if (is.null(Import_Stocks))
-    Import_Stocks <- names(BAM_Info_List)
+  if (is.null(Import_Stocks)) {
+    Import_Stocks <- names(BAM_Specs)
+  } else {
+    missing <- Import_Stocks[!Import_Stocks %in% names(BAM_Specs)]
+    if (length(missing))
+      cli::cli_abort(c('x'='{.val {missing}} not found in `BAM_Specs',
+                       'i'= 'Available stocks are: {.val {names(BAM_Specs)}}'))
+  }
 
+  OM_List <- list()
   for (i in seq_along(Import_Stocks)) {
 
     BAM_Stock <- Import_Stocks[i]
-    ind <- match(BAM_Stock, names(BAM_Info_List))
-    BAM_Info <- BAM_Info_List[[ind]]
-
+    ind <- match(BAM_Stock, names(BAM_Specs))
+    BAM_Info <- BAM_Specs[[ind]]
 
     cli::cli_text('')
 
     OM <- MSEtool::ImportBAM(Stock = BAM_Stock,
-                             nSim = nSim,
-                             pYear = pYear,
+                             nSim = get_setting('nSim'),
+                             pYear = get_setting('pYear'),
+                             Source = BAM_Info$Link,
                              StockName = BAM_Info$Stock,
                              DiscMortDF = BAM_Info$DiscMortDF,
                              DiscFleets = BAM_Info$DiscFleets,
                              DiscSelFleets = BAM_Info$DiscSelFleets,
-                             RetSelFleets = BAM_Info$RetSelFleets)
+                             RetSelFleets = BAM_Info$RetSelFleets,
+                             SurveyNames = BAM_Info$SurveyNames,
+                             UnitsLandings = BAM_Info$UnitsLandings,
+                             UnitsDiscards = BAM_Info$UnitsDiscards
+                             )
 
+    OM_List[[i]] <- OM
     cli::cli_text('')
     if (Compare)
       MSEtool::CompareBAM(Stock=BAM_Stock, OM, plot=plot)
@@ -60,8 +73,9 @@ Import_OMs <- function(Import_Stocks=NULL, Compare=TRUE, plot=FALSE, OMpath="Obj
     cli::cli_text('')
 
     fl <- paste0(BAM_Stock, '.om')
-    saveRDS(OM, file.path(OMpath, fl))
+    Save(OM, file.path(OMpath, fl), overwrite = TRUE)
 
   }
+  invisible(OM_List)
 
 }

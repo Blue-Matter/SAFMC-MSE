@@ -4,11 +4,14 @@
 \alias{fleet-tables}
 \alias{FleetTable}
 \alias{StockFleetTable}
+\alias{MissingFleets}
 \title{Fleet and Stock-Fleet Reference Tables}
 \usage{
 FleetTable(OM_List = NULL)
 
 StockFleetTable(OM_List = NULL)
+
+MissingFleets(OM_List = NULL)
 }
 \value{
 \itemize{

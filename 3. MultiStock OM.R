@@ -20,6 +20,17 @@ OM_List_Combined$GagGrouper <- OM_List$GagGrouper |>
     cOT = c('cDV')
   ))
 
+Rename
+
+OM_List_Combined$GagGrouper@Obs$`Gag Grouper`
+OM_List_Combined$GagGrouper@Data$`Gag Grouper`@Landings@Name
+
+# TODO
+# - Obs
+# - Data
+# - then CombineOM
+
+
 OM_List_Combined$ScampGrouper <- OM_List$ScampGrouper |>
   CombineFleets(FleetList = list(
     cOT = c('cGN')
