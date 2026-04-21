@@ -82,10 +82,10 @@ BAM_Specs[[1]]
 #> [1] "MARMAP blackfish/snapper trap" "SERFS Chevron Trap"           
 #> 
 #> $UnitsLandings
-#> [1] "1000 lb"  "1000 lb"  " 1000 lb" "1000 lb"  "1000 lb" 
+#> [1] "1000 lb"  " 1000 lb" "1000 lb"  "1000 lb" 
 #> 
 #> $UnitsDiscards
-#> [1] "1000 lb" "1000 n"  "1000 n" 
+#> [1] "1000 n" "1000 n"
 #> 
 #> $DiscMortDF
 #>   Fleet Value Year

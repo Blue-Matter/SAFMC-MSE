@@ -43,7 +43,7 @@ DeleteOMs(OMpath = "Objects/OM", type = c("SingleStock", "MultiStock"))
 - name:
 
   `character(1)`. Name of the OM to load, without the `.om` extension.
-  Defaults to `"BlackSeaBass"`. (`LoadOM` only.)
+  If `NULL` (default) it loads all OMs returned by `ListOMFiles()`.
 
 ## Value
 

@@ -8,6 +8,8 @@
   : Check Required Package Dependencies
 - [`Import_OMs()`](https://safmc-mse.bluematterscience.com/reference/Import_OMs.md)
   : Import BAM Operating Models
+- [`MakeCommonFleets()`](https://safmc-mse.bluematterscience.com/reference/MakeCommonFleets.md)
+  : Make Common Fleets Across Operating Models
 - [`ListOMFiles()`](https://safmc-mse.bluematterscience.com/reference/OM-files.md)
   [`LoadOM()`](https://safmc-mse.bluematterscience.com/reference/OM-files.md)
   [`DeleteOMs()`](https://safmc-mse.bluematterscience.com/reference/OM-files.md)

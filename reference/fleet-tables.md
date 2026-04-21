@@ -10,11 +10,19 @@ comma-separated string per fleet.
 ## Usage
 
 ``` r
-FleetTable(OM_List = NULL)
+FleetTable(
+  OM_List = NULL,
+  OMpath = "Objects/OM",
+  type = c("SingleStock", "MultiStock")
+)
 
 StockFleetTable(OM_List = NULL)
 
-MissingFleets(OM_List = NULL)
+MissingFleets(
+  OM_List = NULL,
+  OMpath = "Objects/OM",
+  type = c("SingleStock", "MultiStock")
+)
 ```
 
 ## Value

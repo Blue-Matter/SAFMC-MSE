@@ -14,6 +14,7 @@ Import_OMs(
   Import_Stocks = NULL,
   Compare = TRUE,
   plot = FALSE,
+  save = TRUE,
   OMpath = "Objects/OM/SingleStock"
 )
 ```
@@ -37,6 +38,10 @@ Import_OMs(
   [`MSEtool::CompareBAM()`](https://msetool.openmse.com/reference/CompareBAM.html).
   Passed directly to that function. Defaults to `FALSE`.
 
+- save:
+
+  `logical`. Save the OM to disk? Default TRUE
+
 - OMpath:
 
   `character`. Directory where `.om` files are saved. Defaults to
@@ -45,7 +50,7 @@ Import_OMs(
 ## Value
 
 Called for its side effects. Each imported OM is saved to `OMpath` as
-`<StockName>.om`. Returns `NULL` invisibly.
+`<StockName>.om`. Returns list of imported OMs invisibly.
 
 ## Details
 
